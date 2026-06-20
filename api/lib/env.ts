@@ -11,7 +11,7 @@ function required(name: string): string {
 export const env = {
   jwtSecret: process.env.JWT_SECRET || process.env.APP_SECRET || "default_super_secret_key_123456",
   isProduction: process.env.NODE_ENV === "production",
-  databaseUrl: required("DATABASE_URL"),
+  databaseUrl: process.env.DATABASE_URL || "sqlite.db",
   ownerUnionId: process.env.OWNER_UNION_ID ?? "",
   googleClientId: process.env.GOOGLE_CLIENT_ID ?? "",
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
