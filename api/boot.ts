@@ -60,6 +60,16 @@ app.post("/api/webhooks/payment", async (c) => {
 
 app.get(Paths.oauthCallback, createOAuthCallbackHandler());
 
+app.get("/api/seed", async (c) => {
+  try {
+    const { execSync } = await import("node:child_process");
+    execSync("npx drizzle-kit push && npx tsx db/seed.ts", { stdio: "inherit" });
+    return c.json({ success: true, message: "Database seeded successfully!" });
+  } catch (error: any) {
+    return c.json({ success: false, error: error.message || "Failed to seed" }, 500);
+  }
+});
+
 app.get("/api/auth/google/login", (c) => {
   const origin = new URL(c.req.url).origin;
   return c.redirect(createGoogleAuthUrl(origin));
