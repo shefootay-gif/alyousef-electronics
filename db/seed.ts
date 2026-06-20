@@ -1,5 +1,13 @@
 import { getDb } from "../api/queries/connection";
-import { categories, products, siteSettings } from "./schema";
+import { categories, products, siteSettings, users } from "./schema";
+import * as crypto from "node:crypto";
+import { eq } from "drizzle-orm";
+
+function hashPassword(password: string): string {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const derivedKey = crypto.scryptSync(password, salt, 64).toString("hex");
+  return `${salt}:${derivedKey}`;
+}
 
 async function seed() {
   const db = getDb();
@@ -293,6 +301,21 @@ async function seed() {
   ]);
 
   console.log("Site settings seeded");
+
+  // Seed Admin User
+  const adminEmail = "admin@alyousef.com";
+  const existingAdmin = await db.select().from(users).where(eq(users.email, adminEmail)).limit(1);
+  if (existingAdmin.length === 0) {
+    await db.insert(users).values({
+      unionId: "local_admin",
+      name: "Admin User",
+      email: adminEmail,
+      passwordHash: hashPassword("admin123"),
+      role: "admin",
+    });
+    console.log("Admin user seeded");
+  }
+
   console.log("Seed complete!");
 }
 
