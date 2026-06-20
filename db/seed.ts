@@ -21,7 +21,7 @@ async function seed() {
     { name: "Audio", nameAr: "الصوتيات", slug: "audio", icon: "Headphones", sortOrder: 4, isActive: true },
     { name: "Gaming", nameAr: "الألعاب", slug: "gaming", icon: "Gamepad2", sortOrder: 5, isActive: true },
     { name: "Accessories", nameAr: "الإكسسوارات", slug: "accessories", icon: "Watch", sortOrder: 6, isActive: true },
-  ]);
+  ]).onConflictDoNothing();
 
   console.log("Categories seeded");
 
@@ -373,7 +373,7 @@ async function seed() {
       metaTitle: "Sony ZV-E10 Camera",
       metaDescription: "Best vlogging camera Sony ZV-E10.",
     }
-  ]);
+  ]).onConflictDoNothing();
 
   console.log("Products seeded");
 
@@ -384,7 +384,7 @@ async function seed() {
     { key: "theme", value: { primaryColor: "#1A2A44", accentColor: "#D4AF37", highlightColor: "#00D4FF" } },
     { key: "shipping", value: { freeThreshold: 500, defaultRate: 35 } },
     { key: "tax", value: { rate: 15, inclusive: false } },
-  ]);
+  ]).onConflictDoNothing();
 
   console.log("Site settings seeded");
 
@@ -398,7 +398,7 @@ async function seed() {
       email: adminEmail,
       passwordHash: hashPassword("admin123"),
       role: "admin",
-    });
+    }).onConflictDoNothing();
     console.log("Admin user seeded");
   }
 
