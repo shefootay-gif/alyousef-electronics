@@ -78,6 +78,6 @@ export const handleGoogleCallback = async (code: string, origin: string) => {
     exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, // 30 days
   };
 
-  const jwt = await sign(payload, env.appSecret);
+  const jwt = await sign(payload, env.jwtSecret);
   return jwt;
 };

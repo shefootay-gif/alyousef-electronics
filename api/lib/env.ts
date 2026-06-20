@@ -9,8 +9,7 @@ function required(name: string): string {
 }
 
 export const env = {
-  appId: required("APP_ID"),
-  appSecret: required("APP_SECRET"),
+  jwtSecret: process.env.JWT_SECRET || process.env.APP_SECRET || "default_super_secret_key_123456",
   isProduction: process.env.NODE_ENV === "production",
   databaseUrl: required("DATABASE_URL"),
   ownerUnionId: process.env.OWNER_UNION_ID ?? "",

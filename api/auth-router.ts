@@ -53,7 +53,7 @@ export const authRouter = createRouter({
 
       const token = await signSessionToken({
         unionId: user.unionId,
-        clientId: env.appId,
+        clientId: "local_auth",
       });
 
       ctx.resHeaders.append(
@@ -91,7 +91,7 @@ export const authRouter = createRouter({
 
       const token = await signSessionToken({
         unionId: user.unionId,
-        clientId: env.appId,
+        clientId: "local_auth",
       });
 
       ctx.resHeaders.append(
