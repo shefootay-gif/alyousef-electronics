@@ -11,6 +11,8 @@ import { Paths } from "@contracts/constants";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { nanoid } from "nanoid";
+import { createGoogleAuthUrl, handleGoogleCallback } from "./google/auth";
+import { setCookie } from "hono/cookie";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
@@ -57,6 +59,33 @@ app.post("/api/webhooks/payment", async (c) => {
 });
 
 app.get(Paths.oauthCallback, createOAuthCallbackHandler());
+
+app.get("/api/auth/google/login", (c) => {
+  const origin = new URL(c.req.url).origin;
+  return c.redirect(createGoogleAuthUrl(origin));
+});
+
+app.get("/api/auth/google/callback", async (c) => {
+  const code = c.req.query("code");
+  const origin = new URL(c.req.url).origin;
+  if (!code) return c.json({ error: "No code provided" }, 400);
+
+  try {
+    const jwt = await handleGoogleCallback(code, origin);
+    setCookie(c, "token", jwt, {
+      httpOnly: true,
+      secure: env.isProduction,
+      sameSite: "Lax",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: "/",
+    });
+    return c.redirect("/");
+  } catch (error) {
+    console.error("Google Auth Error:", error);
+    return c.redirect("/login?error=auth_failed");
+  }
+});
+
 app.use("/api/trpc/*", async (c) => {
   return fetchRequestHandler({
     endpoint: "/api/trpc",

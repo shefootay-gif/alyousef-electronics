@@ -119,7 +119,7 @@ export default function Login() {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => toast.error("تسجيل الدخول عبر Google يتطلب إعداد مفاتيح API أولاً")}
+              onClick={() => window.location.href = "/api/auth/google/login"}
             >
               الدخول عبر Google
             </Button>
