@@ -75,6 +75,16 @@ if (env.isProduction) {
   serveStaticFiles(app);
 
   const port = parseInt(process.env.PORT || "3000");
+
+  try {
+    const { execSync } = await import("node:child_process");
+    console.log("Running database migrations and seed...");
+    execSync("npx drizzle-kit push && npx tsx db/seed.ts", { stdio: "inherit" });
+    console.log("Database ready!");
+  } catch (error) {
+    console.error("Failed to migrate/seed database:", error);
+  }
+
   serve({ fetch: app.fetch, port }, () => {
     console.log(`Server running on http://localhost:${port}/`);
   });

@@ -115,18 +115,17 @@ export default function Login() {
             </div>
           </div>
 
-          <Button
-            type="button"
-            className="w-full bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#1A2A44] border-0 mb-4 py-6 rounded-xl text-md font-semibold"
-            variant="outline"
-            onClick={() => {
-              window.location.href = getOAuthUrl();
-            }}
-          >
-            {t("signInWithKimi")}
-          </Button>
+          <div className="mt-6 text-center">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => toast.error("تسجيل الدخول عبر Google يتطلب إعداد مفاتيح API أولاً")}
+            >
+              الدخول عبر Google
+            </Button>
+          </div>
 
-          <p className="text-center text-sm text-[#64748B] flex items-center justify-center gap-1 flex-row-reverse">
+          <p className="text-center text-sm text-[#64748B] flex items-center justify-center gap-1 flex-row-reverse mt-6">
             <button 
               type="button" 
               onClick={() => setIsLogin(!isLogin)} 
