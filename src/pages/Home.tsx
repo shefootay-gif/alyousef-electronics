@@ -99,7 +99,7 @@ function HeroSection() {
             <div className="relative w-full max-w-[560px] rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-xl">
               <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
               <div className="relative flex items-end justify-center gap-[-20px]">
-                <div className="relative z-20 -mr-8 flex h-[290px] w-[150px] flex-col rounded-[2rem] border-2 border-[#D4AF37] bg-[#061125] shadow-[0_0_36px_rgba(0,212,255,0.18)]">
+                <div className="relative z-20 -mr-8 hidden sm:flex h-[290px] w-[150px] flex-col rounded-[2rem] border-2 border-[#D4AF37] bg-[#061125] shadow-[0_0_36px_rgba(0,212,255,0.18)]">
                   <div className="mx-auto mt-3 h-1.5 w-14 rounded-full bg-[#D4AF37]/80" />
                   <div className="flex flex-1 items-center justify-center">
                     <div className="flex h-24 w-24 items-center justify-center rounded-full border border-[#D4AF37]/70 bg-[#071427] shadow-[0_0_22px_rgba(0,212,255,0.25)]">
@@ -107,7 +107,7 @@ function HeroSection() {
                     </div>
                   </div>
                 </div>
-                <div className="relative z-10 w-[360px]">
+                <div className="relative z-10 w-full sm:w-[360px]">
                   <div className="h-[230px] rounded-t-[1.6rem] border-2 border-[#D4AF37] bg-[#061125] shadow-[0_0_32px_rgba(0,212,255,0.20)]">
                     <div className="m-5 h-[180px] rounded-xl bg-gradient-to-br from-[#0D1E36] to-[#020617] border border-white/5" />
                   </div>
