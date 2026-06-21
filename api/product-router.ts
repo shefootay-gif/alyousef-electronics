@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createRouter, publicQuery, adminQuery } from "./middleware";
 import { getDb } from "./queries/connection";
-import { products, categories, reviews } from "@db/schema";
+import { products, categories, reviews, cartItems, orderItems, wishlistItems } from "@db/schema";
 import { eq, and, like, gte, lte, desc, asc, sql, inArray } from "drizzle-orm";
 
 const ListInput = z.object({
@@ -298,9 +298,8 @@ export const productRouter = createRouter({
     )
     .mutation(async ({ input }) => {
       const db = getDb();
-      const result = await db.insert(products).values(input);
-      const insertId = Number((result as any)[0]?.insertId);
-      return { id: insertId, ...input };
+      const [inserted] = await db.insert(products).values(input).returning({ id: products.id });
+      return { id: inserted.id, ...input };
     }),
 
   update: adminQuery
@@ -333,6 +332,12 @@ export const productRouter = createRouter({
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       const db = getDb();
+      // Delete dependent records first to avoid foreign key constraints
+      await db.delete(cartItems).where(eq(cartItems.productId, input.id));
+      await db.delete(orderItems).where(eq(orderItems.productId, input.id));
+      await db.delete(wishlistItems).where(eq(wishlistItems.productId, input.id));
+      await db.delete(reviews).where(eq(reviews.productId, input.id));
+
       await db.delete(products).where(eq(products.id, input.id));
       return { success: true };
     }),

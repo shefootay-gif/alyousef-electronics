@@ -156,6 +156,9 @@ function ProductsManagement() {
       utils.product.list.invalidate();
       toast.success("Product deleted");
     },
+    onError: (err) => {
+      toast.error(err.message || "Failed to delete product");
+    }
   });
 
   const toggleStatusMutation = trpc.product.toggleStatus.useMutation({
@@ -175,9 +178,12 @@ function ProductsManagement() {
     onSuccess: () => {
       utils.product.list.invalidate();
       setShowForm(false);
-      setFormData({ name: "", slug: "", description: "", shortDescription: "", categoryId: 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false });
+      setFormData({ name: "", slug: "", description: "", shortDescription: "", categoryId: categories?.[0]?.id || 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false });
       toast.success("Product created");
     },
+    onError: (err) => {
+      toast.error(err.message || "Failed to create product");
+    }
   });
 
   const updateMutation = trpc.product.update.useMutation({
@@ -187,6 +193,9 @@ function ProductsManagement() {
       setEditingProduct(null);
       toast.success("Product updated");
     },
+    onError: (err) => {
+      toast.error(err.message || "Failed to update product");
+    }
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -234,7 +243,7 @@ function ProductsManagement() {
         <button
           onClick={() => {
             setEditingProduct(null);
-            setFormData({ name: "", slug: "", description: "", shortDescription: "", categoryId: 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false });
+            setFormData({ name: "", slug: "", description: "", shortDescription: "", categoryId: categories?.[0]?.id || 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false });
             setShowForm(true);
           }}
           className={`${isRTL ? "mr-4" : "ml-4"} px-4 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl hover:shadow-lg transition-all flex items-center gap-2 text-sm`}
