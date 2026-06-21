@@ -6,6 +6,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
+import OrderDetail from "./pages/OrderDetail";
 import Admin from "./pages/Admin";
 import About from "./pages/About";
 import ReturnPolicy from "./pages/ReturnPolicy";
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/track-order" element={<TrackOrder />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/order/:id" element={<OrderDetail />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound />} />
