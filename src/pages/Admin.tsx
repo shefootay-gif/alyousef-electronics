@@ -626,10 +626,31 @@ export default function Admin() {
             {sidebarOpen ? <X className="w-5 h-5" /> : <BarChart3 className="w-5 h-5" />}
           </button>
           <div className={`flex items-center gap-4 ${isRTL ? "mr-auto" : "ml-auto"}`}>
-            <button className="relative w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#F1F5F9] transition-colors">
-              <Bell className="w-5 h-5 text-[#64748B]" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => {
+                  const el = document.getElementById("notifications-dropdown");
+                  if (el) el.classList.toggle("hidden");
+                }}
+                className="relative w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#F1F5F9] transition-colors"
+              >
+                <Bell className="w-5 h-5 text-[#64748B]" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+              </button>
+              
+              {/* Notifications Dropdown */}
+              <div id="notifications-dropdown" className="hidden absolute top-12 right-0 w-80 bg-white rounded-2xl shadow-xl border border-[#E2E8F0] overflow-hidden z-50">
+                <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC]">
+                  <h3 className="font-bold text-[#1A2A44]">{lang === "ar" ? "الإشعارات" : "Notifications"}</h3>
+                </div>
+                <div className="max-h-80 overflow-y-auto">
+                  <div className="p-4 text-center text-[#64748B] text-sm">
+                    {lang === "ar" ? "لا توجد إشعارات جديدة حالياً" : "No new notifications"}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1A2A44] to-[#00D4FF] flex items-center justify-center text-white font-bold text-sm">
               {(user.name || "A")[0]}
             </div>
