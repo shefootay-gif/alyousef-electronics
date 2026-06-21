@@ -39,7 +39,7 @@ export const authRouter = createRouter({
   me: authedQuery.query((opts) => opts.ctx.user),
   
   login: publicQuery
-    .input(z.object({ email: z.string().email(), password: z.string() }))
+    .input(z.object({ email: z.string().email().toLowerCase().trim(), password: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const user = await findUserByEmail(input.email);
       if (!user || !user.passwordHash) {
@@ -69,7 +69,7 @@ export const authRouter = createRouter({
     }),
 
   register: publicQuery
-    .input(z.object({ name: z.string(), email: z.string().email(), password: z.string().min(6) }))
+    .input(z.object({ name: z.string(), email: z.string().email().toLowerCase().trim(), password: z.string().min(6) }))
     .mutation(async ({ input, ctx }) => {
       const existing = await findUserByEmail(input.email);
       if (existing) {
