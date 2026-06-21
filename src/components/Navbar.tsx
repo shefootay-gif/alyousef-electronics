@@ -67,8 +67,14 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="group flex items-center" aria-label="AL-YOUSEF Electronics home">
-            <BrandLogo className="transition-transform duration-300 group-hover:scale-[1.03]" />
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1A2A44] to-[#00D4FF] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform border border-[#D4AF37]/30">
+              <span className="text-[#D4AF37] font-bold text-xl">Y</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-lg font-black tracking-tight text-white leading-none">AL-YOUSEF</span>
+              <span className="text-[10px] font-bold text-[#D4AF37] tracking-widest uppercase mt-0.5">Electronics</span>
+            </div>
           </Link>
 
           {/* Desktop Nav */}

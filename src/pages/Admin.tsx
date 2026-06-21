@@ -535,11 +535,13 @@ export default function Admin() {
       >
         <div className="h-full flex flex-col">
           <div className="flex items-center gap-3 p-6 border-b border-white/10 h-20">
-            <img 
-              src="/logo.jpg" 
-              alt="AL-YOUSEF Logo" 
-              className="h-10 sm:h-12 w-auto object-contain flex-shrink-0 drop-shadow-[0_0_10px_rgba(212,175,55,0.2)]" 
-            />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#1A2A44] to-[#00D4FF] flex items-center justify-center shadow-lg border border-[#D4AF37]/30">
+              <span className="text-[#D4AF37] font-bold text-lg">Y</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-black tracking-tight text-white leading-none">AL-YOUSEF</span>
+              <span className="text-[8px] font-bold text-[#D4AF37] tracking-widest uppercase mt-0.5">Electronics</span>
+            </div>
           </div>
           <nav className="flex-1 py-4">
             {tabs.map((tab) => {
