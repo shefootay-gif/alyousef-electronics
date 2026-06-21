@@ -5,6 +5,8 @@ import FloatingWhatsApp from "./FloatingWhatsApp";
 import PromoBar from "./PromoBar";
 import { Toaster } from "sonner";
 
+import { motion } from "framer-motion";
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#F1F5F9]">
@@ -12,7 +14,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <Navbar />
       <CartDrawer />
       <FloatingWhatsApp />
-      <main>{children}</main>
+      <motion.main
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -15 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      >
+        {children}
+      </motion.main>
       <Footer />
       <Toaster
         position="top-right"

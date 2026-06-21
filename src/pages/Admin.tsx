@@ -49,6 +49,7 @@ function DashboardOverview() {
   const { data: dashboard } = trpc.analytics.dashboard.useQuery({ period: "30d" });
   const { data: revenueData } = trpc.analytics.revenue.useQuery({ period: "30d" });
   const { data: recentOrders } = trpc.analytics.recentOrders.useQuery();
+  const { data: productPerformance } = trpc.analytics.productPerformance.useQuery();
 
   const chartData = revenueData?.labels.map((label: string, i: number) => ({
     date: label.slice(5),
@@ -97,38 +98,59 @@ function DashboardOverview() {
         </div>
       </div>
 
-      {/* Recent Orders */}
-      <div className="bg-white rounded-2xl shadow-lg p-6">
-        <h3 className="text-lg font-bold text-[#171717] mb-4">{t("recentOrders")}</h3>
-        <div className="overflow-x-auto">
-          <table className={`w-full text-sm ${isRTL ? "text-right" : "text-left"}`}>
-            <thead>
-              <tr className="border-b border-[#E2E8F0]">
-                <th className="py-3 px-4 font-semibold text-[#171717]">{t("orderNumber")}</th>
-                <th className="py-3 px-4 font-semibold text-[#171717]">{t("status")}</th>
-                <th className="py-3 px-4 font-semibold text-[#171717]">{t("payment")}</th>
-                <th className="py-3 px-4 font-semibold text-[#171717]">{t("total")}</th>
-                <th className="py-3 px-4 font-semibold text-[#171717]">{t("date")}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#E2E8F0]">
-              {recentOrders?.map((order: any) => (
-                <tr key={order.id} className="hover:bg-[#F8FAFC]">
-                  <td className="py-3 px-4 font-medium">{order.orderNumber}</td>
-                  <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${orderStatusColors[order.status] || ""}`}>
-                      {t(order.status)}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 capitalize">{order.paymentMethod?.replace("_", " ") || "N/A"}</td>
-                  <td className="py-3 px-4 font-semibold text-[#D4AF37]">SAR {Number(order.total).toFixed(2)}</td>
-                  <td className="py-3 px-4 text-[#94A3B8]">
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </td>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Orders */}
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <h3 className="text-lg font-bold text-[#171717] mb-4">{t("recentOrders")}</h3>
+          <div className="overflow-x-auto">
+            <table className={`w-full text-sm ${isRTL ? "text-right" : "text-left"}`}>
+              <thead>
+                <tr className="border-b border-[#E2E8F0]">
+                  <th className="py-3 px-4 font-semibold text-[#171717]">{t("orderNumber")}</th>
+                  <th className="py-3 px-4 font-semibold text-[#171717]">{t("status")}</th>
+                  <th className="py-3 px-4 font-semibold text-[#171717]">{t("total")}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-[#E2E8F0]">
+                {recentOrders?.slice(0, 5).map((order: any) => (
+                  <tr key={order.id} className="hover:bg-[#F8FAFC]">
+                    <td className="py-3 px-4 font-medium">{order.orderNumber}</td>
+                    <td className="py-3 px-4">
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${orderStatusColors[order.status] || ""}`}>
+                        {t(order.status)}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 font-semibold text-[#D4AF37]">SAR {Number(order.total).toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Top Selling Products */}
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <h3 className="text-lg font-bold text-[#171717] mb-4">Top Selling Products / الأكثر مبيعاً</h3>
+          <div className="overflow-x-auto">
+            <table className={`w-full text-sm ${isRTL ? "text-right" : "text-left"}`}>
+              <thead>
+                <tr className="border-b border-[#E2E8F0]">
+                  <th className="py-3 px-4 font-semibold text-[#171717]">Product</th>
+                  <th className="py-3 px-4 font-semibold text-[#171717]">Sold</th>
+                  <th className="py-3 px-4 font-semibold text-[#171717]">Revenue</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E2E8F0]">
+                {productPerformance?.topSelling?.slice(0, 5).map((item: any) => (
+                  <tr key={item.productId} className="hover:bg-[#F8FAFC]">
+                    <td className="py-3 px-4 font-medium line-clamp-1 max-w-[150px]" title={item.productName}>{item.productName}</td>
+                    <td className="py-3 px-4 text-[#0099CC] font-bold">{item.totalSold}</td>
+                    <td className="py-3 px-4 font-semibold text-[#D4AF37]">SAR {Number(item.revenue || 0).toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
