@@ -8,6 +8,6 @@ export default defineConfig({
   out: "./db/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL || "postgresql://neondb_owner:npg_Ocsg7AmCxP8N@ep-divine-pond-ascw5lgo.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require",
+    url: process.env.DATABASE_URL || "",
   },
 });

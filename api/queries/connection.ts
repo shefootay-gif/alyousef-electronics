@@ -11,7 +11,8 @@ let instance: ReturnType<typeof drizzle<typeof fullSchema>>;
 
 export function getDb() {
   if (!instance) {
-    const dbUrl = env.databaseUrl || "postgresql://neondb_owner:npg_Ocsg7AmCxP8N@ep-divine-pond-ascw5lgo.c-4.eu-central-1.aws.neon.tech/neondb?sslmode=require";
+    const dbUrl = env.databaseUrl || process.env.DATABASE_URL;
+    if (!dbUrl) throw new Error("DATABASE_URL is missing");
     const pool = new Pool({
       connectionString: dbUrl,
     });
