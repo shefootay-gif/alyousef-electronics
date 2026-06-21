@@ -12,6 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 const steps = [
   { id: "shipping", label: "Shipping", icon: Truck },
@@ -22,13 +23,14 @@ const steps = [
 export default function Checkout() {
   const { items, total, clearCart } = useCart();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [shippingData, setShippingData] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
+    firstName: user?.name ? user.name.split(" ")[0] : "",
+    lastName: user?.name && user.name.split(" ").length > 1 ? user.name.split(" ").slice(1).join(" ") : "",
+    phone: user?.phone || "",
     district: "",
     streetAddress: "",
     buildingNumber: "",

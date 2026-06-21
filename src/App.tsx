@@ -16,28 +16,31 @@ import TrackOrder from "./pages/TrackOrder";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import TrackingPixels from "./components/TrackingPixels";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 export default function App() {
   return (
     <CartProvider>
       <TrackingPixels />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/product/:slug" element={<ProductDetail />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/return-policy" element={<ReturnPolicy />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/track-order" element={<TrackOrder />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/product/:slug" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/return-policy" element={<ReturnPolicy />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/track-order" element={<TrackOrder />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </ErrorBoundary>
     </CartProvider>
   );
 }

@@ -414,13 +414,19 @@ function OrdersManagement() {
                 <td className="py-3 px-4 font-medium">{order.orderNumber}</td>
                 <td className="py-3 px-4">
                   <div className="font-medium text-[#1A2A44]">
-                    {order.shippingAddress?.firstName} {order.shippingAddress?.lastName}
+                    {typeof order.shippingAddress === 'object' && order.shippingAddress !== null ? (
+                      <>
+                        {order.shippingAddress.firstName || order.shippingAddress.fullName} {order.shippingAddress.lastName || ''}
+                      </>
+                    ) : 'Guest'}
                   </div>
-                  <div className="text-xs text-[#64748B] mt-1 space-y-0.5">
-                    <p>{order.shippingAddress?.phone}</p>
-                    <p>{order.shippingAddress?.district}, {order.shippingAddress?.city}</p>
-                    <p>{order.shippingAddress?.streetAddress} {order.shippingAddress?.buildingNumber ? `- ${order.shippingAddress.buildingNumber}` : ''}</p>
-                  </div>
+                  {typeof order.shippingAddress === 'object' && order.shippingAddress !== null && (
+                    <div className="text-xs text-[#64748B] mt-1 space-y-0.5">
+                      <p>{order.shippingAddress.phone}</p>
+                      <p>{order.shippingAddress.district || ''}{order.shippingAddress.city ? `, ${order.shippingAddress.city}` : ''}</p>
+                      <p>{order.shippingAddress.streetAddress || order.shippingAddress.address || ''} {order.shippingAddress.buildingNumber ? `- ${order.shippingAddress.buildingNumber}` : ''}</p>
+                    </div>
+                  )}
                 </td>
                 <td className="py-3 px-4 font-semibold text-[#D4AF37]">SAR {Number(order.total).toFixed(2)}</td>
                 <td className="py-3 px-4">
@@ -461,9 +467,9 @@ function SettingsPage() {
   const [links, setLinks] = useState<any>({});
   const [pixels, setPixels] = useState<any>({});
 
-  useState(() => {
+  useEffect(() => {
     if (contactLinks) setLinks(contactLinks);
-  });
+  }, [contactLinks]);
 
   useEffect(() => {
     if (settings?.trackingPixels) setPixels(settings.trackingPixels);
