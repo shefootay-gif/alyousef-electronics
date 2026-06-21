@@ -111,6 +111,10 @@ export const authRouter = createRouter({
       "set-cookie",
       cookie.serialize(Session.cookieName, "", toCookieSerializeOptions(ctx.req.headers, 0)),
     );
+    ctx.resHeaders.append(
+      "set-cookie",
+      cookie.serialize("token", "", toCookieSerializeOptions(ctx.req.headers, 0)),
+    );
     return { success: true };
   }),
 });

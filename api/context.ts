@@ -21,8 +21,8 @@ export async function createContext(
     const cookieHeader = opts.req.headers.get("cookie");
     if (cookieHeader) {
       const parsed = cookie.parse(cookieHeader);
-      // Try 'token' (Google Auth) or 'kimi_sid' (Local Auth)
-      const token = parsed["token"] || parsed["kimi_sid"];
+      // Try 'kimi_sid' (Local Auth) first, then 'token' (Google Auth)
+      const token = parsed["kimi_sid"] || parsed["token"];
       if (token) {
         const payload = await verify(token, env.jwtSecret);
         if (payload && payload.unionId) {
