@@ -23,6 +23,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 const categoryIcons: Record<string, React.ReactNode> = {
   Smartphone: <Smartphone className="w-7 h-7" />,
@@ -52,52 +53,70 @@ function HeroSection() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 w-full">
         <div className="grid lg:grid-cols-2 items-center gap-14">
           <div className={`${lang === "ar" ? "text-right lg:order-2" : "text-left"}`}>
-            <p className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/30 bg-white/5 px-4 py-2 text-xs font-bold tracking-[0.25em] text-[#D4AF37] mb-6">
-              <span className="h-2 w-2 rounded-full bg-[#C0C0C0] shadow-[0_0_14px_rgba(0,212,255,0.9)]" />
-              {t("premiumElectronics")}
-            </p>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#F8FAFC] leading-tight mb-6">
-              {lang === "ar" ? (
-                <>تجربة إلكترونيات <span className="text-[#D4AF37]">فاخرة</span> لمتجر عصري</>
-              ) : (
-                <>Premium <span className="text-[#D4AF37]">electronics</span> for modern lifestyles</>
-              )}
-            </h1>
-            <p className={`text-lg text-[#B6C2D2] mb-8 leading-relaxed max-w-xl ${lang === "ar" ? "mr-auto" : ""}`}>
-              {lang === "ar"
-                ? "هوية AL-YOUSEF الذهبية والكحلية بتصميم مناسب للموقع: واضح، سريع القراءة، ومرتبط مباشرة بعالم الهواتف والحواسيب والملحقات الذكية."
-                : t("heroDesc")}
-            </p>
+            <FadeIn delay={100} direction="up">
+              <p className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/30 bg-white/5 px-4 py-2 text-xs font-bold tracking-[0.25em] text-[#D4AF37] mb-6">
+                <span className="h-2 w-2 rounded-full bg-[#C0C0C0] shadow-[0_0_14px_rgba(0,212,255,0.9)]" />
+                {t("premiumElectronics")}
+              </p>
+            </FadeIn>
+            <FadeIn delay={200} direction="up">
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#F8FAFC] leading-tight mb-6">
+                {lang === "ar" ? (
+                  <>تجربة إلكترونيات <span className="text-[#D4AF37]">فاخرة</span> لمتجر عصري</>
+                ) : (
+                  <>Premium <span className="text-[#D4AF37]">electronics</span> for modern lifestyles</>
+                )}
+              </h1>
+            </FadeIn>
+            <FadeIn delay={300} direction="up">
+              <p className={`text-lg text-[#B6C2D2] mb-8 leading-relaxed max-w-xl ${lang === "ar" ? "mr-auto" : ""}`}>
+                {lang === "ar"
+                  ? "هوية AL-YOUSEF الذهبية والكحلية بتصميم مناسب للموقع: واضح، سريع القراءة، ومرتبط مباشرة بعالم الهواتف والحواسيب والملحقات الذكية."
+                  : t("heroDesc")}
+              </p>
+            </FadeIn>
 
-            <div className={`flex flex-wrap gap-3 mb-9 ${lang === "ar" ? "justify-end" : ""}`}>
-              {stats.map((item) => (
-                <span key={item} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-[#F8FAFC]">
-                  {item}
-                </span>
-              ))}
-            </div>
+            <FadeIn delay={400} direction="up">
+              <div className={`flex flex-wrap gap-3 mb-9 ${lang === "ar" ? "justify-end" : ""}`}>
+                {stats.map((item) => (
+                  <span key={item} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-[#F8FAFC]">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </FadeIn>
 
-            <div className={`flex flex-col sm:flex-row gap-4 ${lang === "ar" ? "sm:justify-end" : ""}`}>
-              <Link
-                to="/shop"
-                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#F8D778] via-[#D4AF37] to-[#A77D16] text-[#050505] font-extrabold rounded-2xl shadow-[0_12px_38px_rgba(212,175,55,0.28)] hover:shadow-[0_16px_48px_rgba(212,175,55,0.42)] hover:-translate-y-0.5 transition-all duration-300"
-              >
-                {t("shopNow")}
-                <ArrowRight className={`w-5 h-5 ${lang === "ar" ? "rotate-180" : ""}`} />
-              </Link>
-              <Link
-                to="/shop?featured=true"
-                className="inline-flex items-center justify-center px-8 py-4 rounded-2xl border border-[#D4AF37]/35 text-[#F8FAFC] font-bold hover:bg-white/10 hover:border-[#D4AF37] transition-all"
-              >
-                {lang === "ar" ? "شاهد العروض" : "View Deals"}
-              </Link>
-            </div>
+            <FadeIn delay={500} direction="up">
+              <div className={`flex flex-col sm:flex-row gap-4 ${lang === "ar" ? "sm:justify-end" : ""}`}>
+                <Link
+                  to="/shop"
+                  className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#F8D778] via-[#D4AF37] to-[#A77D16] text-[#050505] font-extrabold rounded-2xl shadow-[0_12px_38px_rgba(212,175,55,0.28)] hover:shadow-[0_16px_48px_rgba(212,175,55,0.42)] hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  {t("shopNow")}
+                  <ArrowRight className={`w-5 h-5 ${lang === "ar" ? "rotate-180" : ""}`} />
+                </Link>
+                <Link
+                  to="/shop?featured=true"
+                  className="inline-flex items-center justify-center px-8 py-4 rounded-2xl border border-[#D4AF37]/35 text-[#F8FAFC] font-bold hover:bg-white/10 hover:border-[#D4AF37] transition-all"
+                >
+                  {lang === "ar" ? "شاهد العروض" : "View Deals"}
+                </Link>
+              </div>
+            </FadeIn>
           </div>
 
-          <div className="relative min-h-[420px] lg:min-h-[540px] flex items-center justify-center">
+          <FadeIn delay={400} direction="left" className="relative min-h-[420px] lg:min-h-[540px] flex items-center justify-center">
             <div className="absolute h-80 w-80 rounded-full bg-[#C0C0C0]/10 blur-3xl" />
-            <div className="absolute h-[28rem] w-[28rem] rounded-full border border-[#D4AF37]/20" />
-            <div className="relative w-full max-w-[560px] rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-xl">
+            <motion.div 
+              animate={{ rotate: 360 }} 
+              transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
+              className="absolute h-[28rem] w-[28rem] rounded-full border border-[#D4AF37]/20 border-dashed" 
+            />
+            <motion.div 
+              animate={{ y: [0, -15, 0] }}
+              transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+              className="relative w-full max-w-[560px] rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-xl"
+            >
               <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
               <div className="relative flex items-end justify-center gap-[-20px]">
                 <div className="relative z-20 -mr-8 hidden sm:flex h-[290px] w-[150px] flex-col rounded-[2rem] border-2 border-[#D4AF37] bg-[#061125] shadow-[0_0_36px_rgba(0,212,255,0.18)]">
@@ -124,8 +143,9 @@ function HeroSection() {
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
+              </div>
+            </motion.div>
+          </FadeIn>
         </div>
       </div>
 
@@ -147,19 +167,20 @@ function CategoriesSection() {
           {t("browseByCategory")} <span className="text-[#D4AF37]">{t("category")}</span>
         </h2>
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
-          {categories?.map((cat) => (
-            <Link
-              key={cat.id}
-              to={`/shop?category=${cat.slug}`}
-              className="flex-shrink-0 w-32 h-36 rounded-2xl bg-white shadow-lg flex flex-col items-center justify-center gap-3 hover:scale-110 hover:shadow-xl hover:border-2 hover:border-[#D4AF37] transition-all duration-300 snap-start group"
-            >
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center text-white group-hover:shadow-lg transition-all">
-                {categoryIcons[cat.icon || ""] || <Smartphone className="w-7 h-7" />}
-              </div>
-              <span className="text-sm font-semibold text-[#171717] text-center px-2">
-                {lang === "ar" && cat.nameAr ? cat.nameAr : cat.name}
-              </span>
-            </Link>
+          {categories?.map((cat, i) => (
+            <FadeIn delay={i * 100} direction="up" key={cat.id} className="snap-start flex-shrink-0">
+              <Link
+                to={`/shop?category=${cat.slug}`}
+                className="w-32 h-36 rounded-2xl bg-white shadow-lg flex flex-col items-center justify-center gap-3 hover:scale-110 hover:shadow-xl hover:border-2 hover:border-[#D4AF37] transition-all duration-300 group"
+              >
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center text-white group-hover:shadow-lg transition-all">
+                  {categoryIcons[cat.icon || ""] || <Smartphone className="w-7 h-7" />}
+                </div>
+                <span className="text-sm font-semibold text-[#171717] text-center px-2">
+                  {lang === "ar" && cat.nameAr ? cat.nameAr : cat.name}
+                </span>
+              </Link>
+            </FadeIn>
           ))}
         </div>
       </div>
@@ -284,8 +305,10 @@ function FeaturedProductsSection() {
           <div className="w-24 h-1 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] mx-auto rounded-full" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featured?.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {featured?.map((product, i) => (
+            <FadeIn key={product.id} delay={i * 150} direction="up">
+              <ProductCard product={product} />
+            </FadeIn>
           ))}
         </div>
         <div className="text-center mt-10">
@@ -336,7 +359,7 @@ function SpecialOfferSection() {
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
-          <div className={`text-center ${lang === "ar" ? "lg:text-right" : "lg:text-left"}`}>
+          <FadeIn direction="left" className={`text-center ${lang === "ar" ? "lg:text-right" : "lg:text-left"}`}>
             <p className="text-xs font-bold tracking-[0.3em] text-[#D4AF37] mb-3">
               {t("limitedTimeOffer")}
             </p>
@@ -346,9 +369,9 @@ function SpecialOfferSection() {
             <p className="text-lg text-[#C0C0C0] font-semibold">
               {lang === "ar" ? "استخدم الكود: GAMING15" : "Use code: GAMING15"}
             </p>
-          </div>
+          </FadeIn>
 
-          <div className="flex gap-3">
+          <FadeIn direction="up" delay={200} className="flex gap-3">
             {timerItems.map((item) => (
               <div
                 key={item.label}
@@ -360,14 +383,16 @@ function SpecialOfferSection() {
                 <span className="text-xs text-[#94A3B8]">{item.label}</span>
               </div>
             ))}
-          </div>
+          </FadeIn>
 
-          <Link
-            to="/shop?category=gaming"
-            className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.5)] hover:scale-105 transition-all animate-pulse"
-          >
-            {t("grabDeal")}
-          </Link>
+          <FadeIn direction="right" delay={400}>
+            <Link
+              to="/shop?category=gaming"
+              className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.5)] hover:scale-105 transition-all animate-pulse inline-block"
+            >
+              {t("grabDeal")}
+            </Link>
+          </FadeIn>
         </div>
       </div>
     </section>
