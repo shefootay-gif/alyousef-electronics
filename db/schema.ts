@@ -157,7 +157,6 @@ export const reviews = sqliteTable("reviews", {
 });
 
 export type Review = typeof reviews.$inferSelect;
-
 // Wishlist items table
 export const wishlistItems = sqliteTable("wishlistItems", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),

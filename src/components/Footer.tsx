@@ -63,14 +63,25 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/contact" className="text-slate-400 hover:text-white transition-colors">
+                  {lang === "ar" ? "اتصل بنا" : "Contact Us"}
+                </Link>
+              </li>
+              <li>
                 <Link to="/return-policy" className="text-slate-400 hover:text-white transition-colors">
                   {t("returnPolicy")}
                 </Link>
               </li>
-              <li><Link to="/" className="text-[#94A3B8] hover:text-[#D4AF37] transition-colors text-sm">{lang === "ar" ? "الرئيسية" : "Home"}</Link></li>
-              <li><Link to="/shop" className="text-[#94A3B8] hover:text-[#D4AF37] transition-colors text-sm">{lang === "ar" ? "المتجر" : "Shop"}</Link></li>
-              <li><Link to="/shop?featured=true" className="text-[#94A3B8] hover:text-[#D4AF37] transition-colors text-sm">{lang === "ar" ? "العروض" : "Deals"}</Link></li>
-              <li><Link to="/login" className="text-[#94A3B8] hover:text-[#D4AF37] transition-colors text-sm">{lang === "ar" ? "الحساب" : "Account"}</Link></li>
+              <li>
+                <Link to="/privacy-policy" className="text-slate-400 hover:text-white transition-colors">
+                  {lang === "ar" ? "سياسة الخصوصية" : "Privacy Policy"}
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="text-slate-400 hover:text-white transition-colors">
+                  {lang === "ar" ? "الشروط والأحكام" : "Terms of Service"}
+                </Link>
+              </li>
             </ul>
           </div>
 

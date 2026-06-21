@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import Layout from "@/components/Layout";
 import {
@@ -14,33 +15,67 @@ import {
   ChevronRight,
   Minus,
   Plus,
+  Send,
 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { addToCart } = useCart();
+  const { user } = useAuth();
   const { t, lang, isRTL } = useLanguage();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<"description" | "specs" | "reviews">("description");
   const [liked, setLiked] = useState(false);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, title: "", comment: "" });
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   const { data: product, isLoading } = trpc.product.getBySlug.useQuery(
     { slug: slug || "" },
     { enabled: !!slug }
   );
 
+  const { data: reviews, refetch: refetchReviews } = trpc.review.listByProduct.useQuery(
+    { productId: product?.id as number },
+    { enabled: !!product?.id }
+  );
+
+  const addReview = trpc.review.add.useMutation({
+    onSuccess: () => {
+      toast.success(lang === "ar" ? "تمت إضافة تقييمك بنجاح!" : "Review added successfully!");
+      setReviewForm({ rating: 5, title: "", comment: "" });
+      refetchReviews();
+      setSubmittingReview(false);
+    },
+    onError: (err) => {
+      toast.error(err.message);
+      setSubmittingReview(false);
+    }
+  });
+
   useEffect(() => {
     if (product) {
-      document.title = `${lang === "ar" && product.nameAr ? product.nameAr : product.name} | AL-YOUSEF Electronics`;
-      let metaDescription = document.querySelector('meta[name="description"]');
-      if (!metaDescription) {
-        metaDescription = document.createElement('meta');
-        metaDescription.setAttribute('name', 'description');
-        document.head.appendChild(metaDescription);
+      const title = `${lang === "ar" && product.nameAr ? product.nameAr : product.name} | AL-YOUSEF Electronics`;
+      document.title = title;
+      
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.setAttribute('name', 'description');
+        document.head.appendChild(metaDesc);
       }
       const desc = lang === "ar" && product.descriptionAr ? product.descriptionAr : (product.shortDescription || product.name);
-      metaDescription.setAttribute('content', desc);
+      metaDesc.setAttribute('content', desc);
+
+      let ogImage = document.querySelector('meta[property="og:image"]');
+      if (!ogImage) {
+        ogImage = document.createElement('meta');
+        ogImage.setAttribute('property', 'og:image');
+        document.head.appendChild(ogImage);
+      }
+      if (product.image) {
+        ogImage.setAttribute('content', product.image);
+      }
     }
   }, [product, lang]);
 
@@ -54,6 +89,16 @@ export default function ProductDetail() {
     addToCart(product.id, quantity);
     const displayName = lang === "ar" && product.nameAr ? product.nameAr : product.name;
     toast.success(lang === "ar" ? `تمت إضافة ${displayName} للسلة!` : `${product.name} added to cart!`);
+  };
+
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!product || !user) return;
+    setSubmittingReview(true);
+    addReview.mutate({
+      productId: product.id,
+      ...reviewForm
+    });
   };
 
   const displayName = product ? (lang === "ar" && product.nameAr ? product.nameAr : product.name) : "";
@@ -96,7 +141,6 @@ export default function ProductDetail() {
 
   return (
     <Layout>
-      {/* Breadcrumb */}
       <div className="bg-[#F1F5F9] pt-24 pb-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
           <div className="flex items-center gap-2 text-sm text-[#64748B]">
@@ -115,7 +159,6 @@ export default function ProductDetail() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Gallery */}
           <div className="space-y-4">
             <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#F8FAFC] to-[#E2E8F0] overflow-hidden flex items-center justify-center p-8">
               <img
@@ -126,14 +169,12 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          {/* Product Info */}
           <div className="space-y-4">
             <p className="text-sm text-[#94A3B8] mb-2">{product.brand}</p>
             <h1 className="text-3xl sm:text-4xl font-bold text-[#1A2A44] mb-3">
               {displayName}
             </h1>
 
-            {/* Rating */}
             <div className="flex items-center gap-2 mb-4">
               <div className="flex gap-0.5">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -148,11 +189,10 @@ export default function ProductDetail() {
                 ))}
               </div>
               <span className="text-sm text-[#64748B]">
-                ({product.averageRating || 0}) {product.reviewCount || 0} Reviews
+                ({product.averageRating || 0}) {reviews?.length || 0} Reviews
               </span>
             </div>
 
-            {/* Price */}
             <div className="flex items-center gap-3 mb-6">
               <span className="text-3xl font-bold text-[#D4AF37]">
                 SAR {salePrice || price}
@@ -167,7 +207,6 @@ export default function ProductDetail() {
               )}
             </div>
 
-            {/* Stock */}
             <div className="flex items-center gap-2 mb-6">
               <span className={`w-3 h-3 rounded-full ${(product.stockQuantity || 0) > 0 ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
               <span className="text-sm text-[#64748B]">
@@ -175,10 +214,8 @@ export default function ProductDetail() {
               </span>
             </div>
 
-            {/* Short Description */}
             <p className="text-[#64748B] mb-6 leading-relaxed">{product.shortDescription}</p>
 
-            {/* Quantity */}
             <div className="flex items-center gap-4 mb-6">
               <span className="text-sm font-semibold text-[#1A2A44]">{t("quantity")}</span>
               <div className="flex items-center gap-2 bg-white rounded-xl shadow border border-[#E2E8F0]">
@@ -198,7 +235,6 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* Actions */}
             <div className="flex gap-3 mb-8">
               <button
                 onClick={handleAddToCart}
@@ -218,7 +254,6 @@ export default function ProductDetail() {
               </button>
             </div>
 
-            {/* Shipping info */}
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center p-4 bg-[#F8FAFC] rounded-xl">
                 <Truck className="w-6 h-6 text-[#D4AF37] mx-auto mb-2" />
@@ -239,7 +274,6 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="mt-16">
           <div className="flex gap-0 border-b border-[#E2E8F0]">
             {(["description", "specs", "reviews"] as const).map((tab) => (
@@ -318,6 +352,73 @@ export default function ProductDetail() {
                 ) : (
                   <p className="text-[#64748B] text-center py-8">{t("noReviews")}</p>
                 )}
+              </div>
+            )}
+            {activeTab === "reviews" && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="bg-white rounded-2xl p-6 border border-[#E2E8F0]">
+                  <h3 className="text-xl font-bold text-[#1A2A44] mb-6">
+                    {lang === "ar" ? "تقييمات العملاء" : "Customer Reviews"}
+                  </h3>
+                  
+                  {reviews && reviews.length > 0 ? (
+                    <div className="space-y-6 mb-8">
+                      {reviews.map((r) => (
+                        <div key={r.id} className="border-b border-[#E2E8F0] pb-6 last:border-0 last:pb-0">
+                          <div className="flex items-center gap-2 mb-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star key={star} className={`w-4 h-4 ${star <= r.rating ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#E2E8F0]"}`} />
+                            ))}
+                            <span className="font-bold text-[#1A2A44] ml-2">{r.title}</span>
+                          </div>
+                          <p className="text-[#64748B] text-sm mb-2">{r.comment}</p>
+                          <div className="flex items-center gap-2 text-xs text-[#94A3B8]">
+                            <span className="font-semibold text-[#1A2A44]">{r.userName || "مستخدم"}</span>
+                            <span>•</span>
+                            <span>{new Date(r.createdAt!).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US")}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-[#64748B] mb-8">{lang === "ar" ? "لا توجد تقييمات بعد. كن أول من يقيم هذا المنتج!" : "No reviews yet. Be the first to review!"}</p>
+                  )}
+
+                  {user ? (
+                    <div className="bg-[#F8FAFC] rounded-xl p-6 border border-[#E2E8F0]">
+                      <h4 className="font-bold text-[#1A2A44] mb-4">{lang === "ar" ? "أضف تقييمك" : "Add your review"}</h4>
+                      <form onSubmit={handleReviewSubmit} className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-[#1A2A44] mb-2">{lang === "ar" ? "التقييم (من 5)" : "Rating (out of 5)"}</label>
+                          <div className="flex gap-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button type="button" key={star} onClick={() => setReviewForm({ ...reviewForm, rating: star })}>
+                                <Star className={`w-8 h-8 ${star <= reviewForm.rating ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#E2E8F0]"} hover:scale-110 transition-transform`} />
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <input required type="text" placeholder={lang === "ar" ? "عنوان التقييم (مثال: منتج ممتاز)" : "Review Title"} className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#D4AF37] outline-none" value={reviewForm.title} onChange={(e) => setReviewForm({ ...reviewForm, title: e.target.value })} />
+                        </div>
+                        <div>
+                          <textarea placeholder={lang === "ar" ? "شاركنا رأيك في المنتج..." : "Share your thoughts..."} rows={4} className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#D4AF37] outline-none resize-none" value={reviewForm.comment} onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })} />
+                        </div>
+                        <button disabled={submittingReview} type="submit" className="px-6 py-3 bg-[#1A2A44] text-white font-bold rounded-xl hover:bg-[#0D1E36] transition-colors flex items-center gap-2">
+                          <Send className="w-4 h-4" />
+                          {lang === "ar" ? "إرسال التقييم" : "Submit Review"}
+                        </button>
+                      </form>
+                    </div>
+                  ) : (
+                    <div className="bg-[#F8FAFC] rounded-xl p-6 border border-[#E2E8F0] text-center">
+                      <p className="text-[#64748B] mb-4">{lang === "ar" ? "يجب تسجيل الدخول لإضافة تقييم." : "You must be logged in to leave a review."}</p>
+                      <Link to="/login" className="inline-block px-6 py-2 border-2 border-[#1A2A44] text-[#1A2A44] font-bold rounded-xl hover:bg-[#1A2A44] hover:text-white transition-colors">
+                        {lang === "ar" ? "تسجيل الدخول" : "Log In"}
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

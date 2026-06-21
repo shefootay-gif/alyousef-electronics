@@ -1,13 +1,17 @@
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import CartDrawer from "./CartDrawer";
+import FloatingWhatsApp from "./FloatingWhatsApp";
+import PromoBar from "./PromoBar";
 import { Toaster } from "sonner";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#F1F5F9]">
+      <PromoBar />
       <Navbar />
       <CartDrawer />
+      <FloatingWhatsApp />
       <main>{children}</main>
       <Footer />
       <Toaster
