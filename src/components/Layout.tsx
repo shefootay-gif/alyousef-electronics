@@ -7,7 +7,17 @@ import { Toaster } from "sonner";
 
 import { motion } from "framer-motion";
 
+import { useEffect } from "react";
+import Lenis from "lenis";
+
 export default function Layout({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const lenis = new Lenis({
+      autoRaf: true,
+    });
+    return () => lenis.destroy();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#F1F5F9]">
       <PromoBar />
