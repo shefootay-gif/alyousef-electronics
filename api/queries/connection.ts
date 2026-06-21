@@ -1,5 +1,5 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/libsql";
+import { createClient } from "@libsql/client";
 import { env } from "../lib/env";
 import * as schema from "@db/schema";
 import * as relations from "@db/relations";
@@ -10,9 +10,9 @@ let instance: ReturnType<typeof drizzle<typeof fullSchema>>;
 
 export function getDb() {
   if (!instance) {
-    const dbPath = env.databaseUrl.replace("sqlite://", "").replace("file:", "") || "sqlite.db";
-    const sqlite = new Database(dbPath);
-    instance = drizzle(sqlite, { schema: fullSchema });
+    const dbPath = env.databaseUrl || "sqlite.db";
+    const client = createClient({ url: `file:${dbPath.replace("file:", "").replace("sqlite://", "")}` });
+    instance = drizzle(client, { schema: fullSchema });
   }
   return instance;
 }
