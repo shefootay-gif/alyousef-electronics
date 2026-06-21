@@ -206,9 +206,10 @@ export const orderRouter = createRouter({
           shippingAddress: shippingAddr,
           paymentMethod: input.paymentMethod,
           notes: input.notes || null,
-        });
+        })
+        .returning({ id: orders.id });
 
-      const orderId = Number((orderInsertResult as any)[0]?.insertId);
+      const orderId = orderInsertResult[0].id;
 
       for (const item of verifiedItems) {
         await db.insert(orderItems).values({
