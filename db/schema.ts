@@ -1,12 +1,16 @@
 import {
-  sqliteTable,
+  pgTable,
   text,
   integer,
-} from "drizzle-orm/sqlite-core";
+  serial,
+  timestamp,
+  boolean,
+  jsonb
+} from "drizzle-orm/pg-core";
 
 // Users table (managed by auth system, extended with role)
-export const users = sqliteTable("users", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
   unionId: text("unionId").notNull().unique(),
   name: text("name"),
   email: text("email"),
@@ -14,92 +18,92 @@ export const users = sqliteTable("users", {
   avatar: text("avatar"),
   role: text("role", { enum: ["user", "admin"] }).default("user").notNull(),
   phone: text("phone"),
-  createdAt: integer("createdAt", { mode: "timestamp" }).defaultNow().notNull(),
-  updatedAt: integer("updatedAt", { mode: "timestamp" })
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt", { mode: "date" })
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
-  lastSignInAt: integer("lastSignInAt", { mode: "timestamp" }).defaultNow().notNull(),
+  lastSignInAt: timestamp("lastSignInAt", { mode: "date" }).defaultNow().notNull(),
 });
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 // Categories table
-export const categories = sqliteTable("categories", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   nameAr: text("nameAr"),
   slug: text("slug").notNull().unique(),
   icon: text("icon"),
   description: text("description"),
   image: text("image"),
-  parentId: integer("parentId", { mode: "number" }),
+  parentId: integer("parentId"),
   sortOrder: integer("sortOrder").default(0),
-  isActive: integer("isActive", { mode: "boolean" }).default(true),
-  createdAt: integer("createdAt", { mode: "timestamp" }).defaultNow(),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).defaultNow().$onUpdate(() => new Date()),
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().$onUpdate(() => new Date()),
 });
 
 export type Category = typeof categories.$inferSelect;
 
 // Products table
-export const products = sqliteTable("products", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   nameAr: text("nameAr"),
   slug: text("slug").notNull().unique(),
   description: text("description"),
   descriptionAr: text("descriptionAr"),
   shortDescription: text("shortDescription"),
-  categoryId: integer("categoryId", { mode: "number" }).references(() => categories.id).notNull(),
+  categoryId: integer("categoryId").references(() => categories.id).notNull(),
   brand: text("brand"),
   sku: text("sku").unique(),
   price: text("price").notNull(),
   salePrice: text("salePrice"),
   costPrice: text("costPrice"),
   image: text("image"),
-  images: text("images", { mode: "json" }).$type<string[]>(),
+  images: jsonb("images").$type<string[]>(),
   stockQuantity: integer("stockQuantity").default(0),
   lowStockThreshold: integer("lowStockThreshold").default(5),
-  trackInventory: integer("trackInventory", { mode: "boolean" }).default(true),
-  variants: text("variants", { mode: "json" }).$type<{
+  trackInventory: boolean("trackInventory").default(true),
+  variants: jsonb("variants").$type<{
     name: string;
     options: { value: string; priceAdjustment: number; stock: number }[];
   }[]>(),
   metaTitle: text("metaTitle"),
   metaDescription: text("metaDescription"),
   status: text("status", { enum: ["active", "inactive", "draft", "out_of_stock"] }).default("draft"),
-  isFeatured: integer("isFeatured", { mode: "boolean" }).default(false),
+  isFeatured: boolean("isFeatured").default(false),
   averageRating: text("averageRating").default("0"),
   reviewCount: integer("reviewCount").default(0),
   weight: text("weight"),
-  dimensions: text("dimensions", { mode: "json" }).$type<{ length: number; width: number; height: number }>(),
-  createdAt: integer("createdAt", { mode: "timestamp" }).defaultNow(),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).defaultNow().$onUpdate(() => new Date()),
+  dimensions: jsonb("dimensions").$type<{ length: number; width: number; height: number }>(),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().$onUpdate(() => new Date()),
 });
 
 export type Product = typeof products.$inferSelect;
 
 // Cart items table
-export const cartItems = sqliteTable("cartItems", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  userId: integer("userId", { mode: "number" }).references(() => users.id),
+export const cartItems = pgTable("cartItems", {
+  id: serial("id").primaryKey(),
+  userId: integer("userId").references(() => users.id),
   sessionId: text("sessionId"),
-  productId: integer("productId", { mode: "number" }).references(() => products.id).notNull(),
+  productId: integer("productId").references(() => products.id).notNull(),
   quantity: integer("quantity").default(1).notNull(),
-  variantData: text("variantData", { mode: "json" }).$type<Record<string, string>>(),
-  addedAt: integer("addedAt", { mode: "timestamp" }).defaultNow(),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).defaultNow().$onUpdate(() => new Date()),
+  variantData: jsonb("variantData").$type<Record<string, string>>(),
+  addedAt: timestamp("addedAt", { mode: "date" }).defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().$onUpdate(() => new Date()),
 });
 
 export type CartItem = typeof cartItems.$inferSelect;
 
 // Orders table
-export const orders = sqliteTable("orders", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+export const orders = pgTable("orders", {
+  id: serial("id").primaryKey(),
   orderNumber: text("orderNumber").notNull().unique(),
-  userId: integer("userId", { mode: "number" }).references(() => users.id),
+  userId: integer("userId").references(() => users.id),
   guestEmail: text("guestEmail"),
   guestPhone: text("guestPhone"),
   status: text("status", { enum: ["pending", "processing", "shipped", "delivered", "cancelled", "return_requested", "returned", "refunded"] }).default("pending"),
@@ -109,7 +113,7 @@ export const orders = sqliteTable("orders", {
   shippingAmount: text("shippingAmount").default("0"),
   discountAmount: text("discountAmount").default("0"),
   total: text("total").notNull(),
-  shippingAddress: text("shippingAddress", { mode: "json" }).$type<{
+  shippingAddress: jsonb("shippingAddress").$type<{
     fullName: string;
     phone: string;
     address: string;
@@ -120,74 +124,74 @@ export const orders = sqliteTable("orders", {
   paymentMethod: text("paymentMethod", { enum: ["credit_card", "paypal", "cod", "stc_pay", "apple_pay"] }),
   notes: text("notes"),
   trackingNumber: text("trackingNumber"),
-  createdAt: integer("createdAt", { mode: "timestamp" }).defaultNow(),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).defaultNow().$onUpdate(() => new Date()),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().$onUpdate(() => new Date()),
 });
 
 export type Order = typeof orders.$inferSelect;
 
 // Order items table
-export const orderItems = sqliteTable("orderItems", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  orderId: integer("orderId", { mode: "number" }).references(() => orders.id).notNull(),
-  productId: integer("productId", { mode: "number" }).references(() => products.id).notNull(),
+export const orderItems = pgTable("orderItems", {
+  id: serial("id").primaryKey(),
+  orderId: integer("orderId").references(() => orders.id).notNull(),
+  productId: integer("productId").references(() => products.id).notNull(),
   productName: text("productName").notNull(),
   productImage: text("productImage"),
   quantity: integer("quantity").notNull(),
   unitPrice: text("unitPrice").notNull(),
   totalPrice: text("totalPrice").notNull(),
-  variantData: text("variantData", { mode: "json" }).$type<Record<string, string>>(),
+  variantData: jsonb("variantData").$type<Record<string, string>>(),
 });
 
 export type OrderItem = typeof orderItems.$inferSelect;
 
 // Reviews table
-export const reviews = sqliteTable("reviews", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  productId: integer("productId", { mode: "number" }).references(() => products.id).notNull(),
-  userId: integer("userId", { mode: "number" }).references(() => users.id),
+export const reviews = pgTable("reviews", {
+  id: serial("id").primaryKey(),
+  productId: integer("productId").references(() => products.id).notNull(),
+  userId: integer("userId").references(() => users.id),
   userName: text("userName"),
   userAvatar: text("userAvatar"),
   rating: integer("rating").notNull(),
   title: text("title"),
   comment: text("comment"),
-  isVerified: integer("isVerified", { mode: "boolean" }).default(false),
+  isVerified: boolean("isVerified").default(false),
   helpful: integer("helpful").default(0),
-  createdAt: integer("createdAt", { mode: "timestamp" }).defaultNow(),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
 });
 
 export type Review = typeof reviews.$inferSelect;
 // Wishlist items table
-export const wishlistItems = sqliteTable("wishlistItems", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  userId: integer("userId", { mode: "number" }).references(() => users.id).notNull(),
-  productId: integer("productId", { mode: "number" }).references(() => products.id).notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp" }).defaultNow(),
+export const wishlistItems = pgTable("wishlistItems", {
+  id: serial("id").primaryKey(),
+  userId: integer("userId").references(() => users.id).notNull(),
+  productId: integer("productId").references(() => products.id).notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
 });
 
 export type WishlistItem = typeof wishlistItems.$inferSelect;
 
 // Site settings table
-export const siteSettings = sqliteTable("siteSettings", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+export const siteSettings = pgTable("siteSettings", {
+  id: serial("id").primaryKey(),
   key: text("key").notNull().unique(),
-  value: text("value", { mode: "json" }),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).defaultNow().$onUpdate(() => new Date()),
+  value: jsonb("value"),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().$onUpdate(() => new Date()),
 });
 
 export type SiteSetting = typeof siteSettings.$inferSelect;
 
 // Activity log table
-export const activityLog = sqliteTable("activityLog", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  userId: integer("userId", { mode: "number" }).references(() => users.id),
+export const activityLog = pgTable("activityLog", {
+  id: serial("id").primaryKey(),
+  userId: integer("userId").references(() => users.id),
   action: text("action").notNull(),
   entityType: text("entityType"),
-  entityId: integer("entityId", { mode: "number" }),
-  details: text("details", { mode: "json" }),
+  entityId: integer("entityId"),
+  details: jsonb("details"),
   ipAddress: text("ipAddress"),
   userAgent: text("userAgent"),
-  createdAt: integer("createdAt", { mode: "timestamp" }).defaultNow(),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
 });
 
 export type ActivityLog = typeof activityLog.$inferSelect;
