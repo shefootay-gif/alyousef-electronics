@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { useCart } from "@/hooks/useCart";
 import { useLanguage } from "@/hooks/useLanguage";
+import FadeIn from "@/components/FadeIn";
 import Layout from "@/components/Layout";
 import {
   Smartphone,
@@ -387,7 +388,8 @@ function FeaturesBar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((f, i) => (
-            <div key={i} className="flex items-center gap-4 group">
+            <FadeIn key={i} delay={i * 100}>
+            <div className="flex items-center gap-4 group">
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center text-white flex-shrink-0 group-hover:scale-110 transition-transform">
                 {f.icon}
               </div>
@@ -396,6 +398,7 @@ function FeaturesBar() {
                 <p className="text-sm text-[#94A3B8]">{f.desc}</p>
               </div>
             </div>
+            </FadeIn>
           ))}
         </div>
       </div>
@@ -413,6 +416,7 @@ function AboutUsSection() {
       
       <div className={`max-w-7xl mx-auto px-4 sm:px-8 relative z-10 ${isRTL ? "text-right" : "text-left"}`}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <FadeIn>
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
               {lang === "ar" ? (
@@ -434,7 +438,9 @@ function AboutUsSection() {
                 : "Since our beginning, we have committed to offering 100% authentic products from the world's most famous brands, focusing on an exceptional and luxurious shopping experience."}
             </p>
           </div>
+          </FadeIn>
           
+          <FadeIn delay={200}>
           <div className="relative">
             <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10 relative z-10">
               <img 
@@ -446,6 +452,7 @@ function AboutUsSection() {
             </div>
             <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-gradient-to-br from-[#D4AF37] to-[#B8960F] rounded-2xl z-0 blur-2xl opacity-30"></div>
           </div>
+          </FadeIn>
         </div>
       </div>
     </section>
@@ -496,7 +503,8 @@ function TestimonialsSection() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((t_item, i) => (
-            <div key={i} className="rounded-2xl bg-white shadow-lg p-8 hover:shadow-xl transition-shadow">
+            <FadeIn key={i} delay={i * 200}>
+            <div className="rounded-2xl bg-white shadow-lg p-8 hover:shadow-xl transition-shadow h-full">
               <div className="flex gap-1 mb-4">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
@@ -520,6 +528,7 @@ function TestimonialsSection() {
                 </div>
               </div>
             </div>
+            </FadeIn>
           ))}
         </div>
       </div>

@@ -58,10 +58,10 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-[#050505]/92 backdrop-blur-xl shadow-[0_14px_40px_rgba(2,8,23,0.22)] border-b border-[#D4AF37]/15"
-          : "bg-gradient-to-b from-[#050505]/75 to-transparent"
+          ? "bg-[#050505]/85 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-b border-[#D4AF37]/20"
+          : "bg-gradient-to-b from-[#050505]/80 to-transparent backdrop-blur-md"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
