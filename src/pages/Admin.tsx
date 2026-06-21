@@ -21,6 +21,7 @@ import {
   Users,
   TrendingUp,
   BarChart3,
+  LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -538,7 +539,7 @@ function SettingsPage() {
 
 export default function Admin() {
   const { t, lang, isRTL } = useLanguage();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -651,8 +652,22 @@ export default function Admin() {
               </div>
             </div>
             
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1A2A44] to-[#00D4FF] flex items-center justify-center text-white font-bold text-sm">
-              {(user.name || "A")[0]}
+            <div className="relative group">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1A2A44] to-[#00D4FF] flex items-center justify-center text-white font-bold text-sm cursor-pointer hover:shadow-lg transition-shadow">
+                {(user.name || "A")[0]}
+              </div>
+              <div className={`absolute ${isRTL ? "left-0" : "right-0"} top-full mt-2 w-48 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden z-50`}>
+                <div className="px-4 py-3 border-b border-[#E2E8F0]">
+                  <p className="text-sm font-semibold text-[#1A2A44]">{user.name}</p>
+                </div>
+                <button
+                  onClick={logout}
+                  className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-[#F1F5F9] transition-colors flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  {t("logout")}
+                </button>
+              </div>
             </div>
           </div>
         </header>
