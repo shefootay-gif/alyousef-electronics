@@ -60,15 +60,15 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#071427]/92 backdrop-blur-xl shadow-[0_14px_40px_rgba(2,8,23,0.22)] border-b border-[#D4AF37]/15"
-          : "bg-gradient-to-b from-[#071427]/75 to-transparent"
+          ? "bg-[#050505]/92 backdrop-blur-xl shadow-[0_14px_40px_rgba(2,8,23,0.22)] border-b border-[#D4AF37]/15"
+          : "bg-gradient-to-b from-[#050505]/75 to-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1A2A44] to-[#00D4FF] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform border border-[#D4AF37]/30">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform border border-[#D4AF37]/30">
               <span className="text-[#D4AF37] font-bold text-xl">Y</span>
             </div>
             <div className="flex flex-col">
@@ -109,7 +109,7 @@ export default function Navbar() {
                   <Link
                     key={cat.id}
                     to={`/shop?category=${cat.slug}`}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-[#F1F5F9] transition-colors text-[#1A2A44]"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-[#F1F5F9] transition-colors text-[#171717]"
                   >
                     <span className="text-[#D4AF37]">
                       {categoryIcons[cat.icon || ""] || <Smartphone className="w-5 h-5" />}
@@ -157,7 +157,7 @@ export default function Navbar() {
                     placeholder={t("search")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#00D4FF] focus:outline-none text-[#1A2A44]"
+                    className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#C0C0C0] focus:outline-none text-[#171717]"
                     autoFocus
                     dir={isRTL ? "rtl" : "ltr"}
                   />
@@ -175,7 +175,7 @@ export default function Navbar() {
                             className="w-10 h-10 object-contain rounded"
                           />
                           <div>
-                            <p className="text-sm font-medium text-[#1A2A44]">
+                            <p className="text-sm font-medium text-[#171717]">
                               {lang === "ar" && (p as any).nameAr ? (p as any).nameAr : p.name}
                             </p>
                             <p className="text-xs text-[#D4AF37] font-semibold">
@@ -198,7 +198,7 @@ export default function Navbar() {
             >
               <ShoppingCart className="w-5 h-5" />
               {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#D4AF37] text-[#1A2A44] text-xs font-bold rounded-full flex items-center justify-center animate-bounce">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#D4AF37] text-[#171717] text-xs font-bold rounded-full flex items-center justify-center animate-bounce">
                   {itemCount}
                 </span>
               )}
@@ -212,25 +212,25 @@ export default function Navbar() {
                 </button>
                 <div className={`absolute ${isRTL ? "left-0" : "right-0"} top-full mt-2 w-48 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden`}>
                   <div className="px-4 py-3 border-b border-[#E2E8F0]">
-                    <p className="text-sm font-semibold text-[#1A2A44]">{user.name || "User"}</p>
+                    <p className="text-sm font-semibold text-[#171717]">{user.name || "User"}</p>
                   </div>
                   {user.role === "admin" && (
                     <Link
                       to="/admin"
-                      className="block px-4 py-3 text-sm text-[#1A2A44] hover:bg-[#F1F5F9] transition-colors"
+                      className="block px-4 py-3 text-sm text-[#171717] hover:bg-[#F1F5F9] transition-colors"
                     >
                       {t("adminDashboard")}
                     </Link>
                   )}
                   <Link
                     to="/orders"
-                    className="block px-4 py-3 text-sm text-[#1A2A44] hover:bg-[#F1F5F9] transition-colors"
+                    className="block px-4 py-3 text-sm text-[#171717] hover:bg-[#F1F5F9] transition-colors"
                   >
                     {t("myOrders")}
                   </Link>
                   <Link
                     to="/track-order"
-                    className="block px-4 py-3 text-sm text-[#1A2A44] hover:bg-[#F1F5F9] transition-colors"
+                    className="block px-4 py-3 text-sm text-[#171717] hover:bg-[#F1F5F9] transition-colors"
                   >
                     {lang === "ar" ? "تتبع الطلب" : "Track Order"}
                   </Link>
@@ -266,7 +266,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#1A2A44]/98 backdrop-blur-xl border-t border-white/10">
+        <div className="lg:hidden bg-[#171717]/98 backdrop-blur-xl border-t border-white/10">
           <div className="px-4 py-6 space-y-4">
             <Link to="/" className="block text-[#F8FAFC] hover:text-[#D4AF37] py-2 text-lg font-medium">
               {t("home")}

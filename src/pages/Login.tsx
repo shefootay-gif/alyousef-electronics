@@ -41,7 +41,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
       <Card className="w-full max-w-md shadow-xl border-0">
         <CardHeader className="text-center pb-2">
-          <CardTitle className="text-2xl font-bold text-[#1A2A44]">
+          <CardTitle className="text-2xl font-bold text-[#171717]">
             {isLogin ? t("welcomeBack") : t("createAccount")}
           </CardTitle>
           <CardDescription>
@@ -52,7 +52,7 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-4 mb-6">
             {!isLogin && (
               <div className={isRTL ? "text-right" : "text-left"}>
-                <label className="block text-sm font-medium text-[#1A2A44] mb-1">{t("nameTitle")}</label>
+                <label className="block text-sm font-medium text-[#171717] mb-1">{t("nameTitle")}</label>
                 <input 
                   type="text" 
                   value={name} 
@@ -63,7 +63,7 @@ export default function Login() {
               </div>
             )}
             <div className={isRTL ? "text-right" : "text-left"}>
-              <label className="block text-sm font-medium text-[#1A2A44] mb-1">{t("email")}</label>
+              <label className="block text-sm font-medium text-[#171717] mb-1">{t("email")}</label>
               <input 
                 type="email" 
                 value={email} 
@@ -73,7 +73,7 @@ export default function Login() {
               />
             </div>
             <div className={isRTL ? "text-right" : "text-left"}>
-              <label className="block text-sm font-medium text-[#1A2A44] mb-1">{t("password")}</label>
+              <label className="block text-sm font-medium text-[#171717] mb-1">{t("password")}</label>
               <input 
                 type="password" 
                 value={password} 
@@ -84,7 +84,7 @@ export default function Login() {
             </div>
             <Button 
               type="submit" 
-              className="w-full bg-[#1A2A44] hover:bg-[#00D4FF] text-white py-6 rounded-xl text-md font-semibold transition-all"
+              className="w-full bg-[#171717] hover:bg-[#C0C0C0] text-white py-6 rounded-xl text-md font-semibold transition-all"
               disabled={loginMutation.isPending || registerMutation.isPending}
             >
               {isLogin ? t("signIn") : t("signUp")}

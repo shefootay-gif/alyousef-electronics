@@ -18,7 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         position="top-right"
         toastOptions={{
           style: {
-            background: "#1A2A44",
+            background: "#171717",
             color: "#F8FAFC",
             border: "1px solid rgba(212, 175, 55, 0.3)",
           },

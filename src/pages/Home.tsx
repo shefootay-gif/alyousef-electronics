@@ -40,19 +40,19 @@ function HeroSection() {
     : ["Authentic Tech", "Trusted Warranty", "Premium Checkout"];
 
   return (
-    <section className="relative min-h-[760px] flex items-center overflow-hidden bg-[#071427] pt-24">
+    <section className="relative min-h-[760px] flex items-center overflow-hidden bg-[#050505] pt-24">
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_34%),radial-gradient(circle_at_75%_20%,rgba(0,212,255,0.16),transparent_30%),linear-gradient(135deg,#071427_0%,#0D1E36_52%,#051020_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_34%),radial-gradient(circle_at_75%_20%,rgba(0,212,255,0.16),transparent_30%),linear-gradient(135deg,#050505_0%,#0D1E36_52%,#051020_100%)]" />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/55 to-transparent" />
         <div className="absolute right-[-8rem] top-24 h-80 w-80 rounded-full border border-[#D4AF37]/20" />
-        <div className="absolute left-[-6rem] bottom-10 h-72 w-72 rounded-full border border-[#00D4FF]/15" />
+        <div className="absolute left-[-6rem] bottom-10 h-72 w-72 rounded-full border border-[#C0C0C0]/15" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 w-full">
         <div className="grid lg:grid-cols-2 items-center gap-14">
           <div className={`${lang === "ar" ? "text-right lg:order-2" : "text-left"}`}>
             <p className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/30 bg-white/5 px-4 py-2 text-xs font-bold tracking-[0.25em] text-[#D4AF37] mb-6">
-              <span className="h-2 w-2 rounded-full bg-[#00D4FF] shadow-[0_0_14px_rgba(0,212,255,0.9)]" />
+              <span className="h-2 w-2 rounded-full bg-[#C0C0C0] shadow-[0_0_14px_rgba(0,212,255,0.9)]" />
               {t("premiumElectronics")}
             </p>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#F8FAFC] leading-tight mb-6">
@@ -79,7 +79,7 @@ function HeroSection() {
             <div className={`flex flex-col sm:flex-row gap-4 ${lang === "ar" ? "sm:justify-end" : ""}`}>
               <Link
                 to="/shop"
-                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#F8D778] via-[#D4AF37] to-[#A77D16] text-[#071427] font-extrabold rounded-2xl shadow-[0_12px_38px_rgba(212,175,55,0.28)] hover:shadow-[0_16px_48px_rgba(212,175,55,0.42)] hover:-translate-y-0.5 transition-all duration-300"
+                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#F8D778] via-[#D4AF37] to-[#A77D16] text-[#050505] font-extrabold rounded-2xl shadow-[0_12px_38px_rgba(212,175,55,0.28)] hover:shadow-[0_16px_48px_rgba(212,175,55,0.42)] hover:-translate-y-0.5 transition-all duration-300"
               >
                 {t("shopNow")}
                 <ArrowRight className={`w-5 h-5 ${lang === "ar" ? "rotate-180" : ""}`} />
@@ -94,7 +94,7 @@ function HeroSection() {
           </div>
 
           <div className="relative min-h-[420px] lg:min-h-[540px] flex items-center justify-center">
-            <div className="absolute h-80 w-80 rounded-full bg-[#00D4FF]/10 blur-3xl" />
+            <div className="absolute h-80 w-80 rounded-full bg-[#C0C0C0]/10 blur-3xl" />
             <div className="absolute h-[28rem] w-[28rem] rounded-full border border-[#D4AF37]/20" />
             <div className="relative w-full max-w-[560px] rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-xl">
               <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
@@ -102,7 +102,7 @@ function HeroSection() {
                 <div className="relative z-20 -mr-8 hidden sm:flex h-[290px] w-[150px] flex-col rounded-[2rem] border-2 border-[#D4AF37] bg-[#061125] shadow-[0_0_36px_rgba(0,212,255,0.18)]">
                   <div className="mx-auto mt-3 h-1.5 w-14 rounded-full bg-[#D4AF37]/80" />
                   <div className="flex flex-1 items-center justify-center">
-                    <div className="flex h-24 w-24 items-center justify-center rounded-full border border-[#D4AF37]/70 bg-[#071427] shadow-[0_0_22px_rgba(0,212,255,0.25)]">
+                    <div className="flex h-24 w-24 items-center justify-center rounded-full border border-[#D4AF37]/70 bg-[#050505] shadow-[0_0_22px_rgba(0,212,255,0.25)]">
                       <span className="text-5xl font-black text-[#D4AF37]">Y</span>
                     </div>
                   </div>
@@ -112,13 +112,13 @@ function HeroSection() {
                     <div className="m-5 h-[180px] rounded-xl bg-gradient-to-br from-[#0D1E36] to-[#020617] border border-white/5" />
                   </div>
                   <div className="h-12 rounded-b-2xl bg-gradient-to-r from-[#9C7614] via-[#D4AF37] to-[#FFE8A3] shadow-[0_18px_38px_rgba(0,0,0,0.35)]">
-                    <div className="mx-auto h-3 w-24 rounded-b-xl bg-[#071427]/70" />
+                    <div className="mx-auto h-3 w-24 rounded-b-xl bg-[#050505]/70" />
                   </div>
                 </div>
               </div>
               <div className="relative mt-8 grid grid-cols-3 gap-3 text-center text-xs font-semibold text-[#B6C2D2]">
                 {(lang === "ar" ? ["هواتف", "لابتوبات", "ملحقات"] : ["Phones", "Laptops", "Accessories"]).map((item) => (
-                  <div key={item} className="rounded-xl border border-white/10 bg-[#071427]/70 px-3 py-3">
+                  <div key={item} className="rounded-xl border border-white/10 bg-[#050505]/70 px-3 py-3">
                     {item}
                   </div>
                 ))}
@@ -142,7 +142,7 @@ function CategoriesSection() {
   return (
     <section className="py-16 bg-[#F1F5F9]">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
-        <h2 className="text-3xl sm:text-4xl font-bold text-[#1A2A44] text-center mb-12">
+        <h2 className="text-3xl sm:text-4xl font-bold text-[#171717] text-center mb-12">
           {t("browseByCategory")} <span className="text-[#D4AF37]">{t("category")}</span>
         </h2>
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
@@ -152,10 +152,10 @@ function CategoriesSection() {
               to={`/shop?category=${cat.slug}`}
               className="flex-shrink-0 w-32 h-36 rounded-2xl bg-white shadow-lg flex flex-col items-center justify-center gap-3 hover:scale-110 hover:shadow-xl hover:border-2 hover:border-[#D4AF37] transition-all duration-300 snap-start group"
             >
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#1A2A44] to-[#00D4FF] flex items-center justify-center text-white group-hover:shadow-lg transition-all">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center text-white group-hover:shadow-lg transition-all">
                 {categoryIcons[cat.icon || ""] || <Smartphone className="w-7 h-7" />}
               </div>
-              <span className="text-sm font-semibold text-[#1A2A44] text-center px-2">
+              <span className="text-sm font-semibold text-[#171717] text-center px-2">
                 {lang === "ar" && cat.nameAr ? cat.nameAr : cat.name}
               </span>
             </Link>
@@ -199,7 +199,7 @@ function ProductCard({ product }: { product: any }) {
           </span>
         )}
         {product.isFeatured && !salePrice && (
-          <span className="absolute top-3 left-3 px-3 py-1 bg-[#00D4FF] text-white text-xs font-bold rounded-lg">
+          <span className="absolute top-3 left-3 px-3 py-1 bg-[#C0C0C0] text-white text-xs font-bold rounded-lg">
             {lang === "ar" ? "جديد" : "NEW"}
           </span>
         )}
@@ -216,10 +216,10 @@ function ProductCard({ product }: { product: any }) {
           </button>
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-[#1A2A44]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0">
+        <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-[#171717]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0">
           <button
             onClick={handleAddToCart}
-            className="w-full py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#1A2A44] font-bold text-sm rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            className="w-full py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold text-sm rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
           >
             <ShoppingCart className="w-4 h-4" />
             {t("addToCart")}
@@ -229,7 +229,7 @@ function ProductCard({ product }: { product: any }) {
 
       <div className="p-5">
         <Link to={`/product/${product.slug}`}>
-          <h3 className="text-base font-semibold text-[#1A2A44] line-clamp-1 hover:text-[#D4AF37] transition-colors">
+          <h3 className="text-base font-semibold text-[#171717] line-clamp-1 hover:text-[#D4AF37] transition-colors">
             {displayName}
           </h3>
         </Link>
@@ -273,7 +273,7 @@ function FeaturedProductsSection() {
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#1A2A44] mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-[#171717] mb-4">
             {lang === "ar" ? (
               <><span className="text-[#D4AF37]">منتجات</span> مميزة</>
             ) : (
@@ -290,7 +290,7 @@ function FeaturedProductsSection() {
         <div className="text-center mt-10">
           <Link
             to="/shop"
-            className="inline-flex items-center gap-2 px-8 py-3 border-2 border-[#1A2A44] text-[#1A2A44] font-semibold rounded-xl hover:bg-[#1A2A44] hover:text-white transition-all"
+            className="inline-flex items-center gap-2 px-8 py-3 border-2 border-[#171717] text-[#171717] font-semibold rounded-xl hover:bg-[#171717] hover:text-white transition-all"
           >
             {t("viewAllProducts")}
             <ArrowRight className={`w-4 h-4 ${lang === "ar" ? "rotate-180" : ""}`} />
@@ -328,10 +328,10 @@ function SpecialOfferSection() {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-r from-[#1A2A44] to-[#0F172A] relative overflow-hidden">
+    <section className="py-16 bg-gradient-to-r from-[#171717] to-[#0F172A] relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4AF37] rounded-full blur-[128px]" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#00D4FF] rounded-full blur-[128px]" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#C0C0C0] rounded-full blur-[128px]" />
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
@@ -342,7 +342,7 @@ function SpecialOfferSection() {
             <h2 className="text-3xl sm:text-4xl font-bold text-[#F8FAFC] mb-3">
               {t("offerTitle")}
             </h2>
-            <p className="text-lg text-[#00D4FF] font-semibold">
+            <p className="text-lg text-[#C0C0C0] font-semibold">
               {lang === "ar" ? "استخدم الكود: GAMING15" : "Use code: GAMING15"}
             </p>
           </div>
@@ -363,7 +363,7 @@ function SpecialOfferSection() {
 
           <Link
             to="/shop?category=gaming"
-            className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#1A2A44] font-bold rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.5)] hover:scale-105 transition-all animate-pulse"
+            className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.5)] hover:scale-105 transition-all animate-pulse"
           >
             {t("grabDeal")}
           </Link>
@@ -388,15 +388,64 @@ function FeaturesBar() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((f, i) => (
             <div key={i} className="flex items-center gap-4 group">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#1A2A44] to-[#00D4FF] flex items-center justify-center text-white flex-shrink-0 group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center text-white flex-shrink-0 group-hover:scale-110 transition-transform">
                 {f.icon}
               </div>
               <div>
-                <h3 className="text-base font-semibold text-[#1A2A44]">{f.title}</h3>
+                <h3 className="text-base font-semibold text-[#171717]">{f.title}</h3>
                 <p className="text-sm text-[#94A3B8]">{f.desc}</p>
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AboutUsSection() {
+  const { lang, isRTL } = useLanguage();
+  
+  return (
+    <section className="py-20 bg-[#050505] text-white relative overflow-hidden">
+      {/* Abstract Background Element */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#D4AF37] rounded-full mix-blend-multiply filter blur-[128px] opacity-20 translate-x-1/2 -translate-y-1/2"></div>
+      
+      <div className={`max-w-7xl mx-auto px-4 sm:px-8 relative z-10 ${isRTL ? "text-right" : "text-left"}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+              {lang === "ar" ? (
+                <>من نحن؟ <span className="text-[#D4AF37]">اليوسف للإلكترونيات</span></>
+              ) : (
+                <>About Us <span className="text-[#D4AF37]">AL-YOUSEF Electronics</span></>
+              )}
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] mb-8 rounded-full" />
+            
+            <p className="text-[#C0C0C0] text-lg leading-relaxed mb-6">
+              {lang === "ar" 
+                ? "تأسست شركة اليوسف للإلكترونيات برؤية واضحة: تقديم أفضل وأحدث التقنيات لعملائنا في المملكة العربية السعودية. نحن نفخر بكوننا الوجهة الموثوقة لكل ما يخص الأجهزة الذكية والحواسيب."
+                : "AL-YOUSEF Electronics was founded with a clear vision: to provide the best and latest technology to our customers in Saudi Arabia. We pride ourselves on being the trusted destination for smart devices."}
+            </p>
+            <p className="text-[#C0C0C0] text-lg leading-relaxed">
+              {lang === "ar"
+                ? "منذ بدايتنا، التزمنا بتوفير منتجات أصلية 100% من أشهر العلامات التجارية العالمية، مع التركيز على تجربة تسوق فاخرة واستثنائية."
+                : "Since our beginning, we have committed to offering 100% authentic products from the world's most famous brands, focusing on an exceptional and luxurious shopping experience."}
+            </p>
+          </div>
+          
+          <div className="relative">
+            <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10 relative z-10">
+              <img 
+                src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=2001&auto=format&fit=crop" 
+                alt="AL-YOUSEF Electronics Store" 
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-gradient-to-br from-[#D4AF37] to-[#B8960F] rounded-2xl z-0 blur-2xl opacity-30"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -436,7 +485,7 @@ function TestimonialsSection() {
     <section className="py-20 bg-gradient-to-b from-[#F1F5F9] to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#1A2A44] mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-[#171717] mb-4">
             {lang === "ar" ? (
               <>ماذا يقول <span className="text-[#D4AF37]">عملاؤنا</span></>
             ) : (
@@ -458,15 +507,15 @@ function TestimonialsSection() {
                   />
                 ))}
               </div>
-              <p className="text-[#1A2A44] italic mb-6 leading-relaxed">
+              <p className="text-[#171717] italic mb-6 leading-relaxed">
                 &ldquo;{lang === "ar" ? t_item.textAr : t_item.textEn}&rdquo;
               </p>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1A2A44] to-[#00D4FF] flex items-center justify-center text-white font-bold">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center text-white font-bold">
                   {(lang === "ar" ? t_item.nameAr : t_item.nameEn)[0]}
                 </div>
                 <div>
-                  <p className="font-semibold text-[#1A2A44]">{lang === "ar" ? t_item.nameAr : t_item.nameEn}</p>
+                  <p className="font-semibold text-[#171717]">{lang === "ar" ? t_item.nameAr : t_item.nameEn}</p>
                   <p className="text-sm text-[#94A3B8]">{t_item.location}</p>
                 </div>
               </div>
@@ -486,6 +535,7 @@ export default function Home() {
       <FeaturedProductsSection />
       <SpecialOfferSection />
       <FeaturesBar />
+      <AboutUsSection />
       <TestimonialsSection />
     </Layout>
   );

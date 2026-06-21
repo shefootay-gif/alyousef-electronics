@@ -25,7 +25,7 @@ export default function Orders() {
 
   return (
     <Layout>
-      <div className="bg-gradient-to-r from-[#1A2A44] to-[#0F172A] pt-28 pb-12">
+      <div className="bg-gradient-to-r from-[#171717] to-[#0F172A] pt-28 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-[#F8FAFC] mb-2">{t("myOrders")}</h1>
           <p className="text-[#94A3B8]">
@@ -57,7 +57,7 @@ export default function Orders() {
                         <Package className="w-5 h-5 text-[#D4AF37]" />
                       </div>
                       <div>
-                        <p className="font-semibold text-[#1A2A44]">{order.orderNumber}</p>
+                        <p className="font-semibold text-[#171717]">{order.orderNumber}</p>
                         <p className="text-xs text-[#94A3B8]">
                           {new Date(order.createdAt).toLocaleDateString("en-US", {
                             year: "numeric",
@@ -82,7 +82,7 @@ export default function Orders() {
                           className="w-12 h-12 object-contain rounded-lg bg-white"
                         />
                         <div>
-                          <p className="text-sm font-medium text-[#1A2A44] line-clamp-1">{item.productName}</p>
+                          <p className="text-sm font-medium text-[#171717] line-clamp-1">{item.productName}</p>
                           <p className="text-xs text-[#94A3B8]">Qty: {item.quantity}</p>
                         </div>
                       </div>
@@ -125,11 +125,11 @@ export default function Orders() {
         ) : (
           <div className="text-center py-20">
             <Package className="w-16 h-16 text-[#E2E8F0] mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-[#1A2A44] mb-2">No Orders Yet</h2>
+            <h2 className="text-xl font-bold text-[#171717] mb-2">No Orders Yet</h2>
             <p className="text-[#94A3B8] mb-6">You haven't placed any orders yet.</p>
             <Link
               to="/shop"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#1A2A44] font-bold rounded-xl"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl"
             >
               Start Shopping
             </Link>

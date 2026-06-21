@@ -50,7 +50,7 @@ export default function OrderDetail() {
 
   return (
     <Layout>
-      <div className="bg-gradient-to-r from-[#1A2A44] to-[#0F172A] pt-28 pb-12">
+      <div className="bg-gradient-to-r from-[#171717] to-[#0F172A] pt-28 pb-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-8">
           <button 
             onClick={() => navigate(-1)} 
@@ -81,7 +81,7 @@ export default function OrderDetail() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2 space-y-6">
             <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-[#1A2A44] mb-4 border-b pb-4">{lang === "ar" ? "المنتجات" : "Items"}</h2>
+              <h2 className="text-xl font-bold text-[#171717] mb-4 border-b pb-4">{lang === "ar" ? "المنتجات" : "Items"}</h2>
               <div className="space-y-4">
                 {order.items?.map((item: any) => (
                   <div key={item.id} className="flex gap-4 p-4 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
@@ -91,7 +91,7 @@ export default function OrderDetail() {
                       className="w-20 h-20 object-contain rounded-lg bg-white"
                     />
                     <div className="flex-1">
-                      <p className="font-semibold text-[#1A2A44]">{item.productName}</p>
+                      <p className="font-semibold text-[#171717]">{item.productName}</p>
                       <p className="text-sm text-[#64748B] mb-2">{lang === "ar" ? "الكمية:" : "Qty:"} {item.quantity}</p>
                       <p className="font-bold text-[#D4AF37]">SAR {Number(item.totalPrice).toFixed(2)}</p>
                     </div>
@@ -101,7 +101,7 @@ export default function OrderDetail() {
             </div>
 
             <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-[#1A2A44] mb-4 border-b pb-4">{lang === "ar" ? "ملخص الدفع" : "Payment Summary"}</h2>
+              <h2 className="text-xl font-bold text-[#171717] mb-4 border-b pb-4">{lang === "ar" ? "ملخص الدفع" : "Payment Summary"}</h2>
               <div className="space-y-3">
                 <div className="flex justify-between text-[#64748B]">
                   <span>{lang === "ar" ? "المجموع الفرعي" : "Subtotal"}</span>
@@ -115,7 +115,7 @@ export default function OrderDetail() {
                   <span>{lang === "ar" ? "الضريبة" : "Tax"}</span>
                   <span>SAR {Number(order.taxAmount).toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between font-bold text-lg text-[#1A2A44] pt-3 border-t">
+                <div className="flex justify-between font-bold text-lg text-[#171717] pt-3 border-t">
                   <span>{lang === "ar" ? "الإجمالي" : "Total"}</span>
                   <span className="text-[#D4AF37]">SAR {Number(order.total).toFixed(2)}</span>
                 </div>
@@ -125,13 +125,13 @@ export default function OrderDetail() {
 
           <div className="space-y-6">
             <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-[#1A2A44] mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-bold text-[#171717] mb-4 flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-[#D4AF37]" />
                 {lang === "ar" ? "عنوان الشحن" : "Shipping Address"}
               </h2>
               {shipping ? (
                 <div className="text-sm text-[#64748B] space-y-1">
-                  <p className="font-semibold text-[#1A2A44]">{shipping.firstName} {shipping.lastName}</p>
+                  <p className="font-semibold text-[#171717]">{shipping.firstName} {shipping.lastName}</p>
                   <p>{shipping.phone}</p>
                   <p>{shipping.streetAddress}</p>
                   {shipping.buildingNumber && <p>{shipping.buildingNumber}</p>}
@@ -144,7 +144,7 @@ export default function OrderDetail() {
             </div>
 
             <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-[#1A2A44] mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-bold text-[#171717] mb-4 flex items-center gap-2">
                 <CreditCard className="w-5 h-5 text-[#D4AF37]" />
                 {lang === "ar" ? "الدفع" : "Payment"}
               </h2>

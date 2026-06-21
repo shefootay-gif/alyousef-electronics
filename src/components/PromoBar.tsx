@@ -9,7 +9,7 @@ export default function PromoBar() {
   if (!isVisible) return null;
 
   return (
-    <div className="bg-gradient-to-r from-[#D4AF37] via-[#F8D778] to-[#B8960F] text-[#1A2A44] px-4 py-2 text-sm font-bold flex justify-center items-center relative z-50 shadow-md">
+    <div className="bg-gradient-to-r from-[#D4AF37] via-[#F8D778] to-[#B8960F] text-[#171717] px-4 py-2 text-sm font-bold flex justify-center items-center relative z-50 shadow-md">
       <p className="text-center w-full pr-6 animate-pulse">
         {lang === "ar" 
           ? "🎉 عرض خاص: شحن مجاني لجميع الطلبات فوق 500 ريال!" 

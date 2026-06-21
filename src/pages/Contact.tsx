@@ -26,7 +26,7 @@ export default function Contact() {
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-16">
         <div className="text-center mb-16">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#1A2A44] mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-[#171717] mb-4">
             {lang === "ar" ? "تواصل معنا" : "Contact Us"}
           </h1>
           <p className="text-[#64748B] max-w-2xl mx-auto">
@@ -38,38 +38,38 @@ export default function Contact() {
 
         <div className="grid lg:grid-cols-2 gap-12">
           <div>
-            <h3 className="text-2xl font-bold text-[#1A2A44] mb-6">
+            <h3 className="text-2xl font-bold text-[#171717] mb-6">
               {lang === "ar" ? "معلومات التواصل" : "Contact Information"}
             </h3>
             <div className="space-y-6">
               {contactLinks?.whatsapp && (
                 <div className="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-sm border border-[#E2E8F0]">
-                  <div className="w-12 h-12 rounded-xl bg-[#00D4FF]/10 flex items-center justify-center text-[#00D4FF] flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-[#C0C0C0]/10 flex items-center justify-center text-[#C0C0C0] flex-shrink-0">
                     <Phone className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-[#1A2A44] mb-1">{lang === "ar" ? "رقم الهاتف / واتساب" : "Phone / WhatsApp"}</h4>
+                    <h4 className="font-semibold text-[#171717] mb-1">{lang === "ar" ? "رقم الهاتف / واتساب" : "Phone / WhatsApp"}</h4>
                     <p className="text-[#64748B]">{contactLinks.whatsapp}</p>
                   </div>
                 </div>
               )}
               {contactLinks?.website && (
                 <div className="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-sm border border-[#E2E8F0]">
-                  <div className="w-12 h-12 rounded-xl bg-[#00D4FF]/10 flex items-center justify-center text-[#00D4FF] flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-[#C0C0C0]/10 flex items-center justify-center text-[#C0C0C0] flex-shrink-0">
                     <MapPin className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-[#1A2A44] mb-1">{lang === "ar" ? "الموقع الإلكتروني" : "Website"}</h4>
+                    <h4 className="font-semibold text-[#171717] mb-1">{lang === "ar" ? "الموقع الإلكتروني" : "Website"}</h4>
                     <p className="text-[#64748B]">{contactLinks.website}</p>
                   </div>
                 </div>
               )}
               <div className="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-sm border border-[#E2E8F0]">
-                <div className="w-12 h-12 rounded-xl bg-[#00D4FF]/10 flex items-center justify-center text-[#00D4FF] flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-[#C0C0C0]/10 flex items-center justify-center text-[#C0C0C0] flex-shrink-0">
                   <Mail className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-[#1A2A44] mb-1">{lang === "ar" ? "البريد الإلكتروني" : "Email"}</h4>
+                  <h4 className="font-semibold text-[#171717] mb-1">{lang === "ar" ? "البريد الإلكتروني" : "Email"}</h4>
                   <p className="text-[#64748B]">support@alyousef.com</p>
                 </div>
               </div>
@@ -77,12 +77,12 @@ export default function Contact() {
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl p-8 border border-[#E2E8F0]">
-            <h3 className="text-2xl font-bold text-[#1A2A44] mb-6">
+            <h3 className="text-2xl font-bold text-[#171717] mb-6">
               {lang === "ar" ? "أرسل لنا رسالة" : "Send us a message"}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[#1A2A44] mb-1">
+                <label className="block text-sm font-medium text-[#171717] mb-1">
                   {lang === "ar" ? "الاسم الكامل" : "Full Name"}
                 </label>
                 <input
@@ -94,7 +94,7 @@ export default function Contact() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1A2A44] mb-1">
+                <label className="block text-sm font-medium text-[#171717] mb-1">
                   {lang === "ar" ? "البريد الإلكتروني" : "Email Address"}
                 </label>
                 <input
@@ -106,7 +106,7 @@ export default function Contact() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1A2A44] mb-1">
+                <label className="block text-sm font-medium text-[#171717] mb-1">
                   {lang === "ar" ? "الرسالة" : "Message"}
                 </label>
                 <textarea
@@ -120,7 +120,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#1A2A44] font-bold rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-70"
+                className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-70"
               >
                 {loading ? (
                   lang === "ar" ? "جاري الإرسال..." : "Sending..."

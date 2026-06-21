@@ -23,9 +23,9 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 function LoadingFallback() {
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-[#071427]">
+    <div className="flex h-screen w-full items-center justify-center bg-[#050505]">
       <div className="flex flex-col items-center gap-4">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#00D4FF] border-t-transparent"></div>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#C0C0C0] border-t-transparent"></div>
         <p className="text-[#F8FAFC] font-semibold tracking-widest text-sm animate-pulse">LOADING...</p>
       </div>
     </div>

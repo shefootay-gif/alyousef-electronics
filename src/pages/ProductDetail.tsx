@@ -127,7 +127,7 @@ export default function ProductDetail() {
     return (
       <Layout>
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-28 text-center">
-          <h1 className="text-2xl font-bold text-[#1A2A44] mb-4">{t("productNotFound")}</h1>
+          <h1 className="text-2xl font-bold text-[#171717] mb-4">{t("productNotFound")}</h1>
           <Link to="/shop" className="text-[#D4AF37] hover:underline">
             {t("backToShop")}
           </Link>
@@ -152,7 +152,7 @@ export default function ProductDetail() {
               {lang === "ar" && product.category?.nameAr ? product.category.nameAr : product.category?.name}
             </Link>
             <ChevronRight className={`w-3 h-3 ${isRTL ? "rotate-180" : ""}`} />
-            <span className="text-[#1A2A44] font-medium">{displayName}</span>
+            <span className="text-[#171717] font-medium">{displayName}</span>
           </div>
         </div>
       </div>
@@ -171,7 +171,7 @@ export default function ProductDetail() {
 
           <div className="space-y-4">
             <p className="text-sm text-[#94A3B8] mb-2">{product.brand}</p>
-            <h1 className="text-3xl sm:text-4xl font-bold text-[#1A2A44] mb-3">
+            <h1 className="text-3xl sm:text-4xl font-bold text-[#171717] mb-3">
               {displayName}
             </h1>
 
@@ -217,7 +217,7 @@ export default function ProductDetail() {
             <p className="text-[#64748B] mb-6 leading-relaxed">{product.shortDescription}</p>
 
             <div className="flex items-center gap-4 mb-6">
-              <span className="text-sm font-semibold text-[#1A2A44]">{t("quantity")}</span>
+              <span className="text-sm font-semibold text-[#171717]">{t("quantity")}</span>
               <div className="flex items-center gap-2 bg-white rounded-xl shadow border border-[#E2E8F0]">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -239,7 +239,7 @@ export default function ProductDetail() {
               <button
                 onClick={handleAddToCart}
                 disabled={product.stockQuantity === 0}
-                className="flex-1 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#1A2A44] font-bold rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.5)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.5)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart
@@ -283,7 +283,7 @@ export default function ProductDetail() {
                 className={`px-6 py-3 text-sm font-semibold capitalize transition-all border-b-2 -mb-[1px] ${
                   activeTab === tab
                     ? "border-[#D4AF37] text-[#D4AF37]"
-                    : "border-transparent text-[#64748B] hover:text-[#1A2A44]"
+                    : "border-transparent text-[#64748B] hover:text-[#171717]"
                 }`}
               >
                 {tab === "description" ? t("description") : tab === "specs" ? t("specifications") : t("reviews")}
@@ -302,19 +302,19 @@ export default function ProductDetail() {
                 <table className="w-full text-sm">
                   <tbody className="divide-y divide-[#E2E8F0]">
                     <tr className="hover:bg-[#F8FAFC]">
-                      <td className="py-3 px-4 font-semibold text-[#1A2A44] w-1/3">{t("brand")}</td>
+                      <td className="py-3 px-4 font-semibold text-[#171717] w-1/3">{t("brand")}</td>
                       <td className="py-3 px-4 text-[#64748B]">{product.brand}</td>
                     </tr>
                     <tr className="hover:bg-[#F8FAFC]">
-                      <td className="py-3 px-4 font-semibold text-[#1A2A44]">{t("sku")}</td>
+                      <td className="py-3 px-4 font-semibold text-[#171717]">{t("sku")}</td>
                       <td className="py-3 px-4 text-[#64748B]">{product.sku || (lang === "ar" ? "غير متوفر" : "N/A")}</td>
                     </tr>
                     <tr className="hover:bg-[#F8FAFC]">
-                      <td className="py-3 px-4 font-semibold text-[#1A2A44]">{t("weight")}</td>
+                      <td className="py-3 px-4 font-semibold text-[#171717]">{t("weight")}</td>
                       <td className="py-3 px-4 text-[#64748B]">{product.weight ? `${product.weight}g` : (lang === "ar" ? "غير متوفر" : "N/A")}</td>
                     </tr>
                     <tr className="hover:bg-[#F8FAFC]">
-                      <td className="py-3 px-4 font-semibold text-[#1A2A44]">{t("stock")}</td>
+                      <td className="py-3 px-4 font-semibold text-[#171717]">{t("stock")}</td>
                       <td className="py-3 px-4 text-[#64748B]">{product.stockQuantity} {t("units")}</td>
                     </tr>
                   </tbody>
@@ -328,11 +328,11 @@ export default function ProductDetail() {
                     {product.reviews.map((review: any) => (
                       <div key={review.id} className="bg-white rounded-xl p-6 shadow-sm border border-[#E2E8F0]">
                         <div className="flex items-center gap-3 mb-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1A2A44] to-[#00D4FF] flex items-center justify-center text-white font-bold text-sm">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center text-white font-bold text-sm">
                             {(review.userName || "A")[0]}
                           </div>
                           <div>
-                            <p className="font-semibold text-[#1A2A44] text-sm">{review.userName || "Anonymous"}</p>
+                            <p className="font-semibold text-[#171717] text-sm">{review.userName || "Anonymous"}</p>
                             <div className="flex gap-0.5">
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <Star
@@ -357,7 +357,7 @@ export default function ProductDetail() {
             {activeTab === "reviews" && (
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="bg-white rounded-2xl p-6 border border-[#E2E8F0]">
-                  <h3 className="text-xl font-bold text-[#1A2A44] mb-6">
+                  <h3 className="text-xl font-bold text-[#171717] mb-6">
                     {lang === "ar" ? "تقييمات العملاء" : "Customer Reviews"}
                   </h3>
                   
@@ -369,11 +369,11 @@ export default function ProductDetail() {
                             {[1, 2, 3, 4, 5].map((star) => (
                               <Star key={star} className={`w-4 h-4 ${star <= r.rating ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#E2E8F0]"}`} />
                             ))}
-                            <span className="font-bold text-[#1A2A44] ml-2">{r.title}</span>
+                            <span className="font-bold text-[#171717] ml-2">{r.title}</span>
                           </div>
                           <p className="text-[#64748B] text-sm mb-2">{r.comment}</p>
                           <div className="flex items-center gap-2 text-xs text-[#94A3B8]">
-                            <span className="font-semibold text-[#1A2A44]">{r.userName || "مستخدم"}</span>
+                            <span className="font-semibold text-[#171717]">{r.userName || "مستخدم"}</span>
                             <span>•</span>
                             <span>{new Date(r.createdAt!).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US")}</span>
                           </div>
@@ -386,10 +386,10 @@ export default function ProductDetail() {
 
                   {user ? (
                     <div className="bg-[#F8FAFC] rounded-xl p-6 border border-[#E2E8F0]">
-                      <h4 className="font-bold text-[#1A2A44] mb-4">{lang === "ar" ? "أضف تقييمك" : "Add your review"}</h4>
+                      <h4 className="font-bold text-[#171717] mb-4">{lang === "ar" ? "أضف تقييمك" : "Add your review"}</h4>
                       <form onSubmit={handleReviewSubmit} className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-[#1A2A44] mb-2">{lang === "ar" ? "التقييم (من 5)" : "Rating (out of 5)"}</label>
+                          <label className="block text-sm font-medium text-[#171717] mb-2">{lang === "ar" ? "التقييم (من 5)" : "Rating (out of 5)"}</label>
                           <div className="flex gap-2">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <button type="button" key={star} onClick={() => setReviewForm({ ...reviewForm, rating: star })}>
@@ -404,7 +404,7 @@ export default function ProductDetail() {
                         <div>
                           <textarea placeholder={lang === "ar" ? "شاركنا رأيك في المنتج..." : "Share your thoughts..."} rows={4} className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#D4AF37] outline-none resize-none" value={reviewForm.comment} onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })} />
                         </div>
-                        <button disabled={submittingReview} type="submit" className="px-6 py-3 bg-[#1A2A44] text-white font-bold rounded-xl hover:bg-[#0D1E36] transition-colors flex items-center gap-2">
+                        <button disabled={submittingReview} type="submit" className="px-6 py-3 bg-[#171717] text-white font-bold rounded-xl hover:bg-[#0D1E36] transition-colors flex items-center gap-2">
                           <Send className="w-4 h-4" />
                           {lang === "ar" ? "إرسال التقييم" : "Submit Review"}
                         </button>
@@ -413,7 +413,7 @@ export default function ProductDetail() {
                   ) : (
                     <div className="bg-[#F8FAFC] rounded-xl p-6 border border-[#E2E8F0] text-center">
                       <p className="text-[#64748B] mb-4">{lang === "ar" ? "يجب تسجيل الدخول لإضافة تقييم." : "You must be logged in to leave a review."}</p>
-                      <Link to="/login" className="inline-block px-6 py-2 border-2 border-[#1A2A44] text-[#1A2A44] font-bold rounded-xl hover:bg-[#1A2A44] hover:text-white transition-colors">
+                      <Link to="/login" className="inline-block px-6 py-2 border-2 border-[#171717] text-[#171717] font-bold rounded-xl hover:bg-[#171717] hover:text-white transition-colors">
                         {lang === "ar" ? "تسجيل الدخول" : "Log In"}
                       </Link>
                     </div>
@@ -427,7 +427,7 @@ export default function ProductDetail() {
         {/* Related Products */}
         {relatedProducts?.items && relatedProducts.items.length > 0 && (
           <div className="mt-16">
-            <h2 className="text-2xl font-bold text-[#1A2A44] mb-8">
+            <h2 className="text-2xl font-bold text-[#171717] mb-8">
               {lang === "ar" ? (<>قد <span className="text-[#D4AF37]">يعجبك</span> أيضاً</>) : (<>You May Also <span className="text-[#D4AF37]">Like</span></>)}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -448,7 +448,7 @@ export default function ProductDetail() {
                       />
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-[#1A2A44] text-sm line-clamp-1">{p.name}</h3>
+                      <h3 className="font-semibold text-[#171717] text-sm line-clamp-1">{p.name}</h3>
                       <p className="text-[#D4AF37] font-bold mt-1">SAR {p.salePrice || p.price}</p>
                     </div>
                   </Link>

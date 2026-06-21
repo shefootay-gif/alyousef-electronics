@@ -19,7 +19,7 @@ export default function CartDrawer() {
       <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col animate-in slide-in-from-right duration-300">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[#E2E8F0]">
-          <h2 className="text-xl font-bold text-[#1A2A44]">Shopping Cart</h2>
+          <h2 className="text-xl font-bold text-[#171717]">Shopping Cart</h2>
           <button
             onClick={() => setIsOpen(false)}
             className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[#F1F5F9] transition-colors"
@@ -37,7 +37,7 @@ export default function CartDrawer() {
               <p className="text-[#94A3B8] text-sm mb-6">Add some products to get started</p>
               <button
                 onClick={() => setIsOpen(false)}
-                className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#1A2A44] font-bold rounded-xl hover:shadow-lg transition-all"
+                className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl hover:shadow-lg transition-all"
               >
                 Continue Shopping
               </button>
@@ -57,7 +57,7 @@ export default function CartDrawer() {
                   <Link
                     to={`/product/${item.product?.slug}`}
                     onClick={() => setIsOpen(false)}
-                    className="text-sm font-semibold text-[#1A2A44] hover:text-[#D4AF37] transition-colors line-clamp-1"
+                    className="text-sm font-semibold text-[#171717] hover:text-[#D4AF37] transition-colors line-clamp-1"
                   >
                     {item.product?.name}
                   </Link>
@@ -101,18 +101,18 @@ export default function CartDrawer() {
           <div className="p-6 border-t border-[#E2E8F0] space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-[#64748B]">Subtotal</span>
-              <span className="text-xl font-bold text-[#1A2A44]">SAR {total.toFixed(2)}</span>
+              <span className="text-xl font-bold text-[#171717]">SAR {total.toFixed(2)}</span>
             </div>
             <Link
               to="/cart"
               onClick={() => setIsOpen(false)}
-              className="block w-full py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#1A2A44] font-bold text-center rounded-xl hover:shadow-lg transition-all"
+              className="block w-full py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold text-center rounded-xl hover:shadow-lg transition-all"
             >
               View Cart
             </Link>
             <button
               onClick={() => setIsOpen(false)}
-              className="block w-full py-3 text-[#64748B] text-sm text-center hover:text-[#1A2A44] transition-colors"
+              className="block w-full py-3 text-[#64748B] text-sm text-center hover:text-[#171717] transition-colors"
             >
               Continue Shopping
             </button>

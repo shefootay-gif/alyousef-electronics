@@ -29,14 +29,14 @@ export default function BrandLogo({
           </linearGradient>
           <linearGradient id="alyousefCyan" x1="8" y1="8" x2="58" y2="58" gradientUnits="userSpaceOnUse">
             <stop stopColor="#6BEAFF" stopOpacity="0.9" />
-            <stop offset="1" stopColor="#00D4FF" stopOpacity="0" />
+            <stop offset="1" stopColor="#C0C0C0" stopOpacity="0" />
           </linearGradient>
         </defs>
         <rect x="10" y="9" width="44" height="46" rx="14" fill="#08162B" stroke="url(#alyousefGold)" strokeWidth="2.4" />
         <path d="M20 21h24c5 0 9 4 9 9v15" fill="none" stroke="url(#alyousefCyan)" strokeWidth="2.1" strokeLinecap="round" />
         <path d="M18 44h29c3.7 0 6.9 2.2 8.3 5.4l1.3 3H8.6l1.3-3A9 9 0 0 1 18 44Z" fill="#0D1E36" stroke="url(#alyousefGold)" strokeWidth="2.1" />
         <path d="M20.5 21.5 32 35.5 43.5 21.5M32 35.5V49" fill="none" stroke="url(#alyousefGold)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="49" cy="19" r="2" fill="#00D4FF" opacity="0.85" />
+        <circle cx="49" cy="19" r="2" fill="#C0C0C0" opacity="0.85" />
       </svg>
 
       {!isMark && (
@@ -48,7 +48,7 @@ export default function BrandLogo({
             ELECTRONICS
           </span>
           {showTagline && (
-            <span className="mt-2 block text-[0.68rem] font-medium tracking-[0.18em] text-[#00D4FF]">
+            <span className="mt-2 block text-[0.68rem] font-medium tracking-[0.18em] text-[#C0C0C0]">
               PREMIUM TECH STORE
             </span>
           )}

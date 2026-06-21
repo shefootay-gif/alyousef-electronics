@@ -44,7 +44,7 @@ export default function TrackOrder() {
 
   return (
     <Layout>
-      <div className="bg-gradient-to-r from-[#1A2A44] to-[#0F172A] pt-28 pb-12">
+      <div className="bg-gradient-to-r from-[#171717] to-[#0F172A] pt-28 pb-12">
         <div className="max-w-3xl mx-auto px-4 sm:px-8 text-center">
           <h1 className="text-3xl sm:text-4xl font-bold text-[#F8FAFC] mb-4">
             {lang === "ar" ? "تتبع طلبك" : "Track Your Order"}
@@ -59,7 +59,7 @@ export default function TrackOrder() {
         <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mb-8">
           <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-[#1A2A44] mb-1">
+              <label className="block text-sm font-medium text-[#171717] mb-1">
                 {lang === "ar" ? "رقم الطلب" : "Order Number"}
               </label>
               <input
@@ -72,7 +72,7 @@ export default function TrackOrder() {
               />
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-[#1A2A44] mb-1">
+              <label className="block text-sm font-medium text-[#171717] mb-1">
                 {lang === "ar" ? "رقم الجوال" : "Phone Number"}
               </label>
               <input
@@ -88,7 +88,7 @@ export default function TrackOrder() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#1A2A44] font-bold rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Search className="w-5 h-5" />
                 {lang === "ar" ? "تتبع" : "Track"}
@@ -120,7 +120,7 @@ export default function TrackOrder() {
             <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
-                  <h2 className="text-xl font-bold text-[#1A2A44] mb-1">
+                  <h2 className="text-xl font-bold text-[#171717] mb-1">
                     {lang === "ar" ? "تفاصيل الطلب" : "Order Details"}
                   </h2>
                   <p className="text-[#64748B]">#{order.orderNumber}</p>
@@ -129,7 +129,7 @@ export default function TrackOrder() {
                   <p className="text-sm text-[#64748B] mb-1">
                     {lang === "ar" ? "تاريخ الطلب" : "Order Date"}
                   </p>
-                  <p className="font-semibold text-[#1A2A44]">
+                  <p className="font-semibold text-[#171717]">
                     {new Date(order.createdAt).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US", {
                       year: "numeric", month: "long", day: "numeric"
                     })}
@@ -154,7 +154,7 @@ export default function TrackOrder() {
                           {stepStatus === "completed" ? <CheckCircle2 className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
                         </div>
                         <span className={`text-xs sm:text-sm font-semibold text-center hidden sm:block ${
-                          stepStatus === "completed" || stepStatus === "current" ? "text-[#1A2A44]" : "text-[#94A3B8]"
+                          stepStatus === "completed" || stepStatus === "current" ? "text-[#171717]" : "text-[#94A3B8]"
                         }`}>
                           {lang === "ar" ? s.labelAr : s.label}
                         </span>
@@ -178,12 +178,12 @@ export default function TrackOrder() {
               {/* Order Summary */}
               <div className="grid sm:grid-cols-2 gap-8 border-t border-[#E2E8F0] pt-8">
                 <div>
-                  <h3 className="font-bold text-[#1A2A44] mb-4 flex items-center gap-2">
+                  <h3 className="font-bold text-[#171717] mb-4 flex items-center gap-2">
                     <MapPin className="w-5 h-5 text-[#D4AF37]" />
                     {lang === "ar" ? "عنوان الشحن" : "Shipping Address"}
                   </h3>
                   <div className="bg-[#F8FAFC] p-4 rounded-xl space-y-1">
-                    <p className="font-semibold text-[#1A2A44]">
+                    <p className="font-semibold text-[#171717]">
                       {order.shippingAddress?.firstName} {order.shippingAddress?.lastName}
                     </p>
                     <p className="text-sm text-[#64748B]">{order.shippingAddress?.phone}</p>
@@ -192,7 +192,7 @@ export default function TrackOrder() {
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1A2A44] mb-4 flex items-center gap-2">
+                  <h3 className="font-bold text-[#171717] mb-4 flex items-center gap-2">
                     <Package className="w-5 h-5 text-[#D4AF37]" />
                     {lang === "ar" ? "المنتجات" : "Items"}
                   </h3>
@@ -201,7 +201,7 @@ export default function TrackOrder() {
                       <div key={item.id} className="flex items-center gap-3">
                         <img src={item.productImage || "/placeholder.png"} alt="" className="w-12 h-12 object-contain rounded bg-white" />
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-[#1A2A44] line-clamp-1">{item.productName}</p>
+                          <p className="text-sm font-medium text-[#171717] line-clamp-1">{item.productName}</p>
                           <p className="text-xs text-[#94A3B8]">Qty: {item.quantity}</p>
                         </div>
                       </div>

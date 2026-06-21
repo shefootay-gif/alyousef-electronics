@@ -19,10 +19,10 @@ export default function Footer() {
   const { lang, t } = useLanguage();
 
   return (
-    <footer className="bg-[#071427] pt-16 pb-8 relative overflow-hidden">
+    <footer className="bg-[#050505] pt-16 pb-8 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none opacity-70">
         <div className="absolute -top-24 right-10 h-72 w-72 rounded-full bg-[#D4AF37]/10 blur-3xl" />
-        <div className="absolute bottom-0 left-10 h-72 w-72 rounded-full bg-[#00D4FF]/10 blur-3xl" />
+        <div className="absolute bottom-0 left-10 h-72 w-72 rounded-full bg-[#C0C0C0]/10 blur-3xl" />
       </div>
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
@@ -111,9 +111,9 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder={lang === "ar" ? "بريدك الإلكتروني" : "Your email"}
-                className="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-[#F8FAFC] placeholder-[#64748B] text-sm focus:outline-none focus:border-[#00D4FF]"
+                className="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-[#F8FAFC] placeholder-[#64748B] text-sm focus:outline-none focus:border-[#C0C0C0]"
               />
-              <button className="px-4 py-2 bg-gradient-to-r from-[#00D4FF] to-[#0099CC] text-white rounded-lg hover:shadow-lg transition-all">
+              <button className="px-4 py-2 bg-gradient-to-r from-[#C0C0C0] to-[#0099CC] text-white rounded-lg hover:shadow-lg transition-all">
                 <Mail className="w-4 h-4" />
               </button>
             </div>
