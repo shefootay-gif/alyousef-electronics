@@ -1,7 +1,7 @@
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import type { User } from "@db/schema";
 import { env } from "./lib/env";
-import { verify } from "hono/jwt";
+import { verifySessionToken } from "./kimi/session";
 import * as cookie from "cookie";
 import { findUserByEmail } from "./queries/users";
 import { getDb } from "./queries/connection";
@@ -24,7 +24,7 @@ export async function createContext(
       // Try 'kimi_sid' (Local Auth) first, then 'token' (Google Auth)
       const token = parsed["kimi_sid"] || parsed["token"];
       if (token) {
-        const payload = await verify(token, env.jwtSecret);
+        const payload = await verifySessionToken(token);
         if (payload && payload.unionId) {
           const db = getDb();
           const userRecords = await db.select().from(users).where(eq(users.unionId, payload.unionId as string)).limit(1);
