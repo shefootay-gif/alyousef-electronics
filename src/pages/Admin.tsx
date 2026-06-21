@@ -412,7 +412,16 @@ function OrdersManagement() {
             {ordersData?.items?.map((order: any) => (
               <tr key={order.id} className="hover:bg-[#F8FAFC]">
                 <td className="py-3 px-4 font-medium">{order.orderNumber}</td>
-                <td className="py-3 px-4 text-[#64748B]">{order.shippingAddress?.fullName || "Guest"}</td>
+                <td className="py-3 px-4">
+                  <div className="font-medium text-[#1A2A44]">
+                    {order.shippingAddress?.firstName} {order.shippingAddress?.lastName}
+                  </div>
+                  <div className="text-xs text-[#64748B] mt-1 space-y-0.5">
+                    <p>{order.shippingAddress?.phone}</p>
+                    <p>{order.shippingAddress?.district}, {order.shippingAddress?.city}</p>
+                    <p>{order.shippingAddress?.streetAddress} {order.shippingAddress?.buildingNumber ? `- ${order.shippingAddress.buildingNumber}` : ''}</p>
+                  </div>
+                </td>
                 <td className="py-3 px-4 font-semibold text-[#D4AF37]">SAR {Number(order.total).toFixed(2)}</td>
                 <td className="py-3 px-4">
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${orderStatusColors[order.status] || ""}`}>

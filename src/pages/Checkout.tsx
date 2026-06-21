@@ -26,9 +26,12 @@ export default function Checkout() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [shippingData, setShippingData] = useState({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     phone: "",
-    address: "",
+    district: "",
+    streetAddress: "",
+    buildingNumber: "",
     city: "",
     postalCode: "",
   });
@@ -52,16 +55,19 @@ export default function Checkout() {
   const grandTotal = total + shipping + tax;
 
   const handlePlaceOrder = () => {
-    if (!shippingData.fullName || !shippingData.phone || !shippingData.address || !shippingData.city) {
-      toast.error("Please fill in all shipping details");
+    if (!shippingData.firstName || !shippingData.lastName || !shippingData.phone || !shippingData.streetAddress || !shippingData.city || !shippingData.district) {
+      toast.error("Please fill in all required shipping details");
       return;
     }
     setIsSubmitting(true);
     createOrder.mutate({
       shippingAddress: {
-        fullName: shippingData.fullName,
+        firstName: shippingData.firstName,
+        lastName: shippingData.lastName,
         phone: shippingData.phone,
-        address: shippingData.address,
+        streetAddress: shippingData.streetAddress,
+        buildingNumber: shippingData.buildingNumber,
+        district: shippingData.district,
         city: shippingData.city,
         postalCode: shippingData.postalCode || undefined,
         country: "Saudi Arabia",
@@ -145,14 +151,24 @@ export default function Checkout() {
               <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
                 <h2 className="text-xl font-bold text-[#1A2A44] mb-6">Shipping Information</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-[#1A2A44] mb-1">Full Name *</label>
+                  <div className="sm:col-span-1">
+                    <label className="block text-sm font-medium text-[#1A2A44] mb-1">First Name *</label>
                     <input
                       type="text"
-                      value={shippingData.fullName}
-                      onChange={(e) => setShippingData({ ...shippingData, fullName: e.target.value })}
+                      value={shippingData.firstName}
+                      onChange={(e) => setShippingData({ ...shippingData, firstName: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#00D4FF] focus:outline-none transition-colors"
-                      placeholder="Your full name"
+                      placeholder="e.g. Ahmed"
+                    />
+                  </div>
+                  <div className="sm:col-span-1">
+                    <label className="block text-sm font-medium text-[#1A2A44] mb-1">Last Name *</label>
+                    <input
+                      type="text"
+                      value={shippingData.lastName}
+                      onChange={(e) => setShippingData({ ...shippingData, lastName: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#00D4FF] focus:outline-none transition-colors"
+                      placeholder="e.g. Al-Rashid"
                     />
                   </div>
                   <div>
@@ -186,13 +202,33 @@ export default function Checkout() {
                     </select>
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-[#1A2A44] mb-1">Address *</label>
+                    <label className="block text-sm font-medium text-[#1A2A44] mb-1">District *</label>
+                    <input
+                      type="text"
+                      value={shippingData.district}
+                      onChange={(e) => setShippingData({ ...shippingData, district: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#00D4FF] focus:outline-none transition-colors"
+                      placeholder="e.g. Al-Olaya District"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-[#1A2A44] mb-1">Street Address *</label>
                     <textarea
-                      value={shippingData.address}
-                      onChange={(e) => setShippingData({ ...shippingData, address: e.target.value })}
+                      value={shippingData.streetAddress}
+                      onChange={(e) => setShippingData({ ...shippingData, streetAddress: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#00D4FF] focus:outline-none transition-colors resize-none"
-                      rows={3}
-                      placeholder="Street address, building, apartment"
+                      rows={2}
+                      placeholder="Street name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#1A2A44] mb-1">Building / Apartment</label>
+                    <input
+                      type="text"
+                      value={shippingData.buildingNumber}
+                      onChange={(e) => setShippingData({ ...shippingData, buildingNumber: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#00D4FF] focus:outline-none transition-colors"
+                      placeholder="e.g. Building 12, Apt 4"
                     />
                   </div>
                   <div>
@@ -208,7 +244,7 @@ export default function Checkout() {
                 </div>
                 <button
                   onClick={() => {
-                    if (!shippingData.fullName || !shippingData.phone || !shippingData.address || !shippingData.city) {
+                    if (!shippingData.firstName || !shippingData.lastName || !shippingData.phone || !shippingData.streetAddress || !shippingData.district || !shippingData.city) {
                       toast.error("Please fill in all required fields");
                       return;
                     }
@@ -283,10 +319,10 @@ export default function Checkout() {
                 {/* Shipping Summary */}
                 <div className="mb-6 p-4 bg-[#F8FAFC] rounded-xl">
                   <h3 className="font-semibold text-[#1A2A44] mb-2">Shipping To</h3>
-                  <p className="text-sm text-[#64748B]">{shippingData.fullName}</p>
+                  <p className="text-sm text-[#64748B]">{shippingData.firstName} {shippingData.lastName}</p>
                   <p className="text-sm text-[#64748B]">{shippingData.phone}</p>
-                  <p className="text-sm text-[#64748B]">{shippingData.address}</p>
-                  <p className="text-sm text-[#64748B]">{shippingData.city}, Saudi Arabia</p>
+                  <p className="text-sm text-[#64748B]">{shippingData.streetAddress}</p>
+                  <p className="text-sm text-[#64748B]">{shippingData.district}, {shippingData.city}, Saudi Arabia</p>
                 </div>
 
                 {/* Payment Summary */}

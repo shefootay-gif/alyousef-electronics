@@ -106,10 +106,13 @@ export const orderRouter = createRouter({
     .input(
       z.object({
         shippingAddress: z.object({
-          fullName: z.string(),
+          firstName: z.string(),
+          lastName: z.string(),
           phone: z.string(),
-          address: z.string(),
           city: z.string(),
+          district: z.string(),
+          streetAddress: z.string(),
+          buildingNumber: z.string().optional(),
           postalCode: z.string().optional(),
           country: z.string().default("Saudi Arabia"),
         }),
@@ -181,10 +184,13 @@ export const orderRouter = createRouter({
       const total = subtotal + shippingAmount + taxAmount;
 
       const shippingAddr: any = {
-        fullName: input.shippingAddress.fullName,
+        firstName: input.shippingAddress.firstName,
+        lastName: input.shippingAddress.lastName,
         phone: input.shippingAddress.phone,
-        address: input.shippingAddress.address,
         city: input.shippingAddress.city,
+        district: input.shippingAddress.district,
+        streetAddress: input.shippingAddress.streetAddress,
+        buildingNumber: input.shippingAddress.buildingNumber,
         country: input.shippingAddress.country,
       };
       if (input.shippingAddress.postalCode) {
@@ -307,5 +313,30 @@ export const orderRouter = createRouter({
         .limit(1);
 
       return updated;
+    }),
+  trackOrder: publicQuery
+    .input(z.object({ orderNumber: z.string(), phone: z.string() }))
+    .query(async ({ input }) => {
+      const db = getDb();
+      const [order] = await db
+        .select()
+        .from(orders)
+        .where(eq(orders.orderNumber, input.orderNumber))
+        .limit(1);
+
+      if (!order) return null;
+
+      // Verify the phone number matches the order's shipping address
+      const address = order.shippingAddress as any;
+      if (address?.phone !== input.phone) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Phone number does not match" });
+      }
+
+      const items = await db
+        .select()
+        .from(orderItems)
+        .where(eq(orderItems.orderId, order.id));
+
+      return { ...order, items };
     }),
 });

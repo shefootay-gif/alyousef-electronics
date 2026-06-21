@@ -12,6 +12,7 @@ import ReturnPolicy from "./pages/ReturnPolicy";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
 import Contact from "./pages/Contact";
+import TrackOrder from "./pages/TrackOrder";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import TrackingPixels from "./components/TrackingPixels";
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/track-order" element={<TrackOrder />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/login" element={<Login />} />

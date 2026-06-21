@@ -93,6 +93,13 @@ export default function Navbar() {
               {t("shop")}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#D4AF37] transition-all group-hover:w-full" />
             </Link>
+            <Link
+              to="/track-order"
+              className="text-[#F8FAFC] hover:text-[#D4AF37] transition-colors text-sm font-medium relative group"
+            >
+              {lang === "ar" ? "تتبع الطلب" : "Track Order"}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#D4AF37] transition-all group-hover:w-full" />
+            </Link>
             <div className="relative group">
               <button className="text-[#F8FAFC] hover:text-[#D4AF37] transition-colors text-sm font-medium flex items-center gap-1">
                 {t("categories")}
@@ -220,6 +227,12 @@ export default function Navbar() {
                   >
                     {t("myOrders")}
                   </Link>
+                  <Link
+                    to="/track-order"
+                    className="block px-4 py-3 text-sm text-[#1A2A44] hover:bg-[#F1F5F9] transition-colors"
+                  >
+                    {lang === "ar" ? "تتبع الطلب" : "Track Order"}
+                  </Link>
                   <button
                     onClick={logout}
                     className="block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-[#F1F5F9] transition-colors"
@@ -257,6 +270,9 @@ export default function Navbar() {
             </Link>
             <Link to="/shop" className="block text-[#F8FAFC] hover:text-[#D4AF37] py-2 text-lg font-medium">
               {t("shop")}
+            </Link>
+            <Link to="/track-order" className="block text-[#F8FAFC] hover:text-[#D4AF37] py-2 text-lg font-medium">
+              {lang === "ar" ? "تتبع الطلب" : "Track Order"}
             </Link>
             <div className="py-2">
               <p className="text-[#94A3B8] text-sm mb-2">{t("categories")}</p>
