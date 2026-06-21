@@ -11,12 +11,14 @@ export type TrpcContext = {
   req: Request;
   resHeaders: Headers;
   user?: User;
+  guestId?: string;
 };
 
 export async function createContext(
   opts: FetchCreateContextFnOptions,
 ): Promise<TrpcContext> {
-  const ctx: TrpcContext = { req: opts.req, resHeaders: opts.resHeaders };
+  const guestId = opts.req.headers.get("x-guest-id") || undefined;
+  const ctx: TrpcContext = { req: opts.req, resHeaders: opts.resHeaders, guestId };
   try {
     const cookieHeader = opts.req.headers.get("cookie");
     if (cookieHeader) {

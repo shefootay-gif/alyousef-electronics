@@ -16,10 +16,11 @@ export const cartRouter = createRouter({
         .from(cartItems)
         .where(eq(cartItems.userId, userId));
     } else {
+      if (!ctx.guestId) return { items: [], total: 0, itemCount: 0 };
       items = await db
         .select()
         .from(cartItems)
-        .where(isNotNull(cartItems.sessionId));
+        .where(eq(cartItems.sessionId, ctx.guestId));
     }
 
     // Get all products
@@ -57,7 +58,11 @@ export const cartRouter = createRouter({
     .mutation(async ({ ctx, input }) => {
       const db = getDb();
       const userId = ctx.user?.id;
-      const sessionId = userId ? undefined : "guest_session";
+      const sessionId = userId ? undefined : ctx.guestId;
+
+      if (!userId && !sessionId) {
+        throw new Error("No session id for guest");
+      }
 
       // Check if item already in cart
       let existing;
@@ -78,7 +83,7 @@ export const cartRouter = createRouter({
           .from(cartItems)
           .where(
             and(
-              isNotNull(cartItems.sessionId),
+              eq(cartItems.sessionId, sessionId as string),
               eq(cartItems.productId, input.productId)
             )
           )
@@ -142,8 +147,8 @@ export const cartRouter = createRouter({
 
     if (userId) {
       await db.delete(cartItems).where(eq(cartItems.userId, userId));
-    } else {
-      await db.delete(cartItems).where(isNotNull(cartItems.sessionId));
+    } else if (ctx.guestId) {
+      await db.delete(cartItems).where(eq(cartItems.sessionId, ctx.guestId));
     }
 
     return { success: true };

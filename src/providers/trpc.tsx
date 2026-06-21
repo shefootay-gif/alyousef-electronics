@@ -8,11 +8,25 @@ import type { ReactNode } from "react";
 export const trpc = createTRPCReact<AppRouter>();
 
 const queryClient = new QueryClient();
+let guestId = "";
+if (typeof window !== "undefined") {
+  guestId = localStorage.getItem("guest_id") || "";
+  if (!guestId) {
+    guestId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    localStorage.setItem("guest_id", guestId);
+  }
+}
+
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
       url: "/api/trpc",
       transformer: superjson,
+      headers() {
+        return {
+          "x-guest-id": guestId,
+        };
+      },
       fetch(input, init) {
         return globalThis.fetch(input, {
           ...(init ?? {}),
