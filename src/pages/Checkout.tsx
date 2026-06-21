@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { z } from "zod";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const steps = [
   { id: "shipping", label: "Shipping", icon: Truck },
@@ -24,6 +26,7 @@ export default function Checkout() {
   const { items, total, clearCart } = useCart();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t, lang } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -57,10 +60,21 @@ export default function Checkout() {
   const grandTotal = total + shipping + tax;
 
   const handlePlaceOrder = () => {
-    if (!shippingData.firstName || !shippingData.lastName || !shippingData.phone || !shippingData.streetAddress || !shippingData.city || !shippingData.district) {
-      toast.error("Please fill in all required shipping details");
+    const shippingSchema = z.object({
+      firstName: z.string().min(2, lang === "ar" ? "الاسم الأول قصير جداً" : "First name is too short"),
+      lastName: z.string().min(2, lang === "ar" ? "اسم العائلة قصير جداً" : "Last name is too short"),
+      phone: z.string().regex(/^(05)(5|0|3|6|4|9|1|8|7)([0-9]{7})$/, lang === "ar" ? "يجب أن يكون رقم الجوال سعودياً يبدأ بـ 05 ويتكون من 10 أرقام" : "Phone number must be a valid Saudi number starting with 05"),
+      city: z.string().min(2, lang === "ar" ? "المدينة مطلوبة" : "City is required"),
+      district: z.string().min(2, lang === "ar" ? "الحي مطلوب" : "District is required"),
+      streetAddress: z.string().min(5, lang === "ar" ? "العنوان بالتفصيل مطلوب" : "Street address is required"),
+    });
+
+    const result = shippingSchema.safeParse(shippingData);
+    if (!result.success) {
+      toast.error(result.error.errors[0].message);
       return;
     }
+
     setIsSubmitting(true);
     createOrder.mutate({
       shippingAddress: {

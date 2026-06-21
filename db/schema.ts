@@ -5,7 +5,8 @@ import {
   serial,
   timestamp,
   boolean,
-  jsonb
+  jsonb,
+  index
 } from "drizzle-orm/pg-core";
 
 // Users table (managed by auth system, extended with role)
@@ -43,7 +44,9 @@ export const categories = pgTable("categories", {
   isActive: boolean("isActive").default(true),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().$onUpdate(() => new Date()),
-});
+}, (table) => ({
+  slugIdx: index("category_slug_idx").on(table.slug),
+}));
 
 export type Category = typeof categories.$inferSelect;
 
@@ -81,7 +84,10 @@ export const products = pgTable("products", {
   dimensions: jsonb("dimensions").$type<{ length: number; width: number; height: number }>(),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().$onUpdate(() => new Date()),
-});
+}, (table) => ({
+  slugIdx: index("product_slug_idx").on(table.slug),
+  categoryIdx: index("product_category_idx").on(table.categoryId),
+}));
 
 export type Product = typeof products.$inferSelect;
 
@@ -126,7 +132,10 @@ export const orders = pgTable("orders", {
   trackingNumber: text("trackingNumber"),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().$onUpdate(() => new Date()),
-});
+}, (table) => ({
+  orderNumberIdx: index("order_number_idx").on(table.orderNumber),
+  userIdIdx: index("order_user_id_idx").on(table.userId),
+}));
 
 export type Order = typeof orders.$inferSelect;
 
