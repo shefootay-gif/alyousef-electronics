@@ -542,7 +542,16 @@ export default function Admin() {
   const { user, isLoading, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setSidebarOpen(window.innerWidth >= 1024);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   if (isLoading) {
     return (
@@ -574,10 +583,18 @@ export default function Admin() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9] flex">
+    <div className="min-h-screen bg-[#F1F5F9] flex relative">
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden" 
+          onClick={() => setSidebarOpen(false)} 
+        />
+      )}
+
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 ${isRTL ? "right-0" : "left-0"} z-40 bg-[#0F172A] transition-all duration-300 ${
+        className={`fixed lg:static inset-y-0 ${isRTL ? "right-0" : "left-0"} z-50 bg-[#0F172A] transition-all duration-300 ${
           sidebarOpen ? "w-64" : "w-0 lg:w-20"
         } overflow-hidden`}
       >
@@ -597,7 +614,10 @@ export default function Admin() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    if (window.innerWidth < 1024) setSidebarOpen(false);
+                  }}
                   className={`w-full flex items-center gap-3 px-6 py-3 transition-all ${
                     activeTab === tab.id
                       ? `bg-white/10 text-[#D4AF37] ${isRTL ? "border-r-2" : "border-l-2"} border-[#D4AF37]`
