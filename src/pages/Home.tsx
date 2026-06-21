@@ -188,6 +188,7 @@ function ProductCard({ product }: { product: any }) {
           <img
             src={product.image || "/placeholder.png"}
             alt={displayName}
+            loading="lazy"
             className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
           />
         </Link>
@@ -205,6 +206,7 @@ function ProductCard({ product }: { product: any }) {
 
         <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
+            aria-label={t("addToFavorites") || "Add to favorites"}
             onClick={() => setLiked(!liked)}
             className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
               liked ? "bg-red-500 text-white" : "bg-white text-[#64748B] hover:text-red-500"
@@ -390,7 +392,7 @@ function FeaturesBar() {
                 {f.icon}
               </div>
               <div>
-                <h4 className="text-base font-semibold text-[#1A2A44]">{f.title}</h4>
+                <h3 className="text-base font-semibold text-[#1A2A44]">{f.title}</h3>
                 <p className="text-sm text-[#94A3B8]">{f.desc}</p>
               </div>
             </div>

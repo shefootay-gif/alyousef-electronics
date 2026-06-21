@@ -192,6 +192,7 @@ export default function Navbar() {
 
             {/* Cart */}
             <button
+              aria-label={t("cart") || "Cart"}
               onClick={() => setIsOpen(true)}
               className="relative w-10 h-10 rounded-full flex items-center justify-center text-[#F8FAFC] hover:text-[#D4AF37] hover:bg-white/10 transition-all"
             >
@@ -206,7 +207,7 @@ export default function Navbar() {
             {/* User */}
             {user ? (
               <div className="relative group">
-                <button className="w-10 h-10 rounded-full flex items-center justify-center text-[#F8FAFC] hover:text-[#D4AF37] hover:bg-white/10 transition-all">
+                <button aria-label="User Menu" className="w-10 h-10 rounded-full flex items-center justify-center text-[#F8FAFC] hover:text-[#D4AF37] hover:bg-white/10 transition-all">
                   <User className="w-5 h-5" />
                 </button>
                 <div className={`absolute ${isRTL ? "left-0" : "right-0"} top-full mt-2 w-48 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden`}>
@@ -244,6 +245,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
+                aria-label="Login"
                 className="w-10 h-10 rounded-full flex items-center justify-center text-[#F8FAFC] hover:text-[#D4AF37] hover:bg-white/10 transition-all"
               >
                 <User className="w-5 h-5" />
@@ -252,6 +254,7 @@ export default function Navbar() {
 
             {/* Mobile menu button */}
             <button
+              aria-label="Mobile Menu"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden w-10 h-10 rounded-full flex items-center justify-center text-[#F8FAFC] hover:bg-white/10 transition-all"
             >
