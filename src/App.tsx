@@ -11,10 +11,12 @@ import About from "./pages/About";
 import ReturnPolicy from "./pages/ReturnPolicy";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import TrackingPixels from "./components/TrackingPixels";
 
 export default function App() {
   return (
     <CartProvider>
+      <TrackingPixels />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />

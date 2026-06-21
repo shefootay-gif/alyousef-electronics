@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { useAuth } from "@/hooks/useAuth";
@@ -448,11 +448,17 @@ function SettingsPage() {
   const { t } = useLanguage();
   const utils = trpc.useUtils();
   const { data: contactLinks } = trpc.settings.getContactLinks.useQuery();
+  const { data: settings } = trpc.settings.get.useQuery();
   const [links, setLinks] = useState<any>({});
+  const [pixels, setPixels] = useState<any>({});
 
   useState(() => {
     if (contactLinks) setLinks(contactLinks);
   });
+
+  useEffect(() => {
+    if (settings?.trackingPixels) setPixels(settings.trackingPixels);
+  }, [settings]);
 
   const updateSettings = trpc.settings.update.useMutation({
     onSuccess: () => {
@@ -463,6 +469,7 @@ function SettingsPage() {
 
   const handleSave = () => {
     updateSettings.mutate({ key: "contactLinks", value: links });
+    updateSettings.mutate({ key: "trackingPixels", value: pixels });
   };
 
   return (
@@ -484,6 +491,31 @@ function SettingsPage() {
         <button onClick={handleSave} className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#1A2A44] font-bold rounded-xl hover:shadow-lg transition-all">
           {t("saveSettings")}
         </button>
+      </div>
+
+      <div className="mt-10 border-t border-[#E2E8F0] pt-8">
+        <h3 className="text-lg font-bold text-[#1A2A44] mb-6">أدوات التتبع (Pixels)</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-[#1A2A44] mb-1">Facebook Pixel ID</label>
+            <input type="text" value={pixels.facebookPixelId || ""} onChange={(e) => setPixels({ ...pixels, facebookPixelId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#00D4FF]" placeholder="مثال: 123456789012345" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[#1A2A44] mb-1">TikTok Pixel ID</label>
+            <input type="text" value={pixels.tiktokPixelId || ""} onChange={(e) => setPixels({ ...pixels, tiktokPixelId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#00D4FF]" placeholder="مثال: C1234567890" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[#1A2A44] mb-1">Snapchat Pixel ID</label>
+            <input type="text" value={pixels.snapchatPixelId || ""} onChange={(e) => setPixels({ ...pixels, snapchatPixelId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#00D4FF]" placeholder="مثال: 12345678-1234-1234-1234-123456789012" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[#1A2A44] mb-1">Google Analytics ID (G-XXXX)</label>
+            <input type="text" value={pixels.googleAnalyticsId || ""} onChange={(e) => setPixels({ ...pixels, googleAnalyticsId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#00D4FF]" placeholder="مثال: G-ABC123XYZ" />
+          </div>
+          <button onClick={handleSave} className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#1A2A44] font-bold rounded-xl hover:shadow-lg transition-all">
+            حفظ إعدادات التتبع
+          </button>
+        </div>
       </div>
     </div>
   );
