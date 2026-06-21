@@ -1,7 +1,12 @@
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import type { User } from "@db/schema";
-import { authenticateRequest } from "./kimi/auth";
-
+import { env } from "./lib/env";
+import { verify } from "hono/jwt";
+import * as cookie from "cookie";
+import { findUserByEmail } from "./queries/users";
+import { getDb } from "./queries/connection";
+import { users } from "@db/schema";
+import { eq } from "drizzle-orm";
 export type TrpcContext = {
   req: Request;
   resHeaders: Headers;
@@ -13,8 +18,23 @@ export async function createContext(
 ): Promise<TrpcContext> {
   const ctx: TrpcContext = { req: opts.req, resHeaders: opts.resHeaders };
   try {
-    ctx.user = await authenticateRequest(opts.req.headers);
-  } catch {
+    const cookieHeader = opts.req.headers.get("cookie");
+    if (cookieHeader) {
+      const parsed = cookie.parse(cookieHeader);
+      // Try 'token' (Google Auth) or 'kimi_sid' (Local Auth)
+      const token = parsed["token"] || parsed["kimi_sid"];
+      if (token) {
+        const payload = await verify(token, env.jwtSecret);
+        if (payload && payload.unionId) {
+          const db = getDb();
+          const userRecords = await db.select().from(users).where(eq(users.unionId, payload.unionId as string)).limit(1);
+          if (userRecords.length > 0) {
+            ctx.user = userRecords[0];
+          }
+        }
+      }
+    }
+  } catch (error) {
     // Authentication is optional here
   }
   return ctx;

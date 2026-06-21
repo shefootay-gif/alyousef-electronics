@@ -6,7 +6,6 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "./router";
 import { createContext } from "./context";
 import { env } from "./lib/env";
-import { createOAuthCallbackHandler } from "./kimi/auth";
 import { Paths } from "@contracts/constants";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
@@ -58,7 +57,6 @@ app.post("/api/webhooks/payment", async (c) => {
   }
 });
 
-app.get(Paths.oauthCallback, createOAuthCallbackHandler());
 
 app.get("/api/seed", async (c) => {
   try {
