@@ -43,18 +43,15 @@ app.post("/api/upload", async (c) => {
 app.post("/api/webhooks/payment", async (c) => {
   try {
     const payload = await c.req.json();
-    // Validate signature here
-    // e.g. const sig = c.req.header("stripe-signature");
-    
     console.log("Received payment webhook:", payload);
-    
-    // Process payment status update in database
-    // if (payload.type === 'payment_intent.succeeded') { ... }
-
     return c.json({ received: true });
   } catch (err) {
     return c.json({ error: "Webhook Error" }, 400);
   }
+});
+
+app.get("/api/health", (c) => {
+  return c.json({ status: "ok", message: "Server is awake!" }, 200);
 });
 
 
