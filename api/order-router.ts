@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { getDb } from "./queries/connection";
 import { orders, orderItems, products } from "@db/schema";
 import { eq, desc, sql, and } from "drizzle-orm";
+import { sendOrderConfirmation, sendOrderStatusUpdate } from "./lib/email";
 
 function generateOrderNumber(): string {
   const prefix = "AYE";
@@ -108,6 +109,7 @@ export const orderRouter = createRouter({
         shippingAddress: z.object({
           firstName: z.string(),
           lastName: z.string(),
+          email: z.string().email().optional(),
           phone: z.string(),
           city: z.string(),
           district: z.string(),
@@ -186,6 +188,7 @@ export const orderRouter = createRouter({
       const shippingAddr: any = {
         firstName: input.shippingAddress.firstName,
         lastName: input.shippingAddress.lastName,
+        email: input.shippingAddress.email,
         phone: input.shippingAddress.phone,
         city: input.shippingAddress.city,
         district: input.shippingAddress.district,
@@ -232,6 +235,18 @@ export const orderRouter = createRouter({
           .update(products)
           .set({ stockQuantity: sql`${products.stockQuantity} - ${item.quantity}` })
           .where(eq(products.id, item.productId));
+      }
+
+      if (input.shippingAddress.email) {
+        await sendOrderConfirmation(input.shippingAddress.email, {
+          orderNumber,
+          total: total.toFixed(2),
+          items: verifiedItems.map(item => ({
+            name: item.productName,
+            quantity: item.quantity,
+            price: item.unitPrice
+          }))
+        });
       }
 
       return { id: orderId, orderNumber, total: total.toFixed(2) };

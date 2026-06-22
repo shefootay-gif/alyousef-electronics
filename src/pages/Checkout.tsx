@@ -33,6 +33,7 @@ export default function Checkout() {
   const [shippingData, setShippingData] = useState({
     firstName: user?.name ? user.name.split(" ")[0] : "",
     lastName: user?.name && user.name.split(" ").length > 1 ? user.name.split(" ").slice(1).join(" ") : "",
+    email: user?.email || "",
     phone: user?.phone || "",
     district: "",
     streetAddress: "",
@@ -63,6 +64,7 @@ export default function Checkout() {
     const shippingSchema = z.object({
       firstName: z.string().min(2, lang === "ar" ? "الاسم الأول قصير جداً" : "First name is too short"),
       lastName: z.string().min(2, lang === "ar" ? "اسم العائلة قصير جداً" : "Last name is too short"),
+      email: z.string().email(lang === "ar" ? "البريد الإلكتروني غير صالح" : "Invalid email address"),
       phone: z.string().regex(/^(01)(0|1|2|5)([0-9]{8})$/, lang === "ar" ? "يجب أن يكون رقم الهاتف مصري صالح يبدأ بـ 01 ويتكون من 11 رقماً" : "Phone number must be a valid Egyptian number starting with 01"),
       city: z.string().min(2, lang === "ar" ? "المدينة مطلوبة" : "City is required"),
       district: z.string().min(2, lang === "ar" ? "الحي مطلوب" : "District is required"),
@@ -80,6 +82,7 @@ export default function Checkout() {
       shippingAddress: {
         firstName: shippingData.firstName,
         lastName: shippingData.lastName,
+        email: shippingData.email,
         phone: shippingData.phone,
         streetAddress: shippingData.streetAddress,
         buildingNumber: shippingData.buildingNumber,
@@ -178,17 +181,31 @@ export default function Checkout() {
                     />
                   </div>
                   <div className="sm:col-span-1">
-                    <label className="block text-sm font-medium text-[#171717] mb-1">Last Name *</label>
+                    <div>
+                      <label className="block text-sm font-medium text-[#0F172A] mb-2">{t("lastName")} *</label>
+                      <input
+                        type="text"
+                        value={shippingData.lastName}
+                        onChange={(e) => setShippingData({ ...shippingData, lastName: e.target.value })}
+                        className="w-full h-12 px-4 rounded-xl border border-[#E2E8F0] focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] bg-[#F8FAFC] focus:bg-white transition-all text-left"
+                        dir="auto"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#0F172A] mb-2">{lang === "ar" ? "البريد الإلكتروني" : "Email Address"} *</label>
                     <input
-                      type="text"
-                      value={shippingData.lastName}
-                      onChange={(e) => setShippingData({ ...shippingData, lastName: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#C0C0C0] focus:outline-none transition-colors"
-                      placeholder="e.g. Al-Rashid"
+                      type="email"
+                      value={shippingData.email}
+                      onChange={(e) => setShippingData({ ...shippingData, email: e.target.value })}
+                      className="w-full h-12 px-4 rounded-xl border border-[#E2E8F0] focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] bg-[#F8FAFC] focus:bg-white transition-all text-left"
+                      dir="ltr"
                     />
                   </div>
+
                   <div>
-                    <label className="block text-sm font-medium text-[#171717] mb-1">Phone *</label>
+                    <label className="block text-sm font-medium text-[#0F172A] mb-2">{t("phone")} *</label>
                     <input
                       type="tel"
                       value={shippingData.phone}
