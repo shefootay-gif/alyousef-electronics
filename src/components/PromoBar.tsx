@@ -12,8 +12,8 @@ export default function PromoBar() {
     <div className="bg-gradient-to-r from-[#D4AF37] via-[#F8D778] to-[#B8960F] text-[#171717] px-4 py-2 text-sm font-bold flex justify-center items-center relative z-50 shadow-md">
       <p className="text-center w-full pr-6 animate-pulse">
         {lang === "ar" 
-          ? "🎉 عرض خاص: شحن مجاني لجميع الطلبات فوق 500 جنيه!" 
-          : "🎉 Special Offer: Free shipping on all orders over EGP 500!"}
+          ? "🎉 عرض خاص: شحن مجاني لجميع الطلبات فوق 5000 جنيه!" 
+          : "🎉 Special Offer: Free shipping on all orders over EGP 5000!"}
       </p>
       <button 
         onClick={() => setIsVisible(false)}

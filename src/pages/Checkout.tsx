@@ -55,7 +55,7 @@ export default function Checkout() {
     },
   });
 
-  const shipping = total >= 500 ? 0 : 35;
+  const shipping = total >= 5000 ? 0 : 350;
   const tax = total * 0.15;
   const grandTotal = total + shipping + tax;
 

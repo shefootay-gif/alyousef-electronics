@@ -42,7 +42,7 @@ const translations: Record<string, Record<Lang, string>> = {
   customers: { en: "Customers", ar: "عملاؤنا" },
   say: { en: "Say", ar: "" },
   freeDelivery: { en: "Free Delivery", ar: "توصيل مجاني" },
-  freeDeliveryDesc: { en: "On orders over EGP 500", ar: "على الطلبات فوق 500 جنيه" },
+  freeDeliveryDesc: { en: "On orders over EGP 5000", ar: "على الطلبات فوق 5000 جنيه" },
   securePayment: { en: "Secure Payment", ar: "دفع آمن" },
   securePaymentDesc: { en: "100% secure checkout", ar: "دفع آمن 100%" },
   support: { en: "24/7 Support", ar: "دعم 24/7" },

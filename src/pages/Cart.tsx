@@ -16,7 +16,7 @@ export default function Cart() {
   const [discountCode, setDiscountCode] = useState("");
   const navigate = useNavigate();
 
-  const shippingThreshold = 500;
+  const shippingThreshold = 5000;
   const shipping = total >= shippingThreshold ? 0 : 35;
   const tax = total * 0.15;
   const grandTotal = total + shipping + tax;

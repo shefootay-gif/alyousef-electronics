@@ -258,7 +258,7 @@ export default function ProductDetail() {
               <div className="text-center p-4 bg-[#F8FAFC] rounded-xl">
                 <Truck className="w-6 h-6 text-[#D4AF37] mx-auto mb-2" />
                 <p className="text-xs text-[#64748B]">{t("freeDeliveryLabel")}</p>
-                <p className="text-xs text-[#94A3B8]">EGP 500+</p>
+                <p className="text-xs text-[#94A3B8]">EGP 5000+</p>
               </div>
               <div className="text-center p-4 bg-[#F8FAFC] rounded-xl">
                 <Shield className="w-6 h-6 text-[#D4AF37] mx-auto mb-2" />
