@@ -38,115 +38,205 @@ function HeroSection() {
     ? ["منتجات أصلية", "ضمان موثوق", "تجربة شراء فاخرة"]
     : ["Authentic Tech", "Trusted Warranty", "Premium Checkout"];
 
+  const textVariants: any = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+  };
+
+  const containerVariants: any = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2, delayChildren: 0.1 }
+    }
+  };
+
   return (
-    <section className="relative min-h-[760px] flex items-center overflow-hidden bg-[#050505] pt-24">
+    <section className="relative min-h-[850px] flex items-center overflow-hidden bg-[#020617] pt-24 perspective-1000">
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_34%),radial-gradient(circle_at_75%_20%,rgba(0,212,255,0.16),transparent_30%),linear-gradient(135deg,#050505_0%,#0D1E36_52%,#051020_100%)]" />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/55 to-transparent" />
-        <div className="absolute right-[-8rem] top-24 h-80 w-80 rounded-full border border-[#D4AF37]/20" />
-        <div className="absolute left-[-6rem] bottom-10 h-72 w-72 rounded-full border border-[#C0C0C0]/15" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.15),transparent_40%),radial-gradient(circle_at_80%_20%,rgba(0,212,255,0.1),transparent_30%),linear-gradient(180deg,#020617_0%,#0A1326_50%,#020617_100%)]" />
+        <motion.div 
+          animate={{ opacity: [0.3, 0.6, 0.3] }}
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+          className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/60 to-transparent shadow-[0_0_20px_rgba(212,175,55,0.5)]" 
+        />
+        {/* Animated Particles */}
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-[#D4AF37]/20 blur-xl"
+            style={{
+              width: Math.random() * 200 + 100,
+              height: Math.random() * 200 + 100,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, Math.random() * -100 - 50, 0],
+              x: [0, Math.random() * 100 - 50, 0],
+              scale: [1, 1.2, 1]
+            }}
+            transition={{
+              repeat: Infinity,
+              duration: Math.random() * 10 + 10,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 w-full">
-        <div className="grid lg:grid-cols-2 items-center gap-14">
-          <div className={`${lang === "ar" ? "text-right lg:order-2" : "text-left"}`}>
-            <FadeIn delay={100} direction="up">
-              <p className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/30 bg-white/5 px-4 py-2 text-xs font-bold tracking-[0.25em] text-[#D4AF37] mb-6">
-                <span className="h-2 w-2 rounded-full bg-[#C0C0C0] shadow-[0_0_14px_rgba(0,212,255,0.9)]" />
+        <div className="grid lg:grid-cols-2 items-center gap-16">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className={`${lang === "ar" ? "text-right lg:order-2" : "text-left"}`}
+          >
+            <motion.div variants={textVariants}>
+              <p className="inline-flex items-center gap-3 rounded-full border border-[#D4AF37]/40 bg-gradient-to-r from-[#D4AF37]/10 to-transparent px-5 py-2.5 text-xs font-bold tracking-[0.25em] text-[#D4AF37] mb-8 shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#D4AF37] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-[#D4AF37]"></span>
+                </span>
                 {t("premiumElectronics")}
               </p>
-            </FadeIn>
-            <FadeIn delay={200} direction="up">
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#F8FAFC] leading-tight mb-6">
+            </motion.div>
+
+            <motion.div variants={textVariants}>
+              <h1 className="text-5xl sm:text-7xl lg:text-[5rem] font-black text-white leading-[1.1] mb-8 tracking-tight">
                 {lang === "ar" ? (
-                  <>تجربة إلكترونيات <span className="text-[#D4AF37]">فاخرة</span> لمتجر عصري</>
+                  <>اكتشف <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F8D778] via-[#D4AF37] to-[#B8960F] drop-shadow-[0_0_30px_rgba(212,175,55,0.4)]">التكنولوجيا</span><br/>بمفهوم جديد</>
                 ) : (
-                  <>Premium <span className="text-[#D4AF37]">electronics</span> for modern lifestyles</>
+                  <>Experience <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F8D778] via-[#D4AF37] to-[#B8960F] drop-shadow-[0_0_30px_rgba(212,175,55,0.4)]">Technology</span><br/>Redefined</>
                 )}
               </h1>
-            </FadeIn>
-            <FadeIn delay={300} direction="up">
-              <p className={`text-lg text-[#B6C2D2] mb-8 leading-relaxed max-w-xl ${lang === "ar" ? "mr-auto" : ""}`}>
+            </motion.div>
+
+            <motion.div variants={textVariants}>
+              <p className={`text-lg sm:text-xl text-[#94A3B8] mb-10 leading-relaxed max-w-xl ${lang === "ar" ? "mr-auto" : ""}`}>
                 {lang === "ar"
-                  ? "هوية AL-YOUSEF الذهبية والكحلية بتصميم مناسب للموقع: واضح، سريع القراءة، ومرتبط مباشرة بعالم الهواتف والحواسيب والملحقات الذكية."
+                  ? "نقدم لك أحدث الأجهزة الذكية وملحقاتها في مكان واحد. تسوق الآن واستمتع بتجربة إلكترونية فاخرة لا مثيل لها."
                   : t("heroDesc")}
               </p>
-            </FadeIn>
+            </motion.div>
 
-            <FadeIn delay={400} direction="up">
-              <div className={`flex flex-wrap gap-3 mb-9 ${lang === "ar" ? "justify-end" : ""}`}>
+            <motion.div variants={textVariants}>
+              <div className={`flex flex-wrap gap-4 mb-12 ${lang === "ar" ? "justify-end" : ""}`}>
                 {stats.map((item) => (
-                  <span key={item} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-[#F8FAFC]">
+                  <span key={item} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 backdrop-blur-md px-5 py-2.5 text-sm font-semibold text-[#E2E8F0] shadow-lg hover:bg-white/10 transition-colors">
+                    <Star className="w-4 h-4 text-[#D4AF37]" />
                     {item}
                   </span>
                 ))}
               </div>
-            </FadeIn>
+            </motion.div>
 
-            <FadeIn delay={500} direction="up">
-              <div className={`flex flex-col sm:flex-row gap-4 ${lang === "ar" ? "sm:justify-end" : ""}`}>
+            <motion.div variants={textVariants}>
+              <div className={`flex flex-col sm:flex-row gap-5 ${lang === "ar" ? "sm:justify-end" : ""}`}>
                 <Link
                   to="/shop"
-                  className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#F8D778] via-[#D4AF37] to-[#A77D16] text-[#050505] font-extrabold rounded-2xl shadow-[0_12px_38px_rgba(212,175,55,0.28)] hover:shadow-[0_16px_48px_rgba(212,175,55,0.42)] hover:-translate-y-0.5 transition-all duration-300"
+                  className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-[#D4AF37] via-[#B8960F] to-[#9C7614] text-[#050505] font-black text-lg rounded-2xl shadow-[0_15px_40px_-10px_rgba(212,175,55,0.6)] hover:shadow-[0_20px_50px_-10px_rgba(212,175,55,0.8)] overflow-hidden transition-all duration-300 hover:-translate-y-1"
                 >
-                  {t("shopNow")}
-                  <ArrowRight className={`w-5 h-5 ${lang === "ar" ? "rotate-180" : ""}`} />
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                  <span className="relative">{t("shopNow")}</span>
+                  <ArrowRight className={`relative w-6 h-6 group-hover:translate-x-1 transition-transform ${lang === "ar" ? "rotate-180 group-hover:-translate-x-1" : ""}`} />
                 </Link>
                 <Link
                   to="/shop?featured=true"
-                  className="inline-flex items-center justify-center px-8 py-4 rounded-2xl border border-[#D4AF37]/35 text-[#F8FAFC] font-bold hover:bg-white/10 hover:border-[#D4AF37] transition-all"
+                  className="inline-flex items-center justify-center px-10 py-5 rounded-2xl border-2 border-white/10 text-white font-bold text-lg hover:bg-white/5 hover:border-[#D4AF37]/50 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
                 >
                   {lang === "ar" ? "شاهد العروض" : "View Deals"}
                 </Link>
               </div>
-            </FadeIn>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          <FadeIn delay={400} direction="left" className="relative min-h-[420px] lg:min-h-[540px] flex items-center justify-center">
-            <div className="absolute h-80 w-80 rounded-full bg-[#C0C0C0]/10 blur-3xl" />
-            <motion.div 
-              animate={{ rotate: 360 }} 
-              transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
-              className="absolute h-[28rem] w-[28rem] rounded-full border border-[#D4AF37]/20 border-dashed" 
-            />
-            <motion.div 
-              animate={{ y: [0, -15, 0] }}
-              transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-              className="relative w-full max-w-[560px] rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.32)] backdrop-blur-xl"
+          {/* 3D Floating Devices Showcase */}
+          <div className="relative min-h-[500px] lg:min-h-[600px] flex items-center justify-center perspective-1000 hidden md:flex">
+            {/* Glowing Backdrop */}
+            <div className="absolute w-[120%] h-[120%] bg-gradient-to-tr from-[#D4AF37]/20 via-[#0099CC]/10 to-transparent rounded-full blur-[100px] opacity-60 animate-pulse" />
+            
+            {/* Main Floating Device (Phone Mockup) */}
+            <motion.div
+              animate={{ 
+                y: [-20, 20, -20],
+                rotateX: [5, -5, 5],
+                rotateY: [-10, 10, -10]
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 6, 
+                ease: "easeInOut" 
+              }}
+              className="relative z-20 w-[240px] h-[500px] rounded-[3rem] border-[8px] border-[#171717] bg-[#0F172A] shadow-[0_30px_60px_rgba(0,0,0,0.6),0_0_40px_rgba(212,175,55,0.3)] overflow-hidden"
+              style={{ transformStyle: 'preserve-3d' }}
             >
-              <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
-              <div className="relative flex items-end justify-center gap-[-20px]">
-                <div className="relative z-20 -mr-8 hidden sm:flex h-[290px] w-[150px] flex-col rounded-[2rem] border-2 border-[#D4AF37] bg-[#061125] shadow-[0_0_36px_rgba(0,212,255,0.18)]">
-                  <div className="mx-auto mt-3 h-1.5 w-14 rounded-full bg-[#D4AF37]/80" />
-                  <div className="flex flex-1 items-center justify-center">
-                    <div className="flex h-24 w-24 items-center justify-center rounded-full border border-[#D4AF37]/70 bg-[#050505] shadow-[0_0_22px_rgba(0,212,255,0.25)]">
-                      <span className="text-5xl font-black text-[#D4AF37]">Y</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="relative z-10 w-full sm:w-[360px]">
-                  <div className="h-[230px] rounded-t-[1.6rem] border-2 border-[#D4AF37] bg-[#061125] shadow-[0_0_32px_rgba(0,212,255,0.20)]">
-                    <div className="m-5 h-[180px] rounded-xl bg-gradient-to-br from-[#0D1E36] to-[#020617] border border-white/5" />
-                  </div>
-                  <div className="h-12 rounded-b-2xl bg-gradient-to-r from-[#9C7614] via-[#D4AF37] to-[#FFE8A3] shadow-[0_18px_38px_rgba(0,0,0,0.35)]">
-                    <div className="mx-auto h-3 w-24 rounded-b-xl bg-[#050505]/70" />
-                  </div>
-                </div>
+              <div className="absolute top-0 inset-x-0 h-7 bg-[#171717] rounded-b-3xl w-1/2 mx-auto z-30 flex items-center justify-center gap-2">
+                 <div className="w-2 h-2 rounded-full bg-[#111]" />
+                 <div className="w-10 h-1.5 rounded-full bg-[#111]" />
               </div>
-              <div className="relative mt-8 grid grid-cols-3 gap-3 text-center text-xs font-semibold text-[#B6C2D2]">
-                {(lang === "ar" ? ["هواتف", "لابتوبات", "ملحقات"] : ["Phones", "Laptops", "Accessories"]).map((item) => (
-                  <div key={item} className="rounded-xl border border-white/10 bg-[#050505]/70 px-3 py-3">
-                    {item}
-                  </div>
-                ))}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1E293B] to-[#020617]" />
+              <img src="https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=800&auto=format&fit=crop" className="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-overlay" alt="Screen" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent" />
+              <div className="absolute bottom-10 inset-x-6">
+                 <div className="h-20 w-20 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 shadow-lg mb-4">
+                   <Gamepad2 className="w-full h-full text-[#D4AF37]" />
+                 </div>
+                 <div className="h-4 w-3/4 bg-white/20 rounded-full mb-2" />
+                 <div className="h-4 w-1/2 bg-[#D4AF37]/50 rounded-full" />
               </div>
             </motion.div>
-          </FadeIn>
+
+            {/* Secondary Floating Device (Watch/Accessory) */}
+            <motion.div
+              animate={{ 
+                y: [15, -15, 15],
+                x: [10, -10, 10],
+                rotateZ: [-5, 5, -5]
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 5, 
+                ease: "easeInOut",
+                delay: 1
+              }}
+              className="absolute -right-12 top-20 z-30 w-40 h-40 rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] flex items-center justify-center"
+            >
+              <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-[#D4AF37]/20 to-transparent" />
+              <Watch className="w-20 h-20 text-white drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]" />
+            </motion.div>
+
+            {/* Third Floating Element (Earbuds) */}
+            <motion.div
+              animate={{ 
+                y: [-10, 15, -10],
+                x: [-15, 10, -15],
+                rotateZ: [10, -10, 10]
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 7, 
+                ease: "easeInOut",
+                delay: 2
+              }}
+              className="absolute -left-16 bottom-32 z-10 w-32 h-32 rounded-3xl border border-white/10 bg-[#0F172A]/80 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] flex items-center justify-center"
+            >
+              <Headphones className="w-16 h-16 text-[#C0C0C0] drop-shadow-[0_0_15px_rgba(192,192,192,0.3)]" />
+            </motion.div>
+          </div>
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <ChevronDown className="w-6 h-6 text-[#D4AF37]" />
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+        <span className="text-xs font-semibold text-[#64748B] tracking-widest uppercase">{t("scrollDown")}</span>
+        <motion.div 
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
+          className="w-8 h-12 rounded-full border-2 border-[#64748B] flex justify-center p-1"
+        >
+          <motion.div className="w-1.5 h-3 bg-[#D4AF37] rounded-full" />
+        </motion.div>
       </div>
     </section>
   );
@@ -157,26 +247,38 @@ function CategoriesSection() {
   const { t, lang } = useLanguage();
 
   return (
-    <section className="py-16 bg-[#F1F5F9]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8">
-        <h2 className="text-3xl sm:text-4xl font-bold text-[#171717] text-center mb-12">
-          {t("browseByCategory")} <span className="text-[#D4AF37]">{t("category")}</span>
-        </h2>
-        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+    <section className="py-24 bg-[#050505] relative overflow-hidden">
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-[100px] -translate-y-1/2 -translate-x-1/2" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">
+            {t("browseByCategory")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778]">{t("category")}</span>
+          </h2>
+          <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] mx-auto rounded-full" />
+        </div>
+        <div className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide px-4 -mx-4">
           {categories?.map((cat, i) => (
-            <FadeIn delay={i * 100} direction="up" key={cat.id} className="snap-start flex-shrink-0">
+            <motion.div 
+              key={cat.id} 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="snap-start flex-shrink-0"
+            >
               <Link
                 to={`/shop?category=${cat.slug}`}
-                className="w-32 h-36 rounded-2xl bg-white shadow-lg flex flex-col items-center justify-center gap-3 hover:scale-110 hover:shadow-xl hover:border-2 hover:border-[#D4AF37] transition-all duration-300 group"
+                className="group relative w-36 h-44 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 flex flex-col items-center justify-center gap-4 hover:bg-white/10 transition-all duration-300 overflow-hidden"
               >
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center text-white group-hover:shadow-lg transition-all">
-                  {categoryIcons[cat.icon || ""] || <Smartphone className="w-7 h-7" />}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1E293B] to-[#020617] border border-white/10 flex items-center justify-center text-[#D4AF37] group-hover:scale-110 group-hover:text-white group-hover:shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-all duration-300">
+                  {categoryIcons[cat.icon || ""] || <Smartphone className="w-8 h-8" />}
                 </div>
-                <span className="text-sm font-semibold text-[#171717] text-center px-2">
+                <span className="relative text-sm font-bold text-white text-center px-2">
                   {lang === "ar" && cat.nameAr ? cat.nameAr : cat.name}
                 </span>
               </Link>
-            </FadeIn>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -225,7 +327,7 @@ function FeaturedProductsSection() {
 }
 
 function SpecialOfferSection() {
-  const { t, lang } = useLanguage();
+  const { t, lang, isRTL } = useLanguage();
   const [timeLeft, setTimeLeft] = useState({ days: 2, hours: 14, minutes: 35, seconds: 42 });
 
   useEffect(() => {
@@ -251,47 +353,75 @@ function SpecialOfferSection() {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-r from-[#171717] to-[#0F172A] relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4AF37] rounded-full blur-[128px]" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#C0C0C0] rounded-full blur-[128px]" />
+    <section className="py-24 bg-[#050505] relative overflow-hidden">
+      {/* Dynamic Background */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A] to-[#020617]" />
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.3, 0.1] }}
+          transition={{ repeat: Infinity, duration: 8 }}
+          className="absolute top-1/2 right-1/4 w-[600px] h-[600px] bg-[#D4AF37] rounded-full blur-[150px] -translate-y-1/2 pointer-events-none" 
+        />
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
       </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
-          <FadeIn direction="left" className={`text-center ${lang === "ar" ? "lg:text-right" : "lg:text-left"}`}>
-            <p className="text-xs font-bold tracking-[0.3em] text-[#D4AF37] mb-3">
-              {t("limitedTimeOffer")}
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#F8FAFC] mb-3">
-              {t("offerTitle")}
-            </h2>
-            <p className="text-lg text-[#C0C0C0] font-semibold">
-              {lang === "ar" ? "استخدم الكود: GAMING15" : "Use code: GAMING15"}
-            </p>
-          </FadeIn>
+        <div className="rounded-[3rem] border border-white/10 bg-white/5 backdrop-blur-2xl p-8 lg:p-16 shadow-2xl relative overflow-hidden">
+          {/* Glass Reflection */}
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+          <div className="absolute -left-32 -top-32 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
 
-          <FadeIn direction="up" delay={200} className="flex gap-3">
-            {timerItems.map((item) => (
-              <div
-                key={item.label}
-                className="w-16 h-20 sm:w-20 sm:h-24 rounded-xl bg-white/10 backdrop-blur flex flex-col items-center justify-center"
-              >
-                <span className="text-2xl sm:text-3xl font-bold text-[#F8FAFC]">
-                  {String(item.value).padStart(2, "0")}
-                </span>
-                <span className="text-xs text-[#94A3B8]">{item.label}</span>
-              </div>
-            ))}
-          </FadeIn>
-
-          <FadeIn direction="right" delay={400}>
-            <Link
-              to="/shop?category=gaming"
-              className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_30px_rgba(212,175,55,0.5)] hover:scale-105 transition-all animate-pulse inline-block"
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className={`text-center ${lang === "ar" ? "lg:text-right" : "lg:text-left"} flex-1`}
             >
-              {t("grabDeal")}
-            </Link>
-          </FadeIn>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-4 py-2 text-xs font-bold tracking-widest text-[#D4AF37] mb-6">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                {t("limitedTimeOffer")}
+              </div>
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
+                {t("offerTitle")}
+              </h2>
+              <div className="inline-block px-6 py-3 rounded-2xl bg-[#0F172A] border border-white/10 text-[#C0C0C0] font-mono text-xl shadow-inner mb-8">
+                {lang === "ar" ? "الكود:" : "Code:"} <span className="text-[#D4AF37] font-bold tracking-wider ml-2">GAMING15</span>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col items-center gap-8"
+            >
+              <div className={`flex gap-3 sm:gap-5 ${isRTL ? "flex-row-reverse" : "flex-row"}`}>
+                {timerItems.map((item, i) => (
+                  <div key={i} className="relative group">
+                    <div className="absolute inset-0 bg-[#D4AF37]/20 rounded-2xl blur-lg group-hover:bg-[#D4AF37]/40 transition-colors" />
+                    <div className="relative w-16 h-20 sm:w-24 sm:h-28 rounded-2xl bg-[#020617] border border-white/10 flex flex-col items-center justify-center shadow-xl">
+                      <span className="text-3xl sm:text-5xl font-black text-white font-mono tracking-tighter">
+                        {String(item.value).padStart(2, "0")}
+                      </span>
+                      <span className="text-xs sm:text-sm text-[#94A3B8] font-bold uppercase tracking-widest mt-1">
+                        {item.label}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <Link
+                to="/shop?category=gaming"
+                className="group relative inline-flex items-center justify-center gap-3 px-12 py-5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#050505] font-black text-xl rounded-2xl overflow-hidden hover:scale-105 transition-transform duration-300 w-full sm:w-auto"
+              >
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                <span className="relative">{t("grabDeal")}</span>
+                <ArrowRight className={`relative w-6 h-6 group-hover:translate-x-2 transition-transform ${isRTL ? "rotate-180 group-hover:-translate-x-2" : ""}`} />
+              </Link>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
@@ -334,49 +464,66 @@ function AboutUsSection() {
   const { lang, isRTL } = useLanguage();
   
   return (
-    <section className="py-20 bg-[#050505] text-white relative overflow-hidden">
-      {/* Abstract Background Element */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#D4AF37] rounded-full mix-blend-multiply filter blur-[128px] opacity-20 translate-x-1/2 -translate-y-1/2"></div>
+    <section className="py-24 bg-[#020617] text-white relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#D4AF37]/10 rounded-full blur-[150px] translate-x-1/3 -translate-y-1/3 pointer-events-none" />
       
       <div className={`max-w-7xl mx-auto px-4 sm:px-8 relative z-10 ${isRTL ? "text-right" : "text-left"}`}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <FadeIn>
-          <div>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <motion.div 
+            initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold tracking-widest text-[#B6C2D2] mb-6">
+              <span className="h-2 w-2 rounded-full bg-[#D4AF37]" />
+              {lang === "ar" ? "قصتنا" : "Our Story"}
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-black mb-6 leading-tight">
               {lang === "ar" ? (
-                <>من نحن؟ <span className="text-[#D4AF37]">اليوسف للإلكترونيات</span></>
+                <>رؤية نحو <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778]">المستقبل</span></>
               ) : (
-                <>About Us <span className="text-[#D4AF37]">AL-YOUSEF Electronics</span></>
+                <>Vision for the <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778]">Future</span></>
               )}
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] mb-8 rounded-full" />
+            <div className={`w-24 h-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] mb-8 rounded-full ${isRTL ? "ml-auto" : "mr-auto"}`} />
             
-            <p className="text-[#C0C0C0] text-lg leading-relaxed mb-6">
+            <p className="text-[#94A3B8] text-lg sm:text-xl leading-relaxed mb-6 font-medium">
               {lang === "ar" 
                 ? "تأسست شركة اليوسف للإلكترونيات برؤية واضحة: تقديم أفضل وأحدث التقنيات لعملائنا في مصر. نحن نفخر بكوننا الوجهة الموثوقة لكل ما يخص الأجهزة الذكية والحواسيب."
                 : "AL-YOUSEF Electronics was founded with a clear vision: to provide the best and latest technology to our customers in Egypt. We pride ourselves on being the trusted destination for smart devices."}
             </p>
-            <p className="text-[#C0C0C0] text-lg leading-relaxed">
+            <p className="text-[#94A3B8] text-lg sm:text-xl leading-relaxed">
               {lang === "ar"
-                ? "منذ بدايتنا، التزمنا بتوفير منتجات أصلية 100% من أشهر العلامات التجارية العالمية، مع التركيز على تجربة تسوق فاخرة واستثنائية."
+                ? "منذ بدايتنا، التزمنا بتوفير منتجات أصلية 100% من أشهر العلامات التجارية العالمية، مع التركيز على تجربة تسوق فاخرة واستثنائية تجعل من التكنولوجيا جزءاً ممتعاً من حياتك."
                 : "Since our beginning, we have committed to offering 100% authentic products from the world's most famous brands, focusing on an exceptional and luxurious shopping experience."}
             </p>
-          </div>
-          </FadeIn>
+          </motion.div>
           
-          <FadeIn delay={200}>
-          <div className="relative">
-            <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10 relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="relative"
+          >
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#D4AF37]/30 to-transparent rounded-[3rem] blur-2xl transform rotate-6" />
+            <div className="relative aspect-[4/3] rounded-[3rem] overflow-hidden border-[6px] border-[#0F172A] shadow-2xl bg-[#0F172A]">
               <img 
-                src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=2001&auto=format&fit=crop" 
-                alt="AL-YOUSEF Electronics Store" 
+                src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop" 
+                alt="AL-YOUSEF Electronics Vision" 
                 loading="lazy"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover mix-blend-luminosity opacity-80 hover:mix-blend-normal hover:opacity-100 transition-all duration-700 hover:scale-105"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent opacity-80" />
+              <div className="absolute bottom-8 left-8 right-8 text-center">
+                <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mx-auto mb-4 flex items-center justify-center shadow-lg">
+                  <Shield className="w-8 h-8 text-[#D4AF37]" />
+                </div>
+                <p className="text-white font-bold text-lg">{lang === "ar" ? "جودة مضمونة 100%" : "100% Guaranteed Quality"}</p>
+              </div>
             </div>
-            <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-gradient-to-br from-[#D4AF37] to-[#B8960F] rounded-2xl z-0 blur-2xl opacity-30"></div>
-          </div>
-          </FadeIn>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -384,7 +531,7 @@ function AboutUsSection() {
 }
 
 function TestimonialsSection() {
-  const { lang } = useLanguage();
+  const { lang, isRTL } = useLanguage();
   const testimonials = [
     {
       nameEn: "Ahmed Al-Rashid",
@@ -392,7 +539,7 @@ function TestimonialsSection() {
       location: lang === "ar" ? "القاهرة" : "Cairo",
       rating: 5,
       textEn: "Excellent service and fast delivery! The iPhone 15 Pro Max I ordered arrived in perfect condition.",
-      textAr: "خدمة ممتازة وتوصيل سريع! وصل الـ iPhone 15 Pro Max الذي طلبته بحالة مثالية.",
+      textAr: "خدمة ممتازة وتوصيل سريع! وصل الـ iPhone 15 Pro Max الذي طلبته بحالة مثالية وتغليف فاخر جداً.",
     },
     {
       nameEn: "Fatima Al-Saud",
@@ -400,7 +547,7 @@ function TestimonialsSection() {
       location: lang === "ar" ? "الإسكندرية" : "Alexandria",
       rating: 5,
       textEn: "Best electronics store in Egypt. Great prices and the customer support team was very helpful.",
-      textAr: "أفضل متجر إلكترونيات في مصر. أسعار رائعة وفريق دعم العملاء مفيد جداً.",
+      textAr: "أفضل متجر إلكترونيات في مصر بلا منازع. أسعار رائعة، وتطبيق التصميم عصري وسهل الاستخدام.",
     },
     {
       nameEn: "Mohammed Al-Qahtani",
@@ -408,51 +555,64 @@ function TestimonialsSection() {
       location: lang === "ar" ? "الجيزة" : "Giza",
       rating: 4,
       textEn: "I bought a MacBook Pro and the delivery was incredibly fast. The packaging was premium and authentic.",
-      textAr: "اشتريت MacBook Pro والتوصيل كان سريعاً للغاية. التغليف كان فاخراً والمنتج أصلي.",
+      textAr: "اشتريت MacBook Pro والتوصيل كان سريعاً للغاية. تجربة المستخدم في المتجر مريحة وتشعرك بالثقة.",
     },
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-[#F1F5F9] to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#171717] mb-4">
+    <section className="py-24 bg-[#050505] relative overflow-hidden">
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#D4AF37]/5 rounded-[100%] blur-[120px] pointer-events-none" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">
             {lang === "ar" ? (
-              <>ماذا يقول <span className="text-[#D4AF37]">عملاؤنا</span></>
+              <>ماذا يقول <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778]">عملاؤنا</span></>
             ) : (
-              <>What Our <span className="text-[#D4AF37]">Customers</span> Say</>
+              <>What Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778]">Customers</span> Say</>
             )}
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] mx-auto rounded-full" />
+          <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] mx-auto rounded-full" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((t_item, i) => (
-            <FadeIn key={i} delay={i * 200}>
-            <div className="rounded-2xl bg-white shadow-lg p-8 hover:shadow-xl transition-shadow h-full">
-              <div className="flex gap-1 mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className={`w-4 h-4 ${
-                      star <= t_item.rating ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#E2E8F0]"
-                    }`}
-                  />
-                ))}
-              </div>
-              <p className="text-[#171717] italic mb-6 leading-relaxed">
-                &ldquo;{lang === "ar" ? t_item.textAr : t_item.textEn}&rdquo;
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center text-white font-bold">
-                  {(lang === "ar" ? t_item.nameAr : t_item.nameEn)[0]}
+            <motion.div 
+              key={i} 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.2 }}
+              className="group relative h-full"
+            >
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#D4AF37]/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+              <div className="relative h-full rounded-3xl bg-[#0F172A] border border-white/10 p-8 hover:-translate-y-2 transition-transform duration-500 flex flex-col">
+                <div className="flex gap-1 mb-6">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`w-5 h-5 ${
+                        star <= t_item.rating ? "text-[#D4AF37] fill-[#D4AF37] drop-shadow-[0_0_5px_rgba(212,175,55,0.5)]" : "text-[#334155]"
+                      }`}
+                    />
+                  ))}
                 </div>
-                <div>
-                  <p className="font-semibold text-[#171717]">{lang === "ar" ? t_item.nameAr : t_item.nameEn}</p>
-                  <p className="text-sm text-[#94A3B8]">{t_item.location}</p>
+                <p className={`text-[#B6C2D2] text-lg italic mb-8 flex-1 leading-relaxed ${isRTL ? "text-right" : "text-left"}`}>
+                  &ldquo;{lang === "ar" ? t_item.textAr : t_item.textEn}&rdquo;
+                </p>
+                <div className={`flex items-center gap-4 ${isRTL ? "flex-row" : "flex-row"}`}>
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#B8960F] p-0.5">
+                    <div className="w-full h-full rounded-full bg-[#020617] flex items-center justify-center text-white font-bold text-xl">
+                      {(lang === "ar" ? t_item.nameAr : t_item.nameEn)[0]}
+                    </div>
+                  </div>
+                  <div className={isRTL ? "text-right" : "text-left"}>
+                    <p className="font-bold text-white text-lg">{lang === "ar" ? t_item.nameAr : t_item.nameEn}</p>
+                    <p className="text-sm text-[#64748B] font-medium tracking-wide">{t_item.location}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            </FadeIn>
+            </motion.div>
           ))}
         </div>
       </div>
