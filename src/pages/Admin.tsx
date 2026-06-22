@@ -24,7 +24,8 @@ import {
   LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { motion } from "framer-motion";
 
 const statusColors: Record<string, string> = {
   active: "bg-green-100 text-green-700",
@@ -46,8 +47,9 @@ const orderStatusColors: Record<string, string> = {
 
 function DashboardOverview() {
   const { t, isRTL } = useLanguage();
-  const { data: dashboard } = trpc.analytics.dashboard.useQuery({ period: "30d" });
-  const { data: revenueData } = trpc.analytics.revenue.useQuery({ period: "30d" });
+  const [period, setPeriod] = useState<"7d" | "30d" | "90d">("30d");
+  const { data: dashboard } = trpc.analytics.dashboard.useQuery({ period });
+  const { data: revenueData } = trpc.analytics.revenue.useQuery({ period });
   const { data: recentOrders } = trpc.analytics.recentOrders.useQuery();
   const { data: productPerformance } = trpc.analytics.productPerformance.useQuery();
 
@@ -56,8 +58,52 @@ function DashboardOverview() {
     revenue: revenueData.data[i],
   })) || [];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants: any = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 300, damping: 24 }
+    }
+  };
+
   return (
-    <div className="space-y-6">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6"
+    >
+      {/* Header and Period Filter */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 className="text-2xl font-bold text-[#171717]">{t("dashboard")}</h2>
+        <div className="flex bg-white rounded-lg shadow-sm border border-[#E2E8F0] p-1">
+          {(["7d", "30d", "90d"] as const).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPeriod(p)}
+              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                period === p 
+                  ? "bg-[#D4AF37] text-white" 
+                  : "text-[#64748B] hover:text-[#171717] hover:bg-[#F8FAFC]"
+              }`}
+            >
+              {p === "7d" ? "7 Days" : p === "30d" ? "30 Days" : "90 Days"}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
@@ -66,41 +112,47 @@ function DashboardOverview() {
           { label: t("activeProducts"), value: dashboard?.activeProducts || 0, icon: <Package className="w-6 h-6" />, color: "from-emerald-500 to-emerald-600" },
           { label: t("newCustomers"), value: dashboard?.newCustomers || 0, icon: <Users className="w-6 h-6" />, color: "from-purple-500 to-purple-600" },
         ].map((card, i) => (
-          <div key={i} className="bg-white rounded-2xl shadow-lg p-6">
+          <motion.div key={i} variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow border border-[#E2E8F0]/50">
             <div className="flex items-center justify-between mb-4">
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center text-white`}>
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center text-white shadow-md`}>
                 {card.icon}
               </div>
               <TrendingUp className="w-5 h-5 text-green-500" />
             </div>
             <p className="text-2xl font-bold text-[#171717]">{card.value}</p>
             <p className="text-sm text-[#94A3B8] mt-1">{card.label}</p>
-          </div>
+          </motion.div>
         ))}
       </div>
 
       {/* Revenue Chart */}
-      <div className="bg-white rounded-2xl shadow-lg p-6">
+      <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-6 border border-[#E2E8F0]/50">
         <h3 className="text-lg font-bold text-[#171717] mb-4">{t("revenueOverview")}</h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-              <XAxis dataKey="date" stroke="#94A3B8" fontSize={12} />
-              <YAxis stroke="#94A3B8" fontSize={12} />
+            <AreaChart data={chartData}>
+              <defs>
+                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#D4AF37" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+              <XAxis dataKey="date" stroke="#94A3B8" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke="#94A3B8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `EGP ${val}`} />
               <Tooltip
-                contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}
+                contentStyle={{ borderRadius: "12px", border: "1px solid #E2E8F0", boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1)" }}
                 formatter={(value: number) => [`EGP ${value.toFixed(2)}`, "Revenue"]}
               />
-              <Line type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={2} dot={{ fill: "#D4AF37" }} />
-            </LineChart>
+              <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
+            </AreaChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Orders */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
+        <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-6 border border-[#E2E8F0]/50">
           <h3 className="text-lg font-bold text-[#171717] mb-4">{t("recentOrders")}</h3>
           <div className="overflow-x-auto">
             <table className={`w-full text-sm ${isRTL ? "text-right" : "text-left"}`}>
@@ -113,7 +165,7 @@ function DashboardOverview() {
               </thead>
               <tbody className="divide-y divide-[#E2E8F0]">
                 {recentOrders?.slice(0, 5).map((order: any) => (
-                  <tr key={order.id} className="hover:bg-[#F8FAFC]">
+                  <tr key={order.id} className="hover:bg-[#F8FAFC] transition-colors">
                     <td className="py-3 px-4 font-medium">{order.orderNumber}</td>
                     <td className="py-3 px-4">
                       <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${orderStatusColors[order.status] || ""}`}>
@@ -126,10 +178,10 @@ function DashboardOverview() {
               </tbody>
             </table>
           </div>
-        </div>
+        </motion.div>
 
         {/* Top Selling Products */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
+        <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-6 border border-[#E2E8F0]/50">
           <h3 className="text-lg font-bold text-[#171717] mb-4">Top Selling Products / الأكثر مبيعاً</h3>
           <div className="overflow-x-auto">
             <table className={`w-full text-sm ${isRTL ? "text-right" : "text-left"}`}>
@@ -142,7 +194,7 @@ function DashboardOverview() {
               </thead>
               <tbody className="divide-y divide-[#E2E8F0]">
                 {productPerformance?.topSelling?.slice(0, 5).map((item: any) => (
-                  <tr key={item.productId} className="hover:bg-[#F8FAFC]">
+                  <tr key={item.productId} className="hover:bg-[#F8FAFC] transition-colors">
                     <td className="py-3 px-4 font-medium line-clamp-1 max-w-[150px]" title={item.productName}>{item.productName}</td>
                     <td className="py-3 px-4 text-[#0099CC] font-bold">{item.totalSold}</td>
                     <td className="py-3 px-4 font-semibold text-[#D4AF37]">EGP {Number(item.revenue || 0).toFixed(2)}</td>
@@ -151,9 +203,9 @@ function DashboardOverview() {
               </tbody>
             </table>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
