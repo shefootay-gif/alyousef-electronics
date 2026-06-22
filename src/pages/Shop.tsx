@@ -126,9 +126,9 @@ export default function Shop() {
               <div className="mb-6">
                 <h4 className="text-sm font-semibold text-[#171717] mb-3">{t("priceRange")}</h4>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#94A3B8]">SAR {filters?.priceRange?.min || 0}</span>
+                  <span className="text-xs text-[#94A3B8]">EGP {filters?.priceRange?.min || 0}</span>
                   <span className="text-xs text-[#94A3B8]">-</span>
-                  <span className="text-xs text-[#94A3B8]">SAR {filters?.priceRange?.max || 10000}</span>
+                  <span className="text-xs text-[#94A3B8]">EGP {filters?.priceRange?.max || 10000}</span>
                 </div>
               </div>
 

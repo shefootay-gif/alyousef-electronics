@@ -63,7 +63,7 @@ export default function Checkout() {
     const shippingSchema = z.object({
       firstName: z.string().min(2, lang === "ar" ? "الاسم الأول قصير جداً" : "First name is too short"),
       lastName: z.string().min(2, lang === "ar" ? "اسم العائلة قصير جداً" : "Last name is too short"),
-      phone: z.string().regex(/^(05)(5|0|3|6|4|9|1|8|7)([0-9]{7})$/, lang === "ar" ? "يجب أن يكون رقم الجوال سعودياً يبدأ بـ 05 ويتكون من 10 أرقام" : "Phone number must be a valid Saudi number starting with 05"),
+      phone: z.string().regex(/^(01)(0|1|2|5)([0-9]{8})$/, lang === "ar" ? "يجب أن يكون رقم الهاتف مصري صالح يبدأ بـ 01 ويتكون من 11 رقماً" : "Phone number must be a valid Egyptian number starting with 01"),
       city: z.string().min(2, lang === "ar" ? "المدينة مطلوبة" : "City is required"),
       district: z.string().min(2, lang === "ar" ? "الحي مطلوب" : "District is required"),
       streetAddress: z.string().min(5, lang === "ar" ? "العنوان بالتفصيل مطلوب" : "Street address is required"),
@@ -86,7 +86,7 @@ export default function Checkout() {
         district: shippingData.district,
         city: shippingData.city,
         postalCode: shippingData.postalCode || undefined,
-        country: "Saudi Arabia",
+        country: "Egypt",
       },
       paymentMethod: paymentMethod as any,
       items: items.map((item) => ({
@@ -205,11 +205,11 @@ export default function Checkout() {
                       className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#C0C0C0] focus:outline-none transition-colors"
                     >
                       <option value="">Select City</option>
-                      <option value="Riyadh">Riyadh</option>
-                      <option value="Jeddah">Jeddah</option>
+                      <option value="Cairo">Cairo</option>
+                      <option value="Alexandria">Alexandria</option>
                       <option value="Mecca">Mecca</option>
                       <option value="Medina">Medina</option>
-                      <option value="Dammam">Dammam</option>
+                      <option value="Giza">Giza</option>
                       <option value="Khobar">Khobar</option>
                       <option value="Tabuk">Tabuk</option>
                       <option value="Abha">Abha</option>
@@ -338,7 +338,7 @@ export default function Checkout() {
                   <p className="text-sm text-[#64748B]">{shippingData.firstName} {shippingData.lastName}</p>
                   <p className="text-sm text-[#64748B]">{shippingData.phone}</p>
                   <p className="text-sm text-[#64748B]">{shippingData.streetAddress}</p>
-                  <p className="text-sm text-[#64748B]">{shippingData.district}, {shippingData.city}, Saudi Arabia</p>
+                  <p className="text-sm text-[#64748B]">{shippingData.district}, {shippingData.city}, Egypt</p>
                 </div>
 
                 {/* Payment Summary */}
@@ -365,7 +365,7 @@ export default function Checkout() {
                         <p className="text-xs text-[#94A3B8]">Qty: {item.quantity}</p>
                       </div>
                       <p className="font-semibold text-[#D4AF37]">
-                        SAR {(Number(item.product?.salePrice || item.product?.price || 0) * item.quantity).toFixed(2)}
+                        EGP {(Number(item.product?.salePrice || item.product?.price || 0) * item.quantity).toFixed(2)}
                       </p>
                     </div>
                   ))}
@@ -384,7 +384,7 @@ export default function Checkout() {
                     className="flex-1 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {isSubmitting && <Loader2 className="w-5 h-5 animate-spin" />}
-                    Place Order - SAR {grandTotal.toFixed(2)}
+                    Place Order - EGP {grandTotal.toFixed(2)}
                   </button>
                 </div>
               </div>
@@ -402,7 +402,7 @@ export default function Checkout() {
                       {item.product?.name} x{item.quantity}
                     </span>
                     <span className="text-[#171717] font-medium">
-                      SAR {(Number(item.product?.salePrice || item.product?.price || 0) * item.quantity).toFixed(2)}
+                      EGP {(Number(item.product?.salePrice || item.product?.price || 0) * item.quantity).toFixed(2)}
                     </span>
                   </div>
                 ))}
@@ -410,22 +410,22 @@ export default function Checkout() {
               <div className="border-t border-[#E2E8F0] pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-[#64748B]">Subtotal</span>
-                  <span className="font-semibold text-[#171717]">SAR {total.toFixed(2)}</span>
+                  <span className="font-semibold text-[#171717]">EGP {total.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-[#64748B]">Shipping</span>
                   <span className={`font-semibold ${shipping === 0 ? "text-green-600" : "text-[#171717]"}`}>
-                    {shipping === 0 ? "FREE" : `SAR ${shipping.toFixed(2)}`}
+                    {shipping === 0 ? "FREE" : `EGP ${shipping.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-[#64748B]">Tax</span>
-                  <span className="font-semibold text-[#171717]">SAR {tax.toFixed(2)}</span>
+                  <span className="font-semibold text-[#171717]">EGP {tax.toFixed(2)}</span>
                 </div>
                 <div className="border-t border-[#E2E8F0] pt-2">
                   <div className="flex justify-between">
                     <span className="font-bold text-[#171717]">Total</span>
-                    <span className="text-xl font-bold text-[#D4AF37]">SAR {grandTotal.toFixed(2)}</span>
+                    <span className="text-xl font-bold text-[#D4AF37]">EGP {grandTotal.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

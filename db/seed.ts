@@ -47,7 +47,7 @@ async function seed() {
       reviewCount: 256,
       weight: "221.00",
       metaTitle: "iPhone 15 Pro Max - AL-YOUSEF ELECTRONICS",
-      metaDescription: "Buy iPhone 15 Pro Max in Saudi Arabia. Best price guaranteed.",
+      metaDescription: "Buy iPhone 15 Pro Max in Egypt. Best price guaranteed.",
     },
     {
       name: "Samsung Galaxy S24 Ultra",
@@ -69,7 +69,7 @@ async function seed() {
       reviewCount: 189,
       weight: "233.00",
       metaTitle: "Samsung Galaxy S24 Ultra - AL-YOUSEF ELECTRONICS",
-      metaDescription: "Buy Samsung Galaxy S24 Ultra in Saudi Arabia. Best price guaranteed.",
+      metaDescription: "Buy Samsung Galaxy S24 Ultra in Egypt. Best price guaranteed.",
     },
     {
       name: "MacBook Pro M3",
@@ -91,7 +91,7 @@ async function seed() {
       reviewCount: 134,
       weight: "2140.00",
       metaTitle: "MacBook Pro M3 - AL-YOUSEF ELECTRONICS",
-      metaDescription: "Buy MacBook Pro M3 in Saudi Arabia. Best price guaranteed.",
+      metaDescription: "Buy MacBook Pro M3 in Egypt. Best price guaranteed.",
     },
     {
       name: "Dell XPS 15",
@@ -112,7 +112,7 @@ async function seed() {
       reviewCount: 87,
       weight: "1860.00",
       metaTitle: "Dell XPS 15 - AL-YOUSEF ELECTRONICS",
-      metaDescription: "Buy Dell XPS 15 in Saudi Arabia. Best price guaranteed.",
+      metaDescription: "Buy Dell XPS 15 in Egypt. Best price guaranteed.",
     },
     {
       name: "iPad Pro 12.9",
@@ -134,7 +134,7 @@ async function seed() {
       reviewCount: 112,
       weight: "682.00",
       metaTitle: "iPad Pro 12.9 - AL-YOUSEF ELECTRONICS",
-      metaDescription: "Buy iPad Pro 12.9 in Saudi Arabia. Best price guaranteed.",
+      metaDescription: "Buy iPad Pro 12.9 in Egypt. Best price guaranteed.",
     },
     {
       name: "Samsung Galaxy Tab S9",
@@ -155,7 +155,7 @@ async function seed() {
       reviewCount: 76,
       weight: "498.00",
       metaTitle: "Samsung Galaxy Tab S9 - AL-YOUSEF ELECTRONICS",
-      metaDescription: "Buy Samsung Galaxy Tab S9 in Saudi Arabia. Best price guaranteed.",
+      metaDescription: "Buy Samsung Galaxy Tab S9 in Egypt. Best price guaranteed.",
     },
     {
       name: "AirPods Pro 2",
@@ -177,7 +177,7 @@ async function seed() {
       reviewCount: 342,
       weight: "50.00",
       metaTitle: "AirPods Pro 2 - AL-YOUSEF ELECTRONICS",
-      metaDescription: "Buy AirPods Pro 2 in Saudi Arabia. Best price guaranteed.",
+      metaDescription: "Buy AirPods Pro 2 in Egypt. Best price guaranteed.",
     },
     {
       name: "Sony WH-1000XM5",
@@ -199,7 +199,7 @@ async function seed() {
       reviewCount: 198,
       weight: "250.00",
       metaTitle: "Sony WH-1000XM5 - AL-YOUSEF ELECTRONICS",
-      metaDescription: "Buy Sony WH-1000XM5 in Saudi Arabia. Best price guaranteed.",
+      metaDescription: "Buy Sony WH-1000XM5 in Egypt. Best price guaranteed.",
     },
     {
       name: "PlayStation 5",
@@ -221,7 +221,7 @@ async function seed() {
       reviewCount: 567,
       weight: "4460.00",
       metaTitle: "PlayStation 5 - AL-YOUSEF ELECTRONICS",
-      metaDescription: "Buy PlayStation 5 in Saudi Arabia. Best price guaranteed.",
+      metaDescription: "Buy PlayStation 5 in Egypt. Best price guaranteed.",
     },
     {
       name: "Xbox Series X",
@@ -242,7 +242,7 @@ async function seed() {
       reviewCount: 423,
       weight: "4450.00",
       metaTitle: "Xbox Series X - AL-YOUSEF ELECTRONICS",
-      metaDescription: "Buy Xbox Series X in Saudi Arabia. Best price guaranteed.",
+      metaDescription: "Buy Xbox Series X in Egypt. Best price guaranteed.",
     },
     {
       name: "Apple Watch Ultra 2",
@@ -264,7 +264,7 @@ async function seed() {
       reviewCount: 156,
       weight: "61.00",
       metaTitle: "Apple Watch Ultra 2 - AL-YOUSEF ELECTRONICS",
-      metaDescription: "Buy Apple Watch Ultra 2 in Saudi Arabia. Best price guaranteed.",
+      metaDescription: "Buy Apple Watch Ultra 2 in Egypt. Best price guaranteed.",
     },
     {
       name: "Anker PowerCore 20000",
@@ -284,7 +284,7 @@ async function seed() {
       averageRating: "4.5",
       reviewCount: 892,
       weight: "350.00",
-      metaDescription: "Buy Anker PowerCore 20000 in Saudi Arabia. Best price guaranteed.",
+      metaDescription: "Buy Anker PowerCore 20000 in Egypt. Best price guaranteed.",
     },
     {
       name: "Samsung 65 Inch 4K Crystal UHD Smart TV",

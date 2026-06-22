@@ -179,7 +179,7 @@ export default function Navbar() {
                               {lang === "ar" && (p as any).nameAr ? (p as any).nameAr : p.name}
                             </p>
                             <p className="text-xs text-[#D4AF37] font-semibold">
-                              SAR {p.salePrice || p.price}
+                              EGP {p.salePrice || p.price}
                             </p>
                           </div>
                         </Link>

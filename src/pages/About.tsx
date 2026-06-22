@@ -15,8 +15,8 @@ export default function About() {
           </h2>
           <p className="text-slate-600 leading-relaxed mb-6">
             {lang === "ar" 
-              ? "تأسست شركة اليوسف للإلكترونيات برؤية واضحة: تقديم أفضل وأحدث التقنيات لعملائنا في المملكة العربية السعودية. منذ بدايتنا، التزمنا بتوفير منتجات أصلية 100% من أشهر العلامات التجارية العالمية، مع التركيز على تجربة تسوق استثنائية."
-              : "AL-YOUSEF Electronics was founded with a clear vision: to provide the best and latest technology to our customers in Saudi Arabia. Since our beginning, we have committed to offering 100% authentic products from the world's most famous brands, focusing on an exceptional shopping experience."}
+              ? "تأسست شركة اليوسف للإلكترونيات برؤية واضحة: تقديم أفضل وأحدث التقنيات لعملائنا في مصر. منذ بدايتنا، التزمنا بتوفير منتجات أصلية 100% من أشهر العلامات التجارية العالمية، مع التركيز على تجربة تسوق استثنائية."
+              : "AL-YOUSEF Electronics was founded with a clear vision: to provide the best and latest technology to our customers in Egypt. Since our beginning, we have committed to offering 100% authentic products from the world's most famous brands, focusing on an exceptional shopping experience."}
           </p>
           <p className="text-slate-600 leading-relaxed">
             {lang === "ar"

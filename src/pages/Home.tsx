@@ -353,8 +353,8 @@ function AboutUsSection() {
             
             <p className="text-[#C0C0C0] text-lg leading-relaxed mb-6">
               {lang === "ar" 
-                ? "تأسست شركة اليوسف للإلكترونيات برؤية واضحة: تقديم أفضل وأحدث التقنيات لعملائنا في المملكة العربية السعودية. نحن نفخر بكوننا الوجهة الموثوقة لكل ما يخص الأجهزة الذكية والحواسيب."
-                : "AL-YOUSEF Electronics was founded with a clear vision: to provide the best and latest technology to our customers in Saudi Arabia. We pride ourselves on being the trusted destination for smart devices."}
+                ? "تأسست شركة اليوسف للإلكترونيات برؤية واضحة: تقديم أفضل وأحدث التقنيات لعملائنا في مصر. نحن نفخر بكوننا الوجهة الموثوقة لكل ما يخص الأجهزة الذكية والحواسيب."
+                : "AL-YOUSEF Electronics was founded with a clear vision: to provide the best and latest technology to our customers in Egypt. We pride ourselves on being the trusted destination for smart devices."}
             </p>
             <p className="text-[#C0C0C0] text-lg leading-relaxed">
               {lang === "ar"
@@ -389,7 +389,7 @@ function TestimonialsSection() {
     {
       nameEn: "Ahmed Al-Rashid",
       nameAr: "أحمد الراشد",
-      location: lang === "ar" ? "الرياض" : "Riyadh",
+      location: lang === "ar" ? "القاهرة" : "Cairo",
       rating: 5,
       textEn: "Excellent service and fast delivery! The iPhone 15 Pro Max I ordered arrived in perfect condition.",
       textAr: "خدمة ممتازة وتوصيل سريع! وصل الـ iPhone 15 Pro Max الذي طلبته بحالة مثالية.",
@@ -397,15 +397,15 @@ function TestimonialsSection() {
     {
       nameEn: "Fatima Al-Saud",
       nameAr: "فاطمة آل سعود",
-      location: lang === "ar" ? "جدة" : "Jeddah",
+      location: lang === "ar" ? "الإسكندرية" : "Alexandria",
       rating: 5,
-      textEn: "Best electronics store in Saudi Arabia. Great prices and the customer support team was very helpful.",
-      textAr: "أفضل متجر إلكترونيات في المملكة العربية السعودية. أسعار رائعة وفريق دعم العملاء مفيد جداً.",
+      textEn: "Best electronics store in Egypt. Great prices and the customer support team was very helpful.",
+      textAr: "أفضل متجر إلكترونيات في مصر. أسعار رائعة وفريق دعم العملاء مفيد جداً.",
     },
     {
       nameEn: "Mohammed Al-Qahtani",
       nameAr: "محمد القحطاني",
-      location: lang === "ar" ? "الدمام" : "Dammam",
+      location: lang === "ar" ? "الجيزة" : "Giza",
       rating: 4,
       textEn: "I bought a MacBook Pro and the delivery was incredibly fast. The packaging was premium and authentic.",
       textAr: "اشتريت MacBook Pro والتوصيل كان سريعاً للغاية. التغليف كان فاخراً والمنتج أصلي.",

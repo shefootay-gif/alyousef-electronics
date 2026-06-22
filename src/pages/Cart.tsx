@@ -75,7 +75,7 @@ export default function Cart() {
                           {item.product?.name}
                         </h3>
                       </Link>
-                      <p className="text-[#D4AF37] font-bold mt-1">SAR {unitPrice}</p>
+                      <p className="text-[#D4AF37] font-bold mt-1">EGP {unitPrice}</p>
                       <div className="flex items-center gap-3 mt-3">
                         <div className="flex items-center gap-2 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0]">
                           <button
@@ -105,7 +105,7 @@ export default function Cart() {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="font-bold text-[#171717]">SAR {itemTotal.toFixed(2)}</p>
+                      <p className="font-bold text-[#171717]">EGP {itemTotal.toFixed(2)}</p>
                     </div>
                   </div>
                 );
@@ -117,10 +117,10 @@ export default function Cart() {
                   <span className="text-sm text-[#64748B]">
                     {total >= shippingThreshold
                       ? "You qualify for free shipping!"
-                      : `Add SAR ${(shippingThreshold - total).toFixed(0)} more for free shipping`}
+                      : `Add EGP ${(shippingThreshold - total).toFixed(0)} more for free shipping`}
                   </span>
                   <span className="text-sm font-semibold text-[#171717]">
-                    SAR {total.toFixed(0)} / {shippingThreshold}
+                    EGP {total.toFixed(0)} / {shippingThreshold}
                   </span>
                 </div>
                 <div className="h-2 bg-[#E2E8F0] rounded-full overflow-hidden">
@@ -158,22 +158,22 @@ export default function Cart() {
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-sm">
                     <span className="text-[#64748B]">Subtotal</span>
-                    <span className="font-semibold text-[#171717]">SAR {total.toFixed(2)}</span>
+                    <span className="font-semibold text-[#171717]">EGP {total.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-[#64748B]">Shipping</span>
                     <span className={`font-semibold ${shipping === 0 ? "text-green-600" : "text-[#171717]"}`}>
-                      {shipping === 0 ? "FREE" : `SAR ${shipping.toFixed(2)}`}
+                      {shipping === 0 ? "FREE" : `EGP ${shipping.toFixed(2)}`}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-[#64748B]">Tax (15%)</span>
-                    <span className="font-semibold text-[#171717]">SAR {tax.toFixed(2)}</span>
+                    <span className="font-semibold text-[#171717]">EGP {tax.toFixed(2)}</span>
                   </div>
                   <div className="border-t border-[#E2E8F0] pt-3">
                     <div className="flex justify-between">
                       <span className="font-bold text-[#171717]">Total</span>
-                      <span className="text-2xl font-bold text-[#D4AF37]">SAR {grandTotal.toFixed(2)}</span>
+                      <span className="text-2xl font-bold text-[#D4AF37]">EGP {grandTotal.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

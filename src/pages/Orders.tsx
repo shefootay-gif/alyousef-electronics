@@ -92,7 +92,7 @@ export default function Orders() {
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#E2E8F0]">
                     <div className="flex items-center gap-2 text-sm text-[#64748B]">
                       <Clock className="w-4 h-4" />
-                      <span>Total: <span className="font-bold text-[#D4AF37]">SAR {Number(order.total).toFixed(2)}</span></span>
+                      <span>Total: <span className="font-bold text-[#D4AF37]">EGP {Number(order.total).toFixed(2)}</span></span>
                     </div>
                     <div className="flex items-center gap-4">
                       {order.status === "delivered" && (

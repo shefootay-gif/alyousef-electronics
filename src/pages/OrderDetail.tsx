@@ -93,7 +93,7 @@ export default function OrderDetail() {
                     <div className="flex-1">
                       <p className="font-semibold text-[#171717]">{item.productName}</p>
                       <p className="text-sm text-[#64748B] mb-2">{lang === "ar" ? "الكمية:" : "Qty:"} {item.quantity}</p>
-                      <p className="font-bold text-[#D4AF37]">SAR {Number(item.totalPrice).toFixed(2)}</p>
+                      <p className="font-bold text-[#D4AF37]">EGP {Number(item.totalPrice).toFixed(2)}</p>
                     </div>
                   </div>
                 ))}
@@ -105,19 +105,19 @@ export default function OrderDetail() {
               <div className="space-y-3">
                 <div className="flex justify-between text-[#64748B]">
                   <span>{lang === "ar" ? "المجموع الفرعي" : "Subtotal"}</span>
-                  <span>SAR {Number(order.subtotal).toFixed(2)}</span>
+                  <span>EGP {Number(order.subtotal).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-[#64748B]">
                   <span>{lang === "ar" ? "الشحن" : "Shipping"}</span>
-                  <span>SAR {Number(order.shippingAmount).toFixed(2)}</span>
+                  <span>EGP {Number(order.shippingAmount).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-[#64748B]">
                   <span>{lang === "ar" ? "الضريبة" : "Tax"}</span>
-                  <span>SAR {Number(order.taxAmount).toFixed(2)}</span>
+                  <span>EGP {Number(order.taxAmount).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-lg text-[#171717] pt-3 border-t">
                   <span>{lang === "ar" ? "الإجمالي" : "Total"}</span>
-                  <span className="text-[#D4AF37]">SAR {Number(order.total).toFixed(2)}</span>
+                  <span className="text-[#D4AF37]">EGP {Number(order.total).toFixed(2)}</span>
                 </div>
               </div>
             </div>

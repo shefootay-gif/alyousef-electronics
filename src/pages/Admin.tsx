@@ -61,7 +61,7 @@ function DashboardOverview() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: t("revenue30d"), value: `SAR ${(dashboard?.revenue || 0).toFixed(0)}`, icon: <DollarSign className="w-6 h-6" />, color: "from-[#D4AF37] to-[#B8960F]" },
+          { label: t("revenue30d"), value: `EGP ${(dashboard?.revenue || 0).toFixed(0)}`, icon: <DollarSign className="w-6 h-6" />, color: "from-[#D4AF37] to-[#B8960F]" },
           { label: t("totalOrders"), value: dashboard?.totalOrders || 0, icon: <ShoppingBag className="w-6 h-6" />, color: "from-[#C0C0C0] to-[#0099CC]" },
           { label: t("activeProducts"), value: dashboard?.activeProducts || 0, icon: <Package className="w-6 h-6" />, color: "from-emerald-500 to-emerald-600" },
           { label: t("newCustomers"), value: dashboard?.newCustomers || 0, icon: <Users className="w-6 h-6" />, color: "from-purple-500 to-purple-600" },
@@ -90,7 +90,7 @@ function DashboardOverview() {
               <YAxis stroke="#94A3B8" fontSize={12} />
               <Tooltip
                 contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}
-                formatter={(value: number) => [`SAR ${value.toFixed(2)}`, "Revenue"]}
+                formatter={(value: number) => [`EGP ${value.toFixed(2)}`, "Revenue"]}
               />
               <Line type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={2} dot={{ fill: "#D4AF37" }} />
             </LineChart>
@@ -120,7 +120,7 @@ function DashboardOverview() {
                         {t(order.status)}
                       </span>
                     </td>
-                    <td className="py-3 px-4 font-semibold text-[#D4AF37]">SAR {Number(order.total).toFixed(2)}</td>
+                    <td className="py-3 px-4 font-semibold text-[#D4AF37]">EGP {Number(order.total).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -145,7 +145,7 @@ function DashboardOverview() {
                   <tr key={item.productId} className="hover:bg-[#F8FAFC]">
                     <td className="py-3 px-4 font-medium line-clamp-1 max-w-[150px]" title={item.productName}>{item.productName}</td>
                     <td className="py-3 px-4 text-[#0099CC] font-bold">{item.totalSold}</td>
-                    <td className="py-3 px-4 font-semibold text-[#D4AF37]">SAR {Number(item.revenue || 0).toFixed(2)}</td>
+                    <td className="py-3 px-4 font-semibold text-[#D4AF37]">EGP {Number(item.revenue || 0).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -383,8 +383,8 @@ function ProductsManagement() {
                     </div>
                   </td>
                   <td className="py-3 px-4">
-                    <span className="font-semibold text-[#D4AF37]">SAR {product.salePrice || product.price}</span>
-                    {product.salePrice && <span className="text-xs text-[#94A3B8] line-through ml-1">SAR {product.price}</span>}
+                    <span className="font-semibold text-[#D4AF37]">EGP {product.salePrice || product.price}</span>
+                    {product.salePrice && <span className="text-xs text-[#94A3B8] line-through ml-1">EGP {product.price}</span>}
                   </td>
                   <td className="py-3 px-4">{product.stockQuantity}</td>
                   <td className="py-3 px-4">
@@ -460,7 +460,7 @@ function OrdersManagement() {
                     </div>
                   )}
                 </td>
-                <td className="py-3 px-4 font-semibold text-[#D4AF37]">SAR {Number(order.total).toFixed(2)}</td>
+                <td className="py-3 px-4 font-semibold text-[#D4AF37]">EGP {Number(order.total).toFixed(2)}</td>
                 <td className="py-3 px-4">
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${orderStatusColors[order.status] || ""}`}>
                     {t(order.status)}

@@ -114,7 +114,7 @@ export const orderRouter = createRouter({
           streetAddress: z.string(),
           buildingNumber: z.string().optional(),
           postalCode: z.string().optional(),
-          country: z.string().default("Saudi Arabia"),
+          country: z.string().default("Egypt"),
         }),
         paymentMethod: z.enum(["credit_card", "paypal", "cod", "stc_pay", "apple_pay"]),
         notes: z.string().optional(),

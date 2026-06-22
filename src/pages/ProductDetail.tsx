@@ -195,14 +195,14 @@ export default function ProductDetail() {
 
             <div className="flex items-center gap-3 mb-6">
               <span className="text-3xl font-bold text-[#D4AF37]">
-                SAR {salePrice || price}
+                EGP {salePrice || price}
               </span>
               {salePrice && (
-                <span className="text-xl text-[#94A3B8] line-through">SAR {price}</span>
+                <span className="text-xl text-[#94A3B8] line-through">EGP {price}</span>
               )}
               {salePrice && (
                 <span className="px-3 py-1 bg-red-100 text-red-600 text-sm font-bold rounded-lg">
-                  Save SAR {(price - salePrice).toFixed(0)}
+                  Save EGP {(price - salePrice).toFixed(0)}
                 </span>
               )}
             </div>
@@ -258,7 +258,7 @@ export default function ProductDetail() {
               <div className="text-center p-4 bg-[#F8FAFC] rounded-xl">
                 <Truck className="w-6 h-6 text-[#D4AF37] mx-auto mb-2" />
                 <p className="text-xs text-[#64748B]">{t("freeDeliveryLabel")}</p>
-                <p className="text-xs text-[#94A3B8]">SAR 500+</p>
+                <p className="text-xs text-[#94A3B8]">EGP 500+</p>
               </div>
               <div className="text-center p-4 bg-[#F8FAFC] rounded-xl">
                 <Shield className="w-6 h-6 text-[#D4AF37] mx-auto mb-2" />
@@ -449,7 +449,7 @@ export default function ProductDetail() {
                     </div>
                     <div className="p-4">
                       <h3 className="font-semibold text-[#171717] text-sm line-clamp-1">{p.name}</h3>
-                      <p className="text-[#D4AF37] font-bold mt-1">SAR {p.salePrice || p.price}</p>
+                      <p className="text-[#D4AF37] font-bold mt-1">EGP {p.salePrice || p.price}</p>
                     </div>
                   </Link>
                 ))}

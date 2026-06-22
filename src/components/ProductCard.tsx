@@ -134,11 +134,11 @@ export default function ProductCard({ product }: { product: any }) {
 
         <div className="flex items-center gap-2 mt-3">
           <span className="text-xl font-bold text-[#D4AF37]">
-            SAR {salePrice || price}
+            EGP {salePrice || price}
           </span>
           {salePrice && (
             <span className="text-sm text-[#94A3B8] line-through">
-              SAR {price}
+              EGP {price}
             </span>
           )}
         </div>
