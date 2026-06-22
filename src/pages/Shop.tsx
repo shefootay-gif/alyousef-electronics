@@ -50,41 +50,43 @@ export default function Shop() {
   return (
     <Layout>
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#171717] to-[#0F172A] pt-28 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8">
-          <h1 className="text-4xl sm:text-5xl font-bold text-[#F8FAFC] mb-2">
+      <div className="bg-[#020617] relative overflow-hidden pt-32 pb-20 border-b border-white/5">
+        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#D4AF37]/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10 text-center">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4 tracking-tight">
             {activeCategory ? (lang === "ar" && activeCategory.nameAr ? activeCategory.nameAr : activeCategory.name) : featured ? (lang === "ar" ? "مميز" : "Featured") : t("shop")}
           </h1>
-          <p className="text-[#94A3B8]">
+          <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] mx-auto rounded-full mb-6" />
+          <p className="text-[#94A3B8] font-medium tracking-wide">
             <Link to="/" className="hover:text-[#D4AF37] transition-colors">{t("home")}</Link>
-            {" > "}
-            <span className="text-[#F8FAFC]">{activeCategory ? (lang === "ar" && activeCategory.nameAr ? activeCategory.nameAr : activeCategory.name) : (lang === "ar" ? "جميع المنتجات" : "All Products")}</span>
+            <span className="mx-2 text-white/30">{">"}</span>
+            <span className="text-[#D4AF37]">{activeCategory ? (lang === "ar" && activeCategory.nameAr ? activeCategory.nameAr : activeCategory.name) : (lang === "ar" ? "جميع المنتجات" : "All Products")}</span>
           </p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8">
-        <div className="flex gap-8">
+        <div className="flex gap-8 relative z-10">
           {/* Sidebar Filters - Desktop */}
-          <aside className="hidden lg:block w-64 flex-shrink-0">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
-              <h3 className="font-bold text-[#171717] mb-4 flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4" />
+          <aside className="hidden lg:block w-72 flex-shrink-0">
+            <div className="bg-[#0F172A]/80 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 sticky top-28 shadow-2xl">
+              <h3 className="font-bold text-white text-xl mb-8 flex items-center gap-3">
+                <SlidersHorizontal className="w-5 h-5 text-[#D4AF37]" />
                 {t("filters")}
               </h3>
 
               {/* Categories */}
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold text-[#171717] mb-3">{t("categories")}</h4>
-                <div className="space-y-2">
+              <div className="mb-8">
+                <h4 className="text-sm font-bold text-[#D4AF37] tracking-widest uppercase mb-4">{t("categories")}</h4>
+                <div className="space-y-3">
                   <button
                     onClick={() => {
                       const newParams = new URLSearchParams(searchParams);
                       newParams.delete("category");
                       setSearchParams(newParams);
                     }}
-                    className={`block text-sm w-full ${isRTL ? "text-right" : "text-left"} py-1 transition-colors ${
-                      !categorySlug ? "text-[#D4AF37] font-semibold" : "text-[#64748B] hover:text-[#171717]"
+                    className={`block text-sm w-full ${isRTL ? "text-right" : "text-left"} py-2 px-3 rounded-xl transition-all ${
+                      !categorySlug ? "bg-[#D4AF37]/10 text-[#D4AF37] font-bold border border-[#D4AF37]/20" : "text-[#94A3B8] hover:text-white hover:bg-white/5"
                     }`}
                   >
                     {t("allCategories")}
@@ -97,8 +99,8 @@ export default function Shop() {
                         newParams.set("category", cat.slug);
                         setSearchParams(newParams);
                       }}
-                      className={`block text-sm w-full ${isRTL ? "text-right" : "text-left"} py-1 transition-colors ${
-                        categorySlug === cat.slug ? "text-[#D4AF37] font-semibold" : "text-[#64748B] hover:text-[#171717]"
+                      className={`block text-sm w-full ${isRTL ? "text-right" : "text-left"} py-2 px-3 rounded-xl transition-all ${
+                        categorySlug === cat.slug ? "bg-[#D4AF37]/10 text-[#D4AF37] font-bold border border-[#D4AF37]/20" : "text-[#94A3B8] hover:text-white hover:bg-white/5"
                       }`}
                     >
                       {lang === "ar" && cat.nameAr ? cat.nameAr : cat.name}
@@ -109,13 +111,16 @@ export default function Shop() {
 
               {/* Brands */}
               {filters?.brands && filters.brands.length > 0 && (
-                <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-[#171717] mb-3">{t("brands")}</h4>
-                  <div className="space-y-2">
+                <div className="mb-8">
+                  <h4 className="text-sm font-bold text-[#D4AF37] tracking-widest uppercase mb-4">{t("brands")}</h4>
+                  <div className="space-y-3">
                     {filters.brands.map((brand) => (
-                      <label key={brand} className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" className="rounded border-[#E2E8F0] text-[#D4AF37] focus:ring-[#D4AF37]" />
-                        <span className="text-sm text-[#64748B]">{brand}</span>
+                      <label key={brand} className="flex items-center gap-3 cursor-pointer group">
+                        <div className="relative flex items-center justify-center w-5 h-5 rounded border border-white/20 bg-black/20 group-hover:border-[#D4AF37] transition-colors">
+                          <input type="checkbox" className="absolute opacity-0 w-full h-full cursor-pointer peer" />
+                          <div className="w-3 h-3 rounded-[2px] bg-[#D4AF37] opacity-0 peer-checked:opacity-100 transition-opacity" />
+                        </div>
+                        <span className="text-sm text-[#94A3B8] group-hover:text-white transition-colors">{brand}</span>
                       </label>
                     ))}
                   </div>
@@ -123,12 +128,16 @@ export default function Shop() {
               )}
 
               {/* Price Range */}
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold text-[#171717] mb-3">{t("priceRange")}</h4>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#94A3B8]">EGP {filters?.priceRange?.min || 0}</span>
-                  <span className="text-xs text-[#94A3B8]">-</span>
-                  <span className="text-xs text-[#94A3B8]">EGP {filters?.priceRange?.max || 10000}</span>
+              <div className="mb-8">
+                <h4 className="text-sm font-bold text-[#D4AF37] tracking-widest uppercase mb-4">{t("priceRange")}</h4>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-center text-white text-sm font-mono">
+                    {filters?.priceRange?.min || 0}
+                  </div>
+                  <span className="text-[#94A3B8]">-</span>
+                  <div className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-center text-white text-sm font-mono">
+                    {filters?.priceRange?.max || 10000}
+                  </div>
                 </div>
               </div>
 
@@ -136,7 +145,7 @@ export default function Shop() {
                 onClick={() => {
                   setSearchParams(new URLSearchParams());
                 }}
-                className="w-full py-2.5 text-sm text-[#64748B] hover:text-[#171717] border border-[#E2E8F0] rounded-lg hover:bg-[#F8FAFC] transition-all"
+                className="w-full py-3.5 text-sm font-bold text-white bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
               >
                 {t("resetAll")}
               </button>
@@ -150,22 +159,22 @@ export default function Shop() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setMobileFiltersOpen(true)}
-                  className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow text-sm text-[#171717]"
+                  className="lg:hidden flex items-center gap-2 px-5 py-2.5 bg-[#0F172A] border border-white/10 rounded-xl text-sm font-bold text-white shadow-lg"
                 >
                   <SlidersHorizontal className="w-4 h-4" />
                   {t("filters")}
                 </button>
-                <span className="text-sm text-[#64748B]">
+                <span className="text-sm font-bold text-[#94A3B8] bg-white/5 px-4 py-2 rounded-xl border border-white/5">
                   {productsData?.total || 0} {lang === "ar" ? "منتج" : "products"}
                 </span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 {/* Sort */}
                 <div className="relative">
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="appearance-none bg-white rounded-lg shadow px-4 py-2 pr-8 text-sm text-[#171717] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                    className="appearance-none bg-[#0F172A] border border-white/10 rounded-xl px-5 py-2.5 pr-10 text-sm font-bold text-white focus:outline-none focus:border-[#D4AF37] transition-colors cursor-pointer"
                   >
                     <option value="newest">{t("newest")}</option>
                     <option value="price_asc">{t("priceLowHigh")}</option>
@@ -173,19 +182,19 @@ export default function Shop() {
                     <option value="rating">{t("topRated")}</option>
                     <option value="name">{t("name")}</option>
                   </select>
-                  <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64748B] pointer-events-none" />
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D4AF37] pointer-events-none" />
                 </div>
                 {/* View toggle */}
-                <div className="hidden sm:flex bg-white rounded-lg shadow overflow-hidden">
+                <div className="hidden sm:flex bg-[#0F172A] border border-white/10 rounded-xl overflow-hidden shadow-lg p-1">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`p-2 ${viewMode === "grid" ? "bg-[#171717] text-white" : "text-[#64748B] hover:text-[#171717]"}`}
+                    className={`p-2 rounded-lg transition-all ${viewMode === "grid" ? "bg-[#D4AF37] text-black" : "text-[#94A3B8] hover:text-white hover:bg-white/5"}`}
                   >
                     <Grid3X3 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`p-2 ${viewMode === "list" ? "bg-[#171717] text-white" : "text-[#64748B] hover:text-[#171717]"}`}
+                    className={`p-2 rounded-lg transition-all ${viewMode === "list" ? "bg-[#D4AF37] text-black" : "text-[#94A3B8] hover:text-white hover:bg-white/5"}`}
                   >
                     <List className="w-4 h-4" />
                   </button>
@@ -226,11 +235,11 @@ export default function Shop() {
 
             {/* Pagination */}
             {productsData && productsData.totalPages > 1 && (
-              <div className="flex justify-center mt-10 gap-2">
+              <div className="flex justify-center mt-16 gap-3">
                 <button
                   onClick={() => setPage(Math.max(1, page - 1))}
                   disabled={page === 1}
-                  className="px-4 py-2 bg-white rounded-lg shadow text-sm text-[#171717] disabled:opacity-50 hover:bg-[#F8FAFC]"
+                  className="px-6 py-3 bg-[#0F172A] border border-white/10 rounded-xl text-sm font-bold text-white disabled:opacity-50 hover:bg-[#1E293B] transition-colors"
                 >
                   {t("previous")}
                 </button>
@@ -238,10 +247,10 @@ export default function Shop() {
                   <button
                     key={i}
                     onClick={() => setPage(i + 1)}
-                    className={`w-10 h-10 rounded-lg text-sm font-medium transition-all ${
+                    className={`w-12 h-12 rounded-xl text-sm font-bold transition-all ${
                       page === i + 1
-                        ? "bg-[#171717] text-white"
-                        : "bg-white text-[#171717] hover:bg-[#F8FAFC] shadow"
+                        ? "bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-black shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                        : "bg-[#0F172A] border border-white/10 text-white hover:bg-[#1E293B]"
                     }`}
                   >
                     {i + 1}
@@ -250,7 +259,7 @@ export default function Shop() {
                 <button
                   onClick={() => setPage(Math.min(productsData.totalPages, page + 1))}
                   disabled={page === productsData.totalPages}
-                  className="px-4 py-2 bg-white rounded-lg shadow text-sm text-[#171717] disabled:opacity-50 hover:bg-[#F8FAFC]"
+                  className="px-6 py-3 bg-[#0F172A] border border-white/10 rounded-xl text-sm font-bold text-white disabled:opacity-50 hover:bg-[#1E293B] transition-colors"
                 >
                   {t("next")}
                 </button>
@@ -263,15 +272,18 @@ export default function Shop() {
       {/* Mobile Filters */}
       {mobileFiltersOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileFiltersOpen(false)} />
-          <div className="absolute left-0 top-0 h-full w-80 bg-white shadow-2xl p-6 overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-[#171717]">{t("filters")}</h3>
-              <button onClick={() => setMobileFiltersOpen(false)}>
-                <X className="w-5 h-5 text-[#64748B]" />
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setMobileFiltersOpen(false)} />
+          <div className="absolute left-0 top-0 h-full w-[85%] max-w-sm bg-[#050505] border-r border-white/10 shadow-2xl p-6 overflow-y-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="font-bold text-white text-xl flex items-center gap-2">
+                <SlidersHorizontal className="w-5 h-5 text-[#D4AF37]" />
+                {t("filters")}
+              </h3>
+              <button onClick={() => setMobileFiltersOpen(false)} className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+                <X className="w-5 h-5 text-white" />
               </button>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {categories?.map((cat) => (
                 <button
                   key={cat.id}
@@ -281,8 +293,8 @@ export default function Shop() {
                     setSearchParams(newParams);
                     setMobileFiltersOpen(false);
                   }}
-                  className={`block text-sm w-full ${isRTL ? "text-right" : "text-left"} py-2 px-3 rounded-lg transition-colors ${
-                    categorySlug === cat.slug ? "bg-[#F1F5F9] text-[#D4AF37] font-semibold" : "text-[#64748B]"
+                  className={`block text-sm w-full ${isRTL ? "text-right" : "text-left"} py-3 px-4 rounded-xl transition-all ${
+                    categorySlug === cat.slug ? "bg-[#D4AF37]/10 text-[#D4AF37] font-bold border border-[#D4AF37]/20" : "text-[#94A3B8] hover:text-white hover:bg-white/5"
                   }`}
                 >
                   {lang === "ar" && cat.nameAr ? cat.nameAr : cat.name}

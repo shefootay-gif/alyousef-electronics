@@ -57,18 +57,19 @@ export default function ProductCard({ product }: { product: any }) {
         rotateY,
         transformStyle: "preserve-3d",
       }}
-      className="rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-shadow duration-300 group"
+      className="relative rounded-[2rem] bg-gradient-to-b from-[#0F172A] to-[#020617] shadow-xl hover:shadow-[0_0_30px_rgba(212,175,55,0.2)] border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-500 group overflow-hidden"
     >
+      <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <div 
         style={{ transform: "translateZ(30px)", transformStyle: "preserve-3d" }}
-        className="relative aspect-square bg-gradient-to-br from-[#F8FAFC] to-[#E2E8F0] overflow-hidden rounded-t-2xl"
+        className="relative aspect-square bg-white/5 backdrop-blur-md overflow-hidden rounded-t-[2rem] border-b border-white/5 p-6"
       >
         <Link to={`/product/${product.slug}`}>
           <img
             src={product.image || "/placeholder.png"}
             alt={displayName}
             loading="lazy"
-            className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-full object-contain filter drop-shadow-2xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-700"
           />
         </Link>
 
@@ -87,15 +88,15 @@ export default function ProductCard({ product }: { product: any }) {
           <button
             aria-label={t("addToFavorites") || "Add to favorites"}
             onClick={() => setLiked(!liked)}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
-              liked ? "bg-red-500 text-white" : "bg-white text-[#64748B] hover:text-red-500"
-            } shadow-md`}
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all backdrop-blur-md border ${
+              liked ? "bg-red-500/20 text-red-500 border-red-500/50" : "bg-black/40 text-[#94A3B8] border-white/10 hover:text-red-500 hover:border-white/30"
+            }`}
           >
             <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
           </button>
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-[#171717]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0">
+        <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-[#020617] to-transparent opacity-0 group-hover:opacity-100 transition-opacity translate-y-4 group-hover:translate-y-0 duration-500">
           <button
             onClick={handleAddToCart}
             className="w-full py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold text-sm rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
@@ -106,12 +107,12 @@ export default function ProductCard({ product }: { product: any }) {
         </div>
       </div>
 
-      <div className="p-5" style={{ transform: "translateZ(20px)" }}>
-        <p className="text-xs text-[#94A3B8] mb-1">
+      <div className="p-6 relative z-10" style={{ transform: "translateZ(20px)" }}>
+        <p className="text-[11px] font-bold tracking-widest text-[#D4AF37] mb-2 uppercase">
           {lang === "ar" && product.category?.nameAr ? product.category.nameAr : product.category?.name}
         </p>
         <Link to={`/product/${product.slug}`}>
-          <h3 className="text-base font-semibold text-[#171717] line-clamp-1 hover:text-[#D4AF37] transition-colors">
+          <h3 className="text-lg font-bold text-white line-clamp-1 group-hover:text-[#D4AF37] transition-colors">
             {displayName}
           </h3>
         </Link>
@@ -132,12 +133,12 @@ export default function ProductCard({ product }: { product: any }) {
           </span>
         </div>
 
-        <div className="flex items-center gap-2 mt-3">
-          <span className="text-xl font-bold text-[#D4AF37]">
+        <div className="flex items-center gap-3 mt-4">
+          <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778]">
             EGP {salePrice || price}
           </span>
           {salePrice && (
-            <span className="text-sm text-[#94A3B8] line-through">
+            <span className="text-sm font-semibold text-[#64748B] line-through decoration-red-500/50 decoration-2">
               EGP {price}
             </span>
           )}
