@@ -4,6 +4,15 @@ const resendApiKey = process.env.RESEND_API_KEY;
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
 const fromEmail = 'AL-YOUSEF Electronics <onboarding@resend.dev>';
 
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function sendOrderConfirmation(
   toEmail: string,
   orderDetails: {
@@ -21,9 +30,9 @@ export async function sendOrderConfirmation(
     .map(
       (item) => `
     <tr>
-      <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.name}</td>
+      <td style="padding: 8px; border-bottom: 1px solid #eee;">${escapeHtml(item.name)}</td>
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
-      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${item.price} EGP</td>
+      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${escapeHtml(item.price)} EGP</td>
     </tr>
   `
     )
@@ -38,7 +47,7 @@ export async function sendOrderConfirmation(
       
       <div style="padding: 20px 0;">
         <h2 style="font-size: 20px;">Thank you for your order!</h2>
-        <p>We've received your order <strong>#${orderDetails.orderNumber}</strong>.</p>
+        <p>We've received your order <strong>#${escapeHtml(orderDetails.orderNumber)}</strong>.</p>
         
         <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
           <thead>
@@ -86,7 +95,7 @@ export async function sendOrderStatusUpdate(
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
       <h1 style="color: #D4AF37;">AL-YOUSEF Electronics</h1>
-      <p>Your order <strong>#${orderDetails.orderNumber}</strong> is now: <strong>${orderDetails.status.replace('_', ' ')}</strong></p>
+            <p>Your order <strong>#${escapeHtml(orderDetails.orderNumber)}</strong> is now: <strong>${escapeHtml(orderDetails.status.replace('_', ' '))}</strong></p>
     </div>
   `;
 

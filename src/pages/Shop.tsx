@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { Link } from "react-router";
 import { trpc } from "@/providers/trpc";
-import { useCart } from "@/hooks/useCart";
 import { useLanguage } from "@/hooks/useLanguage";
 import Layout from "@/components/Layout";
 import {
@@ -13,7 +12,6 @@ import {
   X,
 } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
-import { toast } from "sonner";
 
 
 export default function Shop() {

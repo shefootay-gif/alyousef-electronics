@@ -1,25 +1,58 @@
 import { z } from "zod";
-import { createRouter, publicQuery, adminQuery } from "./middleware";
+import { createRouter, publicQuery, adminQuery, authedQuery } from "./middleware";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "./queries/connection";
-import { orders, orderItems, products } from "@db/schema";
-import { eq, desc, sql, and } from "drizzle-orm";
-import { sendOrderConfirmation, sendOrderStatusUpdate } from "./lib/email";
+import { couponRedemptions, coupons, invoices, orders, orderItems, paymentTransactions, products, shippingRates } from "@db/schema";
+import { eq, desc, sql, and, gte } from "drizzle-orm";
+import { sendOrderConfirmation } from "./lib/email";
+import { nanoid } from "nanoid";
+import { calculateCouponDiscount, calculateShippingAmount, normalizeCouponCode } from "./lib/commerce";
+import { assertRateLimit } from "./lib/security";
+
+type ShippingAddress = NonNullable<(typeof orders.$inferInsert)["shippingAddress"]>;
 
 function generateOrderNumber(): string {
   const prefix = "AYE";
   const timestamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+  const random = nanoid(6).replace(/[-_]/g, "").toUpperCase();
   return `${prefix}-${timestamp}-${random}`;
 }
+
+const OrderStatusSchema = z.enum([
+  "pending",
+  "processing",
+  "shipped",
+  "delivered",
+  "cancelled",
+  "return_requested",
+  "returned",
+  "refunded",
+]);
+
+const PaymentMethodSchema = z.enum([
+  "credit_card",
+  "paypal",
+  "cod",
+  "stc_pay",
+  "apple_pay",
+  "paymob",
+  "fawry",
+]);
+
+const PhoneSchema = z
+  .string()
+  .trim()
+  .min(8)
+  .max(20)
+  .regex(/^\+?[0-9\s-]+$/, "Invalid phone number");
 
 export const orderRouter = createRouter({
   list: publicQuery
     .input(
       z.object({
-        page: z.number().default(1),
-        limit: z.number().default(10),
-        status: z.string().optional(),
+        page: z.number().int().min(1).default(1),
+        limit: z.number().int().min(1).max(100).default(10),
+        status: OrderStatusSchema.optional(),
       }).optional()
     )
     .query(async ({ ctx, input }) => {
@@ -38,7 +71,7 @@ export const orderRouter = createRouter({
       }
 
       if (filters.status) {
-        conditions.push(eq(orders.status, filters.status as any));
+        conditions.push(eq(orders.status, filters.status));
       }
 
       const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -107,26 +140,28 @@ export const orderRouter = createRouter({
     .input(
       z.object({
         shippingAddress: z.object({
-          firstName: z.string(),
-          lastName: z.string(),
-          email: z.string().email().optional(),
-          phone: z.string(),
-          city: z.string(),
-          district: z.string(),
-          streetAddress: z.string(),
-          buildingNumber: z.string().optional(),
-          postalCode: z.string().optional(),
-          country: z.string().default("Egypt"),
+          firstName: z.string().trim().min(2).max(80),
+          lastName: z.string().trim().min(2).max(80),
+          email: z.string().email().toLowerCase().trim().optional(),
+          phone: PhoneSchema,
+          city: z.string().trim().min(2).max(80),
+          district: z.string().trim().min(2).max(120),
+          streetAddress: z.string().trim().min(5).max(240),
+          buildingNumber: z.string().trim().max(40).optional(),
+          postalCode: z.string().trim().max(20).optional(),
+          country: z.string().trim().min(2).max(80).default("Egypt"),
         }),
-        paymentMethod: z.enum(["credit_card", "paypal", "cod", "stc_pay", "apple_pay"]),
-        notes: z.string().optional(),
+        paymentMethod: PaymentMethodSchema,
+        couponCode: z.string().trim().max(40).optional(),
+        shippingRateId: z.number().int().positive().optional(),
+        notes: z.string().trim().max(500).optional(),
         items: z.array(
           z.object({
-            productId: z.number(),
-            quantity: z.number().int().positive(),
+            productId: z.number().int().positive(),
+            quantity: z.number().int().positive().max(20),
             unitPrice: z.string().optional(),
           })
-        ),
+        ).min(1).max(100),
         subtotal: z.string().optional(),
         shippingAmount: z.string().optional(),
         taxAmount: z.string().optional(),
@@ -135,9 +170,23 @@ export const orderRouter = createRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const db = getDb();
+      const limited = assertRateLimit(
+        "order:create",
+        ctx.req.headers,
+        { windowMs: 10 * 60_000, max: 10 },
+        ctx.user ? `user:${ctx.user.id}` : `guest:${ctx.guestId || "anonymous"}`,
+      );
+
+      if (limited) {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: limited.message });
+      }
 
       if (input.items.length === 0) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Cart is empty" });
+      }
+
+      if (!ctx.user && !input.shippingAddress.email) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Guest orders require an email address" });
       }
 
       const orderNumber = generateOrderNumber();
@@ -148,6 +197,7 @@ export const orderRouter = createRouter({
         quantity: number;
         unitPrice: string;
         totalPrice: string;
+        trackInventory: boolean | null;
       }>;
 
       let subtotal = 0;
@@ -163,7 +213,7 @@ export const orderRouter = createRouter({
           throw new TRPCError({ code: "BAD_REQUEST", message: "One of the products is unavailable" });
         }
 
-        if ((product.stockQuantity || 0) < item.quantity) {
+        if (product.trackInventory && (product.stockQuantity || 0) < item.quantity) {
           throw new TRPCError({ code: "BAD_REQUEST", message: `${product.name} is out of stock` });
         }
 
@@ -178,14 +228,38 @@ export const orderRouter = createRouter({
           quantity: item.quantity,
           unitPrice: unitPriceNumber.toFixed(2),
           totalPrice: lineTotal.toFixed(2),
+          trackInventory: product.trackInventory,
         });
       }
 
-      const shippingAmount = subtotal >= 500 ? 0 : 35;
-      const taxAmount = subtotal * 0.15;
-      const total = subtotal + shippingAmount + taxAmount;
+      let selectedCoupon: typeof coupons.$inferSelect | null = null;
+      let couponId: number | null = null;
+      let discountAmount = 0;
+      if (input.couponCode?.trim()) {
+        const code = normalizeCouponCode(input.couponCode);
+        const [coupon] = await db.select().from(coupons).where(eq(coupons.code, code)).limit(1);
+        if (!coupon) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Coupon not found" });
+        }
+        selectedCoupon = coupon;
+        couponId = coupon.id;
+        discountAmount = calculateCouponDiscount(coupon, subtotal);
+      }
 
-      const shippingAddr: any = {
+      let shippingAmount = subtotal >= 5000 ? 0 : 35;
+      if (input.shippingRateId) {
+        const [rate] = await db.select().from(shippingRates).where(eq(shippingRates.id, input.shippingRateId)).limit(1);
+        if (!rate || !rate.isActive) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Shipping rate is unavailable" });
+        }
+        shippingAmount = calculateShippingAmount(rate, subtotal);
+      }
+
+      const taxableSubtotal = Math.max(0, subtotal - discountAmount);
+      const taxAmount = taxableSubtotal * 0.15;
+      const total = taxableSubtotal + shippingAmount + taxAmount;
+
+      const shippingAddr: ShippingAddress = {
         firstName: input.shippingAddress.firstName,
         lastName: input.shippingAddress.lastName,
         email: input.shippingAddress.email,
@@ -200,42 +274,103 @@ export const orderRouter = createRouter({
         shippingAddr.postalCode = input.shippingAddress.postalCode;
       }
 
-      const orderInsertResult = await db
-        .insert(orders)
-        .values({
-          orderNumber,
-          userId: ctx.user?.id || null,
-          guestEmail: ctx.user ? null : null,
+      const orderId = await db.transaction(async (tx) => {
+        const orderInsertResult = await tx
+          .insert(orders)
+          .values({
+            orderNumber,
+            userId: ctx.user?.id || null,
+            guestEmail: ctx.user ? null : input.shippingAddress.email || null,
+            guestPhone: ctx.user ? null : input.shippingAddress.phone,
+            status: "pending",
+            paymentStatus: "pending",
+            subtotal: subtotal.toFixed(2),
+            taxAmount: taxAmount.toFixed(2),
+            shippingAmount: shippingAmount.toFixed(2),
+            discountAmount: discountAmount.toFixed(2),
+            total: total.toFixed(2),
+            shippingAddress: shippingAddr,
+            paymentMethod: input.paymentMethod,
+            notes: input.notes || null,
+          })
+          .returning({ id: orders.id });
+
+        const createdOrderId = orderInsertResult[0].id;
+
+        for (const item of verifiedItems) {
+          await tx.insert(orderItems).values({
+            orderId: createdOrderId,
+            productId: item.productId,
+            productName: item.productName,
+            productImage: item.productImage,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            totalPrice: item.totalPrice,
+          });
+
+          if (item.trackInventory) {
+            const [stockUpdate] = await tx
+              .update(products)
+              .set({ stockQuantity: sql`${products.stockQuantity} - ${item.quantity}` })
+              .where(and(eq(products.id, item.productId), gte(products.stockQuantity, item.quantity)))
+              .returning({ id: products.id });
+
+            if (!stockUpdate) {
+              throw new TRPCError({
+                code: "CONFLICT",
+                message: `${item.productName} no longer has enough stock`,
+              });
+            }
+          }
+        }
+
+        await tx.insert(paymentTransactions).values({
+          orderId: createdOrderId,
+          provider: input.paymentMethod === "cod" ? "cod" : input.paymentMethod === "fawry" ? "fawry" : "paymob",
+          amount: total.toFixed(2),
+          currency: "EGP",
           status: "pending",
-          paymentStatus: input.paymentMethod === "cod" ? "pending" : "paid",
+        });
+
+        await tx.insert(invoices).values({
+          invoiceNumber: `INV-${orderNumber}`,
+          orderId: createdOrderId,
           subtotal: subtotal.toFixed(2),
           taxAmount: taxAmount.toFixed(2),
           shippingAmount: shippingAmount.toFixed(2),
+          discountAmount: discountAmount.toFixed(2),
           total: total.toFixed(2),
-          shippingAddress: shippingAddr,
-          paymentMethod: input.paymentMethod,
-          notes: input.notes || null,
-        })
-        .returning({ id: orders.id });
-
-      const orderId = orderInsertResult[0].id;
-
-      for (const item of verifiedItems) {
-        await db.insert(orderItems).values({
-          orderId,
-          productId: item.productId,
-          productName: item.productName,
-          productImage: item.productImage,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          totalPrice: item.totalPrice,
+          currency: "EGP",
         });
 
-        await db
-          .update(products)
-          .set({ stockQuantity: sql`${products.stockQuantity} - ${item.quantity}` })
-          .where(eq(products.id, item.productId));
-      }
+        if (couponId && selectedCoupon) {
+          const couponWhere = selectedCoupon.usageLimit
+            ? and(
+                eq(coupons.id, couponId),
+                sql`COALESCE(${coupons.usedCount}, 0) < ${selectedCoupon.usageLimit}`,
+              )
+            : eq(coupons.id, couponId);
+
+          const [couponUpdate] = await tx
+            .update(coupons)
+            .set({ usedCount: sql`COALESCE(${coupons.usedCount}, 0) + 1` })
+            .where(couponWhere)
+            .returning({ id: coupons.id });
+
+          if (!couponUpdate) {
+            throw new TRPCError({ code: "CONFLICT", message: "Coupon usage limit reached" });
+          }
+
+          await tx.insert(couponRedemptions).values({
+            couponId,
+            orderId: createdOrderId,
+            userId: ctx.user?.id || null,
+            discountAmount: discountAmount.toFixed(2),
+          });
+        }
+
+        return createdOrderId;
+      });
 
       if (input.shippingAddress.email) {
         await sendOrderConfirmation(input.shippingAddress.email, {
@@ -253,7 +388,7 @@ export const orderRouter = createRouter({
     }),
 
   updateStatus: adminQuery
-    .input(z.object({ id: z.number(), status: z.enum(["pending", "processing", "shipped", "delivered", "cancelled", "return_requested", "returned", "refunded"]) }))
+    .input(z.object({ id: z.number().int().positive(), status: OrderStatusSchema }))
     .mutation(async ({ input }) => {
       const db = getDb();
       await db
@@ -268,8 +403,8 @@ export const orderRouter = createRouter({
       return updated;
     }),
 
-  cancel: publicQuery
-    .input(z.object({ id: z.number(), reason: z.string().optional() }))
+  cancel: authedQuery
+    .input(z.object({ id: z.number().int().positive(), reason: z.string().trim().max(500).optional() }))
     .mutation(async ({ ctx, input }) => {
       const db = getDb();
       const [order] = await db
@@ -278,15 +413,29 @@ export const orderRouter = createRouter({
         .where(eq(orders.id, input.id))
         .limit(1);
 
-      if (!order) throw new Error("Order not found");
+      if (!order) throw new TRPCError({ code: "NOT_FOUND", message: "Order not found" });
       if (ctx.user?.role !== "admin" && order.userId !== ctx.user?.id) {
-        throw new Error("Unauthorized");
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
       }
 
-      await db
-        .update(orders)
-        .set({ status: "cancelled" })
-        .where(eq(orders.id, input.id));
+      if (order.status !== "pending" && order.status !== "processing") {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Only pending or processing orders can be cancelled" });
+      }
+
+      await db.transaction(async (tx) => {
+        await tx
+          .update(orders)
+          .set({ status: "cancelled" })
+          .where(eq(orders.id, input.id));
+
+        const items = await tx.select().from(orderItems).where(eq(orderItems.orderId, input.id));
+        for (const item of items) {
+          await tx
+            .update(products)
+            .set({ stockQuantity: sql`COALESCE(${products.stockQuantity}, 0) + ${item.quantity}` })
+            .where(and(eq(products.id, item.productId), eq(products.trackInventory, true)));
+        }
+      });
 
       const [updated] = await db
         .select()
@@ -297,8 +446,8 @@ export const orderRouter = createRouter({
       return updated;
     }),
 
-  requestReturn: publicQuery
-    .input(z.object({ id: z.number(), reason: z.string().optional() }))
+  requestReturn: authedQuery
+    .input(z.object({ id: z.number().int().positive(), reason: z.string().trim().max(500).optional() }))
     .mutation(async ({ ctx, input }) => {
       const db = getDb();
       const [order] = await db
@@ -307,13 +456,13 @@ export const orderRouter = createRouter({
         .where(eq(orders.id, input.id))
         .limit(1);
 
-      if (!order) throw new Error("Order not found");
+      if (!order) throw new TRPCError({ code: "NOT_FOUND", message: "Order not found" });
       if (ctx.user?.role !== "admin" && order.userId !== ctx.user?.id) {
-        throw new Error("Unauthorized");
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
       }
 
       if (order.status !== "delivered") {
-        throw new Error("Can only return delivered orders");
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Can only return delivered orders" });
       }
 
       await db
@@ -330,9 +479,20 @@ export const orderRouter = createRouter({
       return updated;
     }),
   trackOrder: publicQuery
-    .input(z.object({ orderNumber: z.string(), phone: z.string() }))
-    .query(async ({ input }) => {
+    .input(z.object({ orderNumber: z.string().trim().min(4).max(80), phone: PhoneSchema }))
+    .query(async ({ ctx, input }) => {
       const db = getDb();
+      const limited = assertRateLimit(
+        "order:track",
+        ctx.req.headers,
+        { windowMs: 10 * 60_000, max: 12 },
+        input.orderNumber,
+      );
+
+      if (limited) {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: limited.message });
+      }
+
       const [order] = await db
         .select()
         .from(orders)
@@ -342,7 +502,7 @@ export const orderRouter = createRouter({
       if (!order) return null;
 
       // Verify the phone number matches the order's shipping address
-      const address = order.shippingAddress as any;
+      const address = order.shippingAddress as { phone?: string } | null;
       if (address?.phone !== input.phone) {
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Phone number does not match" });
       }

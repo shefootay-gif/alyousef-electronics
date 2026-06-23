@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import { trpc } from "@/providers/trpc";
 import Layout from "@/components/Layout";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -13,7 +12,7 @@ const statuses = [
 ];
 
 export default function TrackOrder() {
-  const { lang, t, isRTL } = useLanguage();
+  const { lang, t } = useLanguage();
   const [orderNumber, setOrderNumber] = useState("");
   const [phone, setPhone] = useState("");
   const [searched, setSearched] = useState(false);
@@ -140,9 +139,10 @@ export default function TrackOrder() {
               {/* Progress Tracker */}
               <div className="relative mb-12 mt-8">
                 <div className="absolute top-5 left-0 w-full h-1 bg-[#E2E8F0] -z-10 rounded-full" />
-                <div className="flex justify-between relative z-0">
-                  {statuses.map((s, index) => {
-                    const stepStatus = getStepStatus(s.id, order.status);
+                  <div className="flex justify-between relative z-0">
+                  {statuses.map((s) => {
+                    const orderStatus = order.status ?? "pending";
+                    const stepStatus = getStepStatus(s.id, orderStatus);
                     const Icon = s.icon;
                     return (
                       <div key={s.id} className="flex flex-col items-center gap-3">
@@ -165,12 +165,12 @@ export default function TrackOrder() {
               </div>
 
               {/* Special Status Notice */}
-              {["cancelled", "return_requested", "returned", "refunded"].includes(order.status) && (
+              {["cancelled", "return_requested", "returned", "refunded"].includes(order.status ?? "") && (
                 <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-8 flex items-center gap-3">
                   <AlertCircle className="w-5 h-5" />
                   <span className="font-semibold">
                     {lang === "ar" ? "حالة الطلب الحالية: " : "Current Order Status: "}
-                    {t(order.status)}
+                    {t(order.status ?? "pending")}
                   </span>
                 </div>
               )}

@@ -2,7 +2,20 @@ import { z } from "zod";
 import { createRouter, publicQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import { cartItems, products } from "@db/schema";
-import { eq, and, isNotNull } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+
+function cartItemOwnerCondition(itemId: number, userId?: number, sessionId?: string) {
+  if (userId) {
+    return and(eq(cartItems.id, itemId), eq(cartItems.userId, userId));
+  }
+
+  if (sessionId) {
+    return and(eq(cartItems.id, itemId), eq(cartItems.sessionId, sessionId));
+  }
+
+  throw new TRPCError({ code: "UNAUTHORIZED", message: "Cart session is missing" });
+}
 
 export const cartRouter = createRouter({
   get: publicQuery.query(async ({ ctx }) => {
@@ -51,8 +64,8 @@ export const cartRouter = createRouter({
   add: publicQuery
     .input(
       z.object({
-        productId: z.number(),
-        quantity: z.number().default(1),
+        productId: z.number().int().positive(),
+        quantity: z.number().int().positive().max(20).default(1),
         variantData: z.record(z.string(), z.string()).optional(),
       })
     )
@@ -63,6 +76,16 @@ export const cartRouter = createRouter({
 
       if (!userId && !sessionId) {
         throw new Error("No session id for guest");
+      }
+
+      const [product] = await db
+        .select()
+        .from(products)
+        .where(eq(products.id, input.productId))
+        .limit(1);
+
+      if (!product || product.status !== "active") {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Product is unavailable" });
       }
 
       // Check if item already in cart
@@ -92,15 +115,28 @@ export const cartRouter = createRouter({
       }
 
       if (existing.length > 0) {
+        const newQuantity = existing[0].quantity + input.quantity;
+        if (newQuantity > 20) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Maximum cart quantity is 20" });
+        }
+
+        if (product.trackInventory && (product.stockQuantity || 0) < newQuantity) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Not enough stock available" });
+        }
+
         // Update quantity
         await db
           .update(cartItems)
-          .set({ quantity: existing[0].quantity + input.quantity })
+          .set({ quantity: newQuantity })
           .where(eq(cartItems.id, existing[0].id));
-        return { ...existing[0], quantity: existing[0].quantity + input.quantity };
+        return { ...existing[0], quantity: newQuantity };
       }
 
-      const insertData: any = {
+      if (product.trackInventory && (product.stockQuantity || 0) < input.quantity) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Not enough stock available" });
+      }
+
+      const insertData: typeof cartItems.$inferInsert = {
         productId: input.productId,
         quantity: input.quantity,
         variantData: input.variantData || null,
@@ -112,33 +148,50 @@ export const cartRouter = createRouter({
         insertData.sessionId = sessionId;
       }
 
-      const result = await db.insert(cartItems).values(insertData);
-      const insertId = Number((result as any)[0]?.insertId);
+      const [inserted] = await db.insert(cartItems).values(insertData).returning();
 
-      return { id: insertId, ...input, userId: userId || null, sessionId: sessionId || null };
+      return inserted;
     }),
 
   updateQuantity: publicQuery
-    .input(z.object({ itemId: z.number(), quantity: z.number().min(1) }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ itemId: z.number().int().positive(), quantity: z.number().int().min(1).max(20) }))
+    .mutation(async ({ ctx, input }) => {
       const db = getDb();
-      await db
+      const ownerCondition = cartItemOwnerCondition(input.itemId, ctx.user?.id, ctx.guestId);
+      const [item] = await db.select().from(cartItems).where(ownerCondition).limit(1);
+
+      if (!item) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Cart item not found" });
+      }
+
+      const [product] = await db.select().from(products).where(eq(products.id, item.productId)).limit(1);
+      if (!product || product.status !== "active") {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Product is unavailable" });
+      }
+
+      if (product.trackInventory && (product.stockQuantity || 0) < input.quantity) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Not enough stock available" });
+      }
+
+      const [updated] = await db
         .update(cartItems)
         .set({ quantity: input.quantity })
-        .where(eq(cartItems.id, input.itemId));
-      const [updated] = await db
-        .select()
-        .from(cartItems)
-        .where(eq(cartItems.id, input.itemId))
-        .limit(1);
+        .where(ownerCondition)
+        .returning();
+
+      if (!updated) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Cart item not found" });
+      }
+
       return updated;
     }),
 
   remove: publicQuery
-    .input(z.object({ itemId: z.number() }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ itemId: z.number().int().positive() }))
+    .mutation(async ({ ctx, input }) => {
       const db = getDb();
-      await db.delete(cartItems).where(eq(cartItems.id, input.itemId));
+      const ownerCondition = cartItemOwnerCondition(input.itemId, ctx.user?.id, ctx.guestId);
+      await db.delete(cartItems).where(ownerCondition);
       return { success: true };
     }),
 

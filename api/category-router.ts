@@ -4,12 +4,14 @@ import { getDb } from "./queries/connection";
 import { categories } from "@db/schema";
 import { eq, asc } from "drizzle-orm";
 
+const SlugInput = z.string().trim().min(1).max(120).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+
 export const categoryRouter = createRouter({
   list: publicQuery
     .input(z.object({ includeInactive: z.boolean().default(false) }).optional())
-    .query(async ({ input }) => {
+    .query(async ({ ctx, input }) => {
       const db = getDb();
-      const includeInactive = input?.includeInactive || false;
+      const includeInactive = ctx.user?.role === "admin" && (input?.includeInactive || false);
 
       if (includeInactive) {
         return db.select().from(categories).orderBy(asc(categories.sortOrder));
@@ -23,7 +25,7 @@ export const categoryRouter = createRouter({
     }),
 
   getBySlug: publicQuery
-    .input(z.object({ slug: z.string() }))
+    .input(z.object({ slug: SlugInput }))
     .query(async ({ input }) => {
       const db = getDb();
       const [category] = await db
@@ -37,30 +39,29 @@ export const categoryRouter = createRouter({
   create: adminQuery
     .input(
       z.object({
-        name: z.string().min(1),
-        slug: z.string().min(1),
-        icon: z.string().optional(),
-        description: z.string().optional(),
-        sortOrder: z.number().default(0),
+        name: z.string().trim().min(1).max(120),
+        slug: SlugInput,
+        icon: z.string().max(80).optional(),
+        description: z.string().max(1_000).optional(),
+        sortOrder: z.number().int().min(0).max(10_000).default(0),
       })
     )
     .mutation(async ({ input }) => {
       const db = getDb();
-      const result = await db.insert(categories).values(input);
-      const insertId = Number((result as any)[0]?.insertId);
-      return { id: insertId, ...input };
+      const [created] = await db.insert(categories).values(input).returning();
+      return created;
     }),
 
   update: adminQuery
     .input(
       z.object({
         id: z.number(),
-        name: z.string().optional(),
-        slug: z.string().optional(),
-        icon: z.string().optional(),
-        description: z.string().optional(),
+        name: z.string().min(1).max(120).optional(),
+        slug: SlugInput.optional(),
+        icon: z.string().max(80).optional(),
+        description: z.string().max(1_000).optional(),
         isActive: z.boolean().optional(),
-        sortOrder: z.number().optional(),
+        sortOrder: z.number().int().min(0).max(10_000).optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -72,7 +73,7 @@ export const categoryRouter = createRouter({
     }),
 
   delete: adminQuery
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: z.number().int().positive() }))
     .mutation(async ({ input }) => {
       const db = getDb();
       await db.delete(categories).where(eq(categories.id, input.id));

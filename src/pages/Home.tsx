@@ -16,7 +16,6 @@ import {
   Shield,
   HeadphonesIcon,
   RefreshCw,
-  ChevronDown,
   ArrowRight,
   Star,
 } from "lucide-react";

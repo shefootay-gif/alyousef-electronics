@@ -10,7 +10,11 @@ import {
   LogOut,
   X,
   Menu,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Tags,
+  Truck,
+  Users,
+  CreditCard
 } from "lucide-react";
 import { useTheme } from "@/providers/ThemeProvider";
 
@@ -57,6 +61,10 @@ export default function AdminLayout() {
     { id: "/admin", label: t("dashboard"), icon: LayoutDashboard },
     { id: "/admin/products", label: t("products"), icon: Package },
     { id: "/admin/orders", label: t("orders"), icon: ShoppingBag },
+    { id: "/admin/customers", label: "Customers", icon: Users },
+    { id: "/admin/coupons", label: "Coupons", icon: Tags },
+    { id: "/admin/shipping", label: "Shipping", icon: Truck },
+    { id: "/admin/finance", label: "Finance", icon: CreditCard },
     { id: "/admin/apps", label: "Apps & Integrations", icon: LinkIcon },
     { id: "/admin/settings", label: t("settings"), icon: Settings },
   ];

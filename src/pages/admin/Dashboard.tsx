@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { useLanguage } from "@/hooks/useLanguage";
 import { formatCurrency } from "@/lib/utils";
-import { DollarSign, ShoppingBag, Package, Users, TrendingUp } from "lucide-react";
+import { AlertTriangle, ArrowRight, DollarSign, Package, Settings, ShoppingBag, Sparkles, TrendingUp, Users } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { motion, type Variants } from "framer-motion";
 
@@ -95,6 +96,74 @@ export default function DashboardOverview() {
             <p className="text-sm text-[#94A3B8] mt-1">{card.label}</p>
           </motion.div>
         ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <motion.div variants={itemVariants} className="lg:col-span-2 bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg p-6">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-bold text-slate-100">Store health / صحة المتجر</h3>
+              <p className="text-sm text-[#94A3B8] mt-1">مؤشرات تشغيل سريعة مثل Shopify Home.</p>
+            </div>
+            <Sparkles className="w-6 h-6 text-[#D4AF37]" />
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-xl bg-black/25 border border-white/10 p-4">
+              <p className="text-xs text-[#94A3B8]">Low stock</p>
+              <p className="mt-2 text-2xl font-black text-white">{dashboard?.lowStockProducts?.length || 0}</p>
+            </div>
+            <div className="rounded-xl bg-black/25 border border-white/10 p-4">
+              <p className="text-xs text-[#94A3B8]">Active catalog</p>
+              <p className="mt-2 text-2xl font-black text-white">{dashboard?.activeProducts || 0}</p>
+            </div>
+            <div className="rounded-xl bg-black/25 border border-white/10 p-4">
+              <p className="text-xs text-[#94A3B8]">Orders period</p>
+              <p className="mt-2 text-2xl font-black text-white">{dashboard?.totalOrders || 0}</p>
+            </div>
+          </div>
+          {(dashboard?.lowStockProducts?.length || 0) > 0 && (
+            <div className="mt-5 rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-4">
+              <div className="mb-3 flex items-center gap-2 text-yellow-300">
+                <AlertTriangle className="w-4 h-4" />
+                <span className="text-sm font-bold">منتجات تحتاج إعادة تخزين</span>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {dashboard?.lowStockProducts?.slice(0, 4).map((product: any) => (
+                  <div key={product.id} className="flex items-center justify-between rounded-lg bg-black/25 px-3 py-2 text-sm">
+                    <span className="line-clamp-1 text-slate-200">{product.name}</span>
+                    <span className="font-bold text-yellow-300">{product.stockQuantity ?? 0}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg p-6">
+          <h3 className="text-lg font-bold text-slate-100">Quick actions</h3>
+          <div className="mt-5 space-y-3">
+            {[
+              { to: "/admin/products", label: "Add or edit products", icon: Package },
+              { to: "/admin/apps", label: "Connect dropshipping", icon: Sparkles },
+              { to: "/admin/settings", label: "Customize theme", icon: Settings },
+            ].map((action) => {
+              const Icon = action.icon;
+              return (
+                <Link
+                  key={action.to}
+                  to={action.to}
+                  className="flex items-center justify-between rounded-xl border border-white/10 bg-black/25 px-4 py-3 text-sm font-bold text-slate-200 transition hover:border-[#D4AF37]/60 hover:text-[#D4AF37]"
+                >
+                  <span className="flex items-center gap-3">
+                    <Icon className="w-4 h-4" />
+                    {action.label}
+                  </span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              );
+            })}
+          </div>
+        </motion.div>
       </div>
 
       {/* Revenue Chart */}

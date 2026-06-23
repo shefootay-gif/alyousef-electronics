@@ -1,9 +1,12 @@
 import { Link } from "react-router";
 import { useCart } from "@/hooks/useCart";
+import { useLanguage } from "@/hooks/useLanguage";
+import { formatCurrency } from "@/lib/utils";
 import { X, Plus, Minus, ShoppingBag, Trash2 } from "lucide-react";
 
 export default function CartDrawer() {
   const { items, total, isOpen, setIsOpen, updateQuantity, removeFromCart } = useCart();
+  const { lang } = useLanguage();
 
   if (!isOpen) return null;
 
@@ -62,7 +65,7 @@ export default function CartDrawer() {
                     {item.product?.name}
                   </Link>
                   <p className="text-[#D4AF37] font-bold text-sm mt-1">
-                    EGP {item.product?.salePrice || item.product?.price}
+                    {formatCurrency(item.product?.salePrice || item.product?.price || 0, lang)}
                   </p>
                   <div className="flex items-center gap-2 mt-2">
                     <button
@@ -101,7 +104,7 @@ export default function CartDrawer() {
           <div className="p-6 border-t border-[#E2E8F0] space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-[#64748B]">Subtotal</span>
-              <span className="text-xl font-bold text-[#171717]">EGP {total.toFixed(2)}</span>
+              <span className="text-xl font-bold text-[#171717]">{formatCurrency(total, lang)}</span>
             </div>
             <Link
               to="/cart"

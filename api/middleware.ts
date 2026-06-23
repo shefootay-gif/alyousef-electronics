@@ -2,6 +2,7 @@ import { ErrorMessages } from "@contracts/constants";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import type { TrpcContext } from "./context";
+import { writeAuditLog } from "./lib/audit";
 
 const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
@@ -34,7 +35,18 @@ function requireRole(role: string) {
       });
     }
 
-    return next({ ctx: { ...ctx, user: ctx.user } });
+    const result = await next({ ctx: { ...ctx, user: ctx.user } });
+
+    if (role === "admin" && opts.type === "mutation") {
+      await writeAuditLog({
+        userId: ctx.user.id,
+        action: opts.path,
+        entityType: "admin_mutation",
+        req: ctx.req,
+      });
+    }
+
+    return result;
   });
 }
 

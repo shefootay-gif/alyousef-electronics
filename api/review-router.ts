@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { createRouter, publicQuery, authedQuery } from "./middleware";
 import { getDb } from "./queries/connection";
-import { reviews, products, users } from "@db/schema";
-import { eq, desc, sql, and } from "drizzle-orm";
+import { reviews, products, orders, orderItems } from "@db/schema";
+import { eq, desc, and } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { assertRateLimit } from "./lib/security";
 
 export const reviewRouter = createRouter({
   listByProduct: publicQuery
-    .input(z.object({ productId: z.number(), limit: z.number().default(10) }))
+    .input(z.object({ productId: z.number().int().positive(), limit: z.number().int().min(1).max(50).default(10) }))
     .query(async ({ input }) => {
       const db = getDb();
       return db
@@ -21,14 +22,24 @@ export const reviewRouter = createRouter({
   add: authedQuery
     .input(
       z.object({
-        productId: z.number(),
+        productId: z.number().int().positive(),
         rating: z.number().min(1).max(5),
-        title: z.string().optional(),
-        comment: z.string().optional(),
+        title: z.string().trim().max(120).optional(),
+        comment: z.string().trim().max(2_000).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const db = getDb();
+      const limited = assertRateLimit(
+        "review:add",
+        ctx.req.headers,
+        { windowMs: 60 * 60_000, max: 8 },
+        `user:${ctx.user.id}`,
+      );
+
+      if (limited) {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: limited.message });
+      }
 
       // Check if user already reviewed this product
       const existingReview = await db
@@ -41,6 +52,24 @@ export const reviewRouter = createRouter({
         throw new TRPCError({ code: "CONFLICT", message: "You already reviewed this product" });
       }
 
+      const [product] = await db.select().from(products).where(eq(products.id, input.productId)).limit(1);
+      if (!product || product.status !== "active") {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Product is unavailable" });
+      }
+
+      const [deliveredPurchase] = await db
+        .select({ id: orderItems.id })
+        .from(orderItems)
+        .innerJoin(orders, eq(orderItems.orderId, orders.id))
+        .where(
+          and(
+            eq(orderItems.productId, input.productId),
+            eq(orders.userId, ctx.user.id),
+            eq(orders.status, "delivered"),
+          ),
+        )
+        .limit(1);
+
       await db.insert(reviews).values({
         productId: input.productId,
         userId: ctx.user!.id,
@@ -49,7 +78,7 @@ export const reviewRouter = createRouter({
         rating: input.rating,
         title: input.title,
         comment: input.comment,
-        isVerified: true, // simplified
+        isVerified: Boolean(deliveredPurchase),
       });
 
       // Update product's average rating and count
@@ -64,7 +93,7 @@ export const reviewRouter = createRouter({
 
       await db
         .update(products)
-        .set({ averageRating: avg, reviewCount: count })
+        .set({ averageRating: avg.toFixed(2), reviewCount: count })
         .where(eq(products.id, input.productId));
 
       return { success: true };

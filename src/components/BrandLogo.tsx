@@ -1,3 +1,5 @@
+import { useTheme } from "@/providers/ThemeProvider";
+
 type BrandLogoProps = {
   variant?: "full" | "mark";
   className?: string;
@@ -10,9 +12,10 @@ export default function BrandLogo({
   showTagline = false,
 }: BrandLogoProps) {
   const isMark = variant === "mark";
+  const { siteName } = useTheme();
 
   return (
-    <div className={`inline-flex items-center gap-3 ${className}`} aria-label="AL-YOUSEF Electronics">
+    <div className={`inline-flex items-center gap-3 ${className}`} aria-label={siteName}>
       <svg
         width={isMark ? 48 : 52}
         height={isMark ? 48 : 52}
@@ -42,10 +45,10 @@ export default function BrandLogo({
       {!isMark && (
         <span className="leading-none">
           <span className="block text-[1.15rem] sm:text-[1.35rem] font-extrabold tracking-[0.16em] text-[#D4AF37]">
-            AL-YOUSEF
+            {siteName}
           </span>
           <span className="mt-1 block text-[0.62rem] sm:text-[0.72rem] font-semibold tracking-[0.36em] text-[#F8FAFC]/85">
-            ELECTRONICS
+            STORE
           </span>
           {showTagline && (
             <span className="mt-2 block text-[0.68rem] font-medium tracking-[0.18em] text-[#C0C0C0]">

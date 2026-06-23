@@ -5,6 +5,7 @@ import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import Layout from "@/components/Layout";
+import { formatCurrency } from "@/lib/utils";
 import {
   Star,
   Heart,
@@ -205,14 +206,14 @@ export default function ProductDetail() {
 
             <div className="flex items-center gap-4 py-4 border-y border-white/10">
               <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778]">
-                EGP {salePrice || price}
+                {formatCurrency(salePrice || price, lang)}
               </span>
               {salePrice && (
-                <span className="text-xl font-bold text-[#64748B] line-through decoration-red-500/50 decoration-2">EGP {price}</span>
+                <span className="text-xl font-bold text-[#64748B] line-through decoration-red-500/50 decoration-2">{formatCurrency(price, lang)}</span>
               )}
               {salePrice && (
                 <span className="ml-auto px-4 py-2 bg-red-500/10 text-red-500 border border-red-500/20 text-sm font-bold rounded-xl animate-pulse">
-                  {lang === "ar" ? "وفّر" : "Save"} EGP {(price - salePrice).toFixed(0)}
+                  {lang === "ar" ? "وفّر" : "Save"} {formatCurrency(price - salePrice, lang)}
                 </span>
               )}
             </div>
@@ -268,7 +269,7 @@ export default function ProductDetail() {
               <div className="text-center p-6 bg-[#0F172A] border border-white/10 rounded-2xl">
                 <Truck className="w-8 h-8 text-[#D4AF37] mx-auto mb-3" />
                 <p className="text-sm font-bold text-white mb-1">{t("freeDeliveryLabel")}</p>
-                <p className="text-xs text-[#94A3B8]">EGP 5000+</p>
+                <p className="text-xs text-[#94A3B8]">{formatCurrency(5000, lang)}+</p>
               </div>
               <div className="text-center p-6 bg-[#0F172A] border border-white/10 rounded-2xl">
                 <Shield className="w-8 h-8 text-[#D4AF37] mx-auto mb-3" />
@@ -429,7 +430,7 @@ export default function ProductDetail() {
                       <img src={cs.image || "/placeholder.png"} alt={cs.name} className="w-full h-full object-contain" />
                     </div>
                     <span className="text-sm text-center text-slate-300 font-medium line-clamp-2 group-hover:text-[#D4AF37]">{lang === 'ar' && cs.nameAr ? cs.nameAr : cs.name}</span>
-                    <span className="text-[#D4AF37] font-bold mt-1">EGP {cs.salePrice || cs.price}</span>
+                    <span className="text-[#D4AF37] font-bold mt-1">{formatCurrency(cs.salePrice || cs.price, lang)}</span>
                   </Link>
                 </div>
               ))}
@@ -478,7 +479,7 @@ export default function ProductDetail() {
                     </div>
                     <div className="p-6 relative z-10">
                       <h3 className="font-bold text-white text-base line-clamp-1 group-hover:text-[#D4AF37] transition-colors">{p.name}</h3>
-                      <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778] font-black text-lg mt-2">EGP {p.salePrice || p.price}</p>
+                      <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778] font-black text-lg mt-2">{formatCurrency(p.salePrice || p.price, lang)}</p>
                     </div>
                   </Link>
                 ))}

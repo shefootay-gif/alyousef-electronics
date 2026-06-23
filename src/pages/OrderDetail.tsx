@@ -1,8 +1,9 @@
-import { useParams, Link, useNavigate } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { trpc } from "@/providers/trpc";
 import Layout from "@/components/Layout";
-import { Package, ChevronLeft, ChevronRight, Clock, MapPin, CreditCard, RefreshCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, CreditCard, RefreshCcw } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
+import { formatCurrency } from "@/lib/utils";
 
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -47,6 +48,9 @@ export default function OrderDetail() {
   }
 
   const shipping = order.shippingAddress as any;
+  const orderStatus = order.status ?? "pending";
+  const paymentMethod = order.paymentMethod ?? "cod";
+  const paymentStatus = order.paymentStatus ?? "pending";
 
   return (
     <Layout>
@@ -70,8 +74,8 @@ export default function OrderDetail() {
                 })}
               </p>
             </div>
-            <span className={`px-4 py-2 rounded-full text-sm font-bold ${statusColors[order.status] || "bg-gray-100"}`}>
-              {t(order.status) || order.status}
+            <span className={`px-4 py-2 rounded-full text-sm font-bold ${statusColors[orderStatus] || "bg-gray-100"}`}>
+              {t(orderStatus) || orderStatus}
             </span>
           </div>
         </div>
@@ -93,7 +97,7 @@ export default function OrderDetail() {
                     <div className="flex-1">
                       <p className="font-semibold text-[#171717]">{item.productName}</p>
                       <p className="text-sm text-[#64748B] mb-2">{lang === "ar" ? "الكمية:" : "Qty:"} {item.quantity}</p>
-                      <p className="font-bold text-[#D4AF37]">EGP {Number(item.totalPrice).toFixed(2)}</p>
+                      <p className="font-bold text-[#D4AF37]">{formatCurrency(item.totalPrice, lang)}</p>
                     </div>
                   </div>
                 ))}
@@ -105,19 +109,19 @@ export default function OrderDetail() {
               <div className="space-y-3">
                 <div className="flex justify-between text-[#64748B]">
                   <span>{lang === "ar" ? "المجموع الفرعي" : "Subtotal"}</span>
-                  <span>EGP {Number(order.subtotal).toFixed(2)}</span>
+                  <span>{formatCurrency(order.subtotal, lang)}</span>
                 </div>
                 <div className="flex justify-between text-[#64748B]">
                   <span>{lang === "ar" ? "الشحن" : "Shipping"}</span>
-                  <span>EGP {Number(order.shippingAmount).toFixed(2)}</span>
+                  <span>{formatCurrency(order.shippingAmount || 0, lang)}</span>
                 </div>
                 <div className="flex justify-between text-[#64748B]">
                   <span>{lang === "ar" ? "الضريبة" : "Tax"}</span>
-                  <span>EGP {Number(order.taxAmount).toFixed(2)}</span>
+                  <span>{formatCurrency(order.taxAmount || 0, lang)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-lg text-[#171717] pt-3 border-t">
                   <span>{lang === "ar" ? "الإجمالي" : "Total"}</span>
-                  <span className="text-[#D4AF37]">EGP {Number(order.total).toFixed(2)}</span>
+                  <span className="text-[#D4AF37]">{formatCurrency(order.total, lang)}</span>
                 </div>
               </div>
             </div>
@@ -148,13 +152,13 @@ export default function OrderDetail() {
                 <CreditCard className="w-5 h-5 text-[#D4AF37]" />
                 {lang === "ar" ? "الدفع" : "Payment"}
               </h2>
-              <p className="text-sm text-[#64748B] capitalize">{t(order.paymentMethod) || order.paymentMethod?.replace("_", " ")}</p>
-              <p className={`text-xs font-semibold mt-2 inline-block px-2 py-1 rounded ${order.paymentStatus === "paid" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
-                {t(order.paymentStatus) || order.paymentStatus}
+              <p className="text-sm text-[#64748B] capitalize">{t(paymentMethod) || paymentMethod.replace("_", " ")}</p>
+              <p className={`text-xs font-semibold mt-2 inline-block px-2 py-1 rounded ${paymentStatus === "paid" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
+                {t(paymentStatus) || paymentStatus}
               </p>
             </div>
             
-            {order.status === "delivered" && (
+            {orderStatus === "delivered" && (
               <button
                 onClick={() => {
                   if (window.confirm(lang === "ar" ? "هل أنت متأكد من طلب استرجاع هذا الطلب؟" : "Are you sure you want to request a return for this order?")) {

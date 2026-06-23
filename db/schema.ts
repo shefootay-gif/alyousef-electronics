@@ -122,14 +122,20 @@ export const orders = pgTable("orders", {
   discountAmount: text("discountAmount").default("0"),
   total: text("total").notNull(),
   shippingAddress: jsonb("shippingAddress").$type<{
-    fullName: string;
+    fullName?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
     phone: string;
-    address: string;
+    address?: string;
+    district?: string;
+    streetAddress?: string;
+    buildingNumber?: string;
     city: string;
-    postalCode: string;
+    postalCode?: string;
     country: string;
   }>(),
-  paymentMethod: text("paymentMethod", { enum: ["credit_card", "paypal", "cod", "stc_pay", "apple_pay"] }),
+  paymentMethod: text("paymentMethod", { enum: ["credit_card", "paypal", "cod", "stc_pay", "apple_pay", "paymob", "fawry"] }),
   notes: text("notes"),
   trackingNumber: text("trackingNumber"),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
@@ -192,6 +198,91 @@ export const siteSettings = pgTable("siteSettings", {
 
 export type SiteSetting = typeof siteSettings.$inferSelect;
 
+// Discount coupons table
+export const coupons = pgTable("coupons", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  type: text("type", { enum: ["percentage", "fixed"] }).notNull(),
+  value: text("value").notNull(),
+  minSubtotal: text("minSubtotal").default("0"),
+  maxDiscount: text("maxDiscount"),
+  usageLimit: integer("usageLimit"),
+  usedCount: integer("usedCount").default(0),
+  startsAt: timestamp("startsAt", { mode: "date" }),
+  expiresAt: timestamp("expiresAt", { mode: "date" }),
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().$onUpdate(() => new Date()),
+}, (table) => ({
+  codeIdx: index("coupon_code_idx").on(table.code),
+}));
+
+export type Coupon = typeof coupons.$inferSelect;
+
+export const couponRedemptions = pgTable("couponRedemptions", {
+  id: serial("id").primaryKey(),
+  couponId: integer("couponId").references(() => coupons.id).notNull(),
+  orderId: integer("orderId").references(() => orders.id).notNull(),
+  userId: integer("userId").references(() => users.id),
+  discountAmount: text("discountAmount").notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+});
+
+export type CouponRedemption = typeof couponRedemptions.$inferSelect;
+
+// Shipping rates table
+export const shippingRates = pgTable("shippingRates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  city: text("city"),
+  price: text("price").notNull(),
+  freeShippingThreshold: text("freeShippingThreshold"),
+  estimatedDaysMin: integer("estimatedDaysMin").default(1),
+  estimatedDaysMax: integer("estimatedDaysMax").default(5),
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().$onUpdate(() => new Date()),
+}, (table) => ({
+  cityIdx: index("shipping_rate_city_idx").on(table.city),
+}));
+
+export type ShippingRate = typeof shippingRates.$inferSelect;
+
+// Payment transaction ledger
+export const paymentTransactions = pgTable("paymentTransactions", {
+  id: serial("id").primaryKey(),
+  orderId: integer("orderId").references(() => orders.id).notNull(),
+  provider: text("provider", { enum: ["cod", "paymob", "fawry", "stripe", "manual"] }).notNull(),
+  providerReference: text("providerReference"),
+  amount: text("amount").notNull(),
+  currency: text("currency").default("EGP").notNull(),
+  status: text("status", { enum: ["pending", "authorized", "paid", "failed", "refunded"] }).default("pending").notNull(),
+  rawPayload: jsonb("rawPayload"),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().$onUpdate(() => new Date()),
+}, (table) => ({
+  orderIdx: index("payment_order_idx").on(table.orderId),
+  referenceIdx: index("payment_reference_idx").on(table.providerReference),
+}));
+
+export type PaymentTransaction = typeof paymentTransactions.$inferSelect;
+
+// Invoice records for accounting and customer downloads
+export const invoices = pgTable("invoices", {
+  id: serial("id").primaryKey(),
+  invoiceNumber: text("invoiceNumber").notNull().unique(),
+  orderId: integer("orderId").references(() => orders.id).notNull(),
+  subtotal: text("subtotal").notNull(),
+  taxAmount: text("taxAmount").default("0"),
+  shippingAmount: text("shippingAmount").default("0"),
+  discountAmount: text("discountAmount").default("0"),
+  total: text("total").notNull(),
+  currency: text("currency").default("EGP").notNull(),
+  issuedAt: timestamp("issuedAt", { mode: "date" }).defaultNow(),
+});
+
+export type Invoice = typeof invoices.$inferSelect;
+
 // Activity log table
 export const activityLog = pgTable("activityLog", {
   id: serial("id").primaryKey(),
@@ -212,6 +303,8 @@ export const apiKeys = pgTable("apiKeys", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   key: text("key").notNull().unique(),
+  keyHash: text("keyHash"),
+  keyPrefix: text("keyPrefix"),
   provider: text("provider").default("custom"),
   isActive: boolean("isActive").default(true),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),

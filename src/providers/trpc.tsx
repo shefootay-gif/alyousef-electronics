@@ -12,7 +12,7 @@ let guestId = "";
 if (typeof window !== "undefined") {
   guestId = localStorage.getItem("guest_id") || "";
   if (!guestId) {
-    guestId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    guestId = crypto.randomUUID();
     localStorage.setItem("guest_id", guestId);
   }
 }

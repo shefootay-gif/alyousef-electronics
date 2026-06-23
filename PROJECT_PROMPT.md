@@ -49,6 +49,16 @@
 - تسجيل الدخول للعملاء وتتبع الطلبات (`TrackOrder.tsx`).
 - نظام أذونات يفصل بين العميل العادي والمدير (Admin).
 
+### 4. حماية الأمان المتقدمة (Enterprise Security Enhancements)
+- **رؤوس حماية المتصفح (Security Headers):** تطبيق `CSP`, `HSTS`, `X-Frame-Options`, `nosniff`, `Permissions-Policy`.
+- **حماية الطلبات:** حماية `CSRF` عبر التحقق من أصل الطلب و الـ `ALLOWED_ORIGINS`.
+- **Rate Limiting:** حد زمني للطلبات مطبق على الدخول، التسجيل، الطلبات، الكوبونات والـ Webhooks.
+- **تأمين الجلسات (JWT Strictness):** مدة الجلسة 30 يوم بدلاً من سنة مع ربط دقيق بـ `issuer` و `audience`. منع تسريب `passwordHash`.
+- **المدفوعات والمخزون:** حماية توقيع `HMAC` على Webhook الدفع لمنع التلاعب بالمبالغ.
+- **تأمين السلة والكوبونات:** الحماية من السباق (Race conditions) وتأمين السلة ضد التجاوزات.
+- **تأمين الرفع (Uploads):** رفع الصور محصور بالمديرين مع فحص حقيقي لتوقيع الصورة.
+- **التدقيق والمراجعات (Audit & Reviews):** نظام سجل تدقيق (Audit Log)، ونظام "شراء موثق" لا يسمح بالتقييم إلا للمشترين الفعليين.
+
 ---
 
 ## 📂 هيكل المجلدات (Directory Structure)
@@ -73,10 +83,12 @@
 > The project uses React, TailwindCSS, Framer Motion, Node.js, Hono, tRPC, PostgreSQL, and Drizzle ORM. 
 > The UI strictly follows a premium 'Dark Glassmorphism' aesthetic (dark backgrounds, transparent glass cards, golden/blue accents).
 > The platform is fully localized in Arabic and English (RTL/LTR). The default currency is EGP (Egyptian Pounds).
+> The application is hardened with Enterprise-grade security (CSRF, CSP, Rate Limiting, strict JWT audiences, HMAC Webhook verification).
 > 
 > **Important Rules:**
 > 1. Always write responses, explanations, and commit messages in Arabic.
 > 2. Ensure any new UI components strictly match the existing Dark Glassmorphism design and use Tailwind classes.
 > 3. Use `tRPC` for all new backend routes. Do not use standard REST unless explicitly required for external webhooks (like dropshipping).
 > 4. Any currency values must be formatted using the `formatCurrency()` function from `@/lib/utils` to maintain EGP standards.
-> 5. The admin dashboard is modularized under `/app/src/pages/admin/` with an `AdminLayout.tsx`. Do not put monolithic code back into `Admin.tsx`."
+> 5. The admin dashboard is modularized under `/app/src/pages/admin/` with an `AdminLayout.tsx`. Do not put monolithic code back into `Admin.tsx`.
+> 6. Respect the existing security architecture: never bypass rate limits, CSRF checks, or expose sensitive hashes to the frontend."

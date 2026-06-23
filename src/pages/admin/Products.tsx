@@ -4,7 +4,6 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { formatCurrency } from "@/lib/utils";
 import { Plus, Pencil, Trash2, Search, X, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
 
 const statusColors: Record<string, string> = {
   active: "bg-green-100 text-green-700",
@@ -24,7 +23,7 @@ export default function ProductsManagement() {
     search: search || undefined,
     page: 1,
     limit: 50,
-    status: undefined,
+    includeInactive: true,
   });
 
   const { data: categories } = trpc.category.list.useQuery({ includeInactive: true });
@@ -50,13 +49,15 @@ export default function ProductsManagement() {
     name: "", nameAr: "", slug: "", description: "", descriptionAr: "", shortDescription: "",
     categoryId: 1, brand: "", sku: "", price: "", salePrice: "",
     image: "", stockQuantity: 0, status: "draft" as const, isFeatured: false,
+    upsellProductId: null as number | null,
+    crossSellIds: [] as number[],
   });
 
   const createMutation = trpc.product.create.useMutation({
     onSuccess: () => {
       utils.product.list.invalidate();
       setShowForm(false);
-      setFormData({ name: "", nameAr: "", slug: "", description: "", descriptionAr: "", shortDescription: "", categoryId: categories?.[0]?.id || 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false });
+      setFormData({ name: "", nameAr: "", slug: "", description: "", descriptionAr: "", shortDescription: "", categoryId: categories?.[0]?.id || 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false, upsellProductId: null, crossSellIds: [] });
       toast.success("Product created");
     },
     onError: (err) => {
@@ -103,8 +104,22 @@ export default function ProductsManagement() {
       stockQuantity: product.stockQuantity || 0,
       status: product.status || "draft",
       isFeatured: product.isFeatured || false,
+      upsellProductId: product.upsellProductId || null,
+      crossSellIds: product.crossSellIds || [],
     });
     setShowForm(true);
+  };
+
+  const productOptions = productsData?.items?.filter((product: any) => product.id !== editingProduct?.id) || [];
+
+  const toggleCrossSell = (productId: number) => {
+    const exists = formData.crossSellIds.includes(productId);
+    setFormData({
+      ...formData,
+      crossSellIds: exists
+        ? formData.crossSellIds.filter((id) => id !== productId)
+        : [...formData.crossSellIds, productId],
+    });
   };
 
   return (
@@ -123,7 +138,7 @@ export default function ProductsManagement() {
         <button
           onClick={() => {
             setEditingProduct(null);
-            setFormData({ name: "", nameAr: "", slug: "", description: "", descriptionAr: "", shortDescription: "", categoryId: categories?.[0]?.id || 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false });
+            setFormData({ name: "", nameAr: "", slug: "", description: "", descriptionAr: "", shortDescription: "", categoryId: categories?.[0]?.id || 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false, upsellProductId: null, crossSellIds: [] });
             setShowForm(true);
           }}
           className={`${isRTL ? "mr-4" : "ml-4"} px-4 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-slate-100 font-bold rounded-xl hover:shadow-lg transition-all flex items-center gap-2 text-sm`}
@@ -197,6 +212,40 @@ export default function ProductsManagement() {
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-slate-100 mb-1">{t("descArTitle")}</label>
               <textarea value={formData.descriptionAr} onChange={(e) => setFormData({ ...formData, descriptionAr: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37] resize-none" rows={3} dir="rtl" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-100 mb-1">Upsell product / منتج الترقية</label>
+              <select
+                value={formData.upsellProductId ?? ""}
+                onChange={(e) => setFormData({ ...formData, upsellProductId: e.target.value ? Number(e.target.value) : null })}
+                className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]"
+              >
+                <option value="">No upsell</option>
+                {productOptions.map((product: any) => (
+                  <option key={product.id} value={product.id}>
+                    {product.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-100 mb-1">Cross-sell products / منتجات مكملة</label>
+              <div className="max-h-36 overflow-y-auto rounded-lg border border-white/10 bg-black/20 p-3 space-y-2">
+                {productOptions.length === 0 && (
+                  <p className="text-xs text-[#94A3B8]">Add more products to enable cross-selling.</p>
+                )}
+                {productOptions.map((product: any) => (
+                  <label key={product.id} className="flex items-center gap-2 text-sm text-slate-200">
+                    <input
+                      type="checkbox"
+                      checked={formData.crossSellIds.includes(product.id)}
+                      onChange={() => toggleCrossSell(product.id)}
+                      className="rounded border-white/10 text-[#D4AF37]"
+                    />
+                    <span className="line-clamp-1">{product.name}</span>
+                  </label>
+                ))}
+              </div>
             </div>
             <div className="sm:col-span-2 flex items-center gap-4">
               <label className="flex items-center gap-2">

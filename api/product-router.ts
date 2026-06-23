@@ -2,25 +2,40 @@ import { z } from "zod";
 import { createRouter, publicQuery, adminQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import { products, categories, reviews, cartItems, orderItems, wishlistItems } from "@db/schema";
-import { eq, and, like, gte, lte, desc, asc, sql, inArray } from "drizzle-orm";
+import { eq, and, like, gte, desc, asc, sql, inArray } from "drizzle-orm";
+
+const ImageInput = z
+  .string()
+  .url("Must be a valid URL")
+  .or(
+    z
+      .string()
+      .regex(/^\/[\w./-]+$/, "Must be a valid URL or local public path")
+      .refine((value) => !value.includes(".."), "Local image paths cannot traverse directories"),
+  )
+  .or(z.literal(""));
+
+const MoneyInput = z.string().regex(/^\d+(\.\d{1,2})?$/);
+const SlugInput = z.string().trim().min(1).max(120).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 
 const ListInput = z.object({
-  categoryId: z.number().optional(),
-  brand: z.string().optional(),
-  minPrice: z.number().optional(),
-  maxPrice: z.number().optional(),
-  rating: z.number().optional(),
+  categoryId: z.number().int().positive().optional(),
+  brand: z.string().trim().max(80).optional(),
+  minPrice: z.number().nonnegative().optional(),
+  maxPrice: z.number().nonnegative().optional(),
+  rating: z.number().min(1).max(5).optional(),
   search: z.string().optional(),
   sort: z.enum(["newest", "price_asc", "price_desc", "rating", "name"]).optional(),
-  page: z.number().default(1),
-  limit: z.number().default(12),
+  page: z.number().int().min(1).default(1),
+  limit: z.number().int().min(1).max(60).default(12),
   status: z.enum(["active", "inactive", "draft", "out_of_stock"]).optional(),
+  includeInactive: z.boolean().optional(),
 });
 
 export const productRouter = createRouter({
   list: publicQuery
     .input(ListInput)
-    .query(async ({ input }) => {
+    .query(async ({ ctx, input }) => {
       const db = getDb();
       const page = input.page;
       const limit = input.limit;
@@ -30,7 +45,7 @@ export const productRouter = createRouter({
       
       if (input.status) {
         conditions.push(eq(products.status, input.status));
-      } else {
+      } else if (!(input.includeInactive && ctx.user?.role === "admin")) {
         conditions.push(eq(products.status, "active"));
       }
 
@@ -43,19 +58,19 @@ export const productRouter = createRouter({
       }
 
       if (input.minPrice !== undefined) {
-        conditions.push(gte(products.price, input.minPrice.toString()));
+        conditions.push(sql`${products.price}::numeric >= ${input.minPrice}`);
       }
 
       if (input.maxPrice !== undefined) {
-        conditions.push(lte(products.price, input.maxPrice.toString()));
+        conditions.push(sql`${products.price}::numeric <= ${input.maxPrice}`);
       }
 
       if (input.rating) {
         conditions.push(gte(products.averageRating, input.rating.toString()));
       }
 
-      if (input.search) {
-        conditions.push(like(products.name, `%${input.search}%`));
+      if (input.search?.trim()) {
+        conditions.push(like(products.name, `%${input.search.trim().slice(0, 120)}%`));
       }
 
       const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -64,10 +79,10 @@ export const productRouter = createRouter({
       let orderBy;
       switch (input.sort) {
         case "price_asc":
-          orderBy = asc(products.price);
+          orderBy = asc(sql`${products.price}::numeric`);
           break;
         case "price_desc":
-          orderBy = desc(products.price);
+          orderBy = desc(sql`${products.price}::numeric`);
           break;
         case "rating":
           orderBy = desc(products.averageRating);
@@ -86,9 +101,12 @@ export const productRouter = createRouter({
             name: products.name,
             nameAr: products.nameAr,
             slug: products.slug,
+            description: products.description,
+            descriptionAr: products.descriptionAr,
             shortDescription: products.shortDescription,
             categoryId: products.categoryId,
             brand: products.brand,
+            sku: products.sku,
             price: products.price,
             salePrice: products.salePrice,
             image: products.image,
@@ -97,6 +115,8 @@ export const productRouter = createRouter({
             isFeatured: products.isFeatured,
             averageRating: products.averageRating,
             reviewCount: products.reviewCount,
+            crossSellIds: products.crossSellIds,
+            upsellProductId: products.upsellProductId,
             createdAt: products.createdAt,
           })
           .from(products)
@@ -132,7 +152,7 @@ export const productRouter = createRouter({
     }),
 
   getBySlug: publicQuery
-    .input(z.object({ slug: z.string() }))
+    .input(z.object({ slug: SlugInput }))
     .query(async ({ input }) => {
       const db = getDb();
       const [product] = await db
@@ -160,7 +180,7 @@ export const productRouter = createRouter({
     }),
 
   getByIds: publicQuery
-    .input(z.object({ ids: z.array(z.number()) }))
+    .input(z.object({ ids: z.array(z.number().int().positive()).max(100) }))
     .query(async ({ input }) => {
       if (!input.ids || input.ids.length === 0) return [];
       const db = getDb();
@@ -172,7 +192,7 @@ export const productRouter = createRouter({
     }),
 
   getFeatured: publicQuery
-    .input(z.object({ limit: z.number().default(8) }).optional())
+    .input(z.object({ limit: z.number().int().min(1).max(24).default(8) }).optional())
     .query(async ({ input }) => {
       const db = getDb();
       const limit = input?.limit || 8;
@@ -199,7 +219,7 @@ export const productRouter = createRouter({
     }),
 
   getByCategory: publicQuery
-    .input(z.object({ categorySlug: z.string(), page: z.number().default(1), limit: z.number().default(12) }))
+    .input(z.object({ categorySlug: SlugInput, page: z.number().int().min(1).default(1), limit: z.number().int().min(1).max(60).default(12) }))
     .query(async ({ input }) => {
       const db = getDb();
       const offset = (input.page - 1) * input.limit;
@@ -241,7 +261,7 @@ export const productRouter = createRouter({
     }),
 
   search: publicQuery
-    .input(z.object({ query: z.string(), limit: z.number().default(8) }))
+    .input(z.object({ query: z.string().trim().min(1).max(120), limit: z.number().int().min(1).max(20).default(8) }))
     .query(async ({ input }) => {
       const db = getDb();
       return db
@@ -257,7 +277,7 @@ export const productRouter = createRouter({
         .from(products)
         .where(
           and(
-            like(products.name, `%${input.query}%`),
+            like(products.name, `%${input.query.trim()}%`),
             eq(products.status, "active")
           )
         )
@@ -293,21 +313,23 @@ export const productRouter = createRouter({
   create: adminQuery
     .input(
       z.object({
-        name: z.string().min(1),
-        nameAr: z.string().optional().nullable(),
-        slug: z.string().min(1),
-        description: z.string().optional(),
-        descriptionAr: z.string().optional().nullable(),
-        shortDescription: z.string().optional(),
-        categoryId: z.number(),
-        brand: z.string().optional(),
-        sku: z.string().optional(),
-        price: z.string(),
-        salePrice: z.string().optional().nullable(),
-        image: z.string().url("Must be a valid URL").or(z.literal("")).optional(),
-        stockQuantity: z.number().default(0),
+        name: z.string().trim().min(1).max(180),
+        nameAr: z.string().trim().max(180).optional().nullable(),
+        slug: SlugInput,
+        description: z.string().max(5_000).optional(),
+        descriptionAr: z.string().max(5_000).optional().nullable(),
+        shortDescription: z.string().max(500).optional(),
+        categoryId: z.number().int().positive(),
+        brand: z.string().trim().max(80).optional(),
+        sku: z.string().trim().max(80).optional(),
+        price: MoneyInput,
+        salePrice: MoneyInput.optional().nullable(),
+        image: ImageInput.optional(),
+        stockQuantity: z.number().int().min(0).default(0),
         status: z.enum(["active", "inactive", "draft", "out_of_stock"]).default("draft"),
         isFeatured: z.boolean().default(false),
+        upsellProductId: z.number().int().positive().nullable().optional(),
+        crossSellIds: z.array(z.number().int().positive()).max(12).default([]),
       })
     )
     .mutation(async ({ input }) => {
@@ -319,21 +341,24 @@ export const productRouter = createRouter({
   update: adminQuery
     .input(
       z.object({
-        id: z.number(),
-        name: z.string().optional(),
-        nameAr: z.string().optional().nullable(),
-        slug: z.string().optional(),
-        description: z.string().optional(),
-        descriptionAr: z.string().optional().nullable(),
-        shortDescription: z.string().optional(),
-        categoryId: z.number().optional(),
-        brand: z.string().optional(),
-        price: z.string().optional(),
-        salePrice: z.string().optional().nullable(),
-        image: z.string().url("Must be a valid URL").or(z.literal("")).optional(),
-        stockQuantity: z.number().optional(),
+        id: z.number().int().positive(),
+        name: z.string().trim().min(1).max(180).optional(),
+        nameAr: z.string().trim().max(180).optional().nullable(),
+        slug: SlugInput.optional(),
+        description: z.string().max(5_000).optional(),
+        descriptionAr: z.string().max(5_000).optional().nullable(),
+        shortDescription: z.string().max(500).optional(),
+        categoryId: z.number().int().positive().optional(),
+        brand: z.string().trim().max(80).optional(),
+        sku: z.string().trim().max(80).optional(),
+        price: MoneyInput.optional(),
+        salePrice: MoneyInput.optional().nullable(),
+        image: ImageInput.optional(),
+        stockQuantity: z.number().int().min(0).optional(),
         status: z.enum(["active", "inactive", "draft", "out_of_stock"]).optional(),
         isFeatured: z.boolean().optional(),
+        upsellProductId: z.number().int().positive().nullable().optional(),
+        crossSellIds: z.array(z.number().int().positive()).max(12).optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -345,12 +370,23 @@ export const productRouter = createRouter({
     }),
 
   delete: adminQuery
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: z.number().int().positive() }))
     .mutation(async ({ input }) => {
       const db = getDb();
-      // Delete dependent records first to avoid foreign key constraints
+      const [ordered] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(orderItems)
+        .where(eq(orderItems.productId, input.id));
+
+      if ((ordered?.count || 0) > 0) {
+        await db
+          .update(products)
+          .set({ status: "inactive" })
+          .where(eq(products.id, input.id));
+        return { success: true, archived: true };
+      }
+
       await db.delete(cartItems).where(eq(cartItems.productId, input.id));
-      await db.delete(orderItems).where(eq(orderItems.productId, input.id));
       await db.delete(wishlistItems).where(eq(wishlistItems.productId, input.id));
       await db.delete(reviews).where(eq(reviews.productId, input.id));
 
@@ -359,7 +395,7 @@ export const productRouter = createRouter({
     }),
 
   toggleStatus: adminQuery
-    .input(z.object({ id: z.number(), status: z.enum(["active", "inactive", "draft", "out_of_stock"]) }))
+    .input(z.object({ id: z.number().int().positive(), status: z.enum(["active", "inactive", "draft", "out_of_stock"]) }))
     .mutation(async ({ input }) => {
       const db = getDb();
       await db.update(products).set({ status: input.status }).where(eq(products.id, input.id));

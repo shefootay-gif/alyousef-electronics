@@ -2,7 +2,7 @@ import Layout from "@/components/Layout";
 import { useLanguage } from "@/hooks/useLanguage";
 
 export default function PrivacyPolicy() {
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
 
   return (
     <Layout>

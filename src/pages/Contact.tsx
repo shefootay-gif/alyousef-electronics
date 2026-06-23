@@ -6,7 +6,7 @@ import { MapPin, Phone, Mail, Send } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Contact() {
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
   const { data: contactLinks } = (trpc.settings as any).getContactLinks.useQuery();
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [loading, setLoading] = useState(false);

@@ -1,9 +1,7 @@
-import { useState } from "react";
 import { trpc } from "@/providers/trpc";
 import { useLanguage } from "@/hooks/useLanguage";
 import { formatCurrency } from "@/lib/utils";
-import { Search, Eye } from "lucide-react";
-import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 const orderStatusColors: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -24,7 +22,7 @@ export default function OrdersManagement() {
   const updateStatus = trpc.order.updateStatus.useMutation({
     onSuccess: () => {
       utils.order.list.invalidate();
-      (toast as any).success("Order status updated");
+      toast.success("Order status updated");
     },
   });
 
