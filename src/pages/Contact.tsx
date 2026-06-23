@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 export default function Contact() {
   const { lang, t } = useLanguage();
-  const { data: contactLinks } = trpc.settings.getContactLinks.useQuery();
+  const { data: contactLinks } = (trpc.settings as any).getContactLinks.useQuery();
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [loading, setLoading] = useState(false);
 

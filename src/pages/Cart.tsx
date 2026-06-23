@@ -25,7 +25,7 @@ export default function Cart() {
   const tax = Math.round(total * 15) / 100;
   const grandTotal = Math.round((total + shipping + tax) * 100) / 100;
 
-  const upsellIds = Array.from(new Set(items.map(i => i.product?.upsellProductId).filter(Boolean))) as number[];
+  const upsellIds = Array.from(new Set(items.map(i => (i.product as any)?.upsellProductId).filter(Boolean))) as number[];
   const { data: upsells } = trpc.product.getByIds.useQuery(
     { ids: upsellIds },
     { enabled: upsellIds.length > 0 }
@@ -85,7 +85,7 @@ export default function Cart() {
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <Link to={`/product/${item.product?.slug}`}>
                         <h3 className="text-xl font-bold text-white hover:text-[#D4AF37] transition-colors line-clamp-2">
-                          {lang === "ar" && (item.product as any)?.nameAr ? item.product.nameAr : item.product?.name}
+                          {lang === "ar" && (item.product as any)?.nameAr ? (item.product as any).nameAr : item.product?.name}
                         </h3>
                       </Link>
                       <p className="text-[#D4AF37] font-bold mt-2" dir="ltr">{formatCurrency(unitPrice, lang)}</p>

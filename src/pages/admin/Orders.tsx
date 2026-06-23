@@ -24,7 +24,7 @@ export default function OrdersManagement() {
   const updateStatus = trpc.order.updateStatus.useMutation({
     onSuccess: () => {
       utils.order.list.invalidate();
-      toast.success("Order status updated");
+      (toast as any).success("Order status updated");
     },
   });
 

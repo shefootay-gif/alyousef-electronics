@@ -371,7 +371,7 @@ export default function Checkout() {
                         className="w-16 h-16 object-cover rounded-lg bg-white/5"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-slate-100 text-sm">{lang === "ar" && (item.product as any)?.nameAr ? item.product.nameAr : item.product?.name}</p>
+                        <p className="font-medium text-slate-100 text-sm">{lang === "ar" && (item.product as any)?.nameAr ? item.product?.nameAr : item.product?.name}</p>
                         <p className="text-xs text-[#94A3B8]">{t("quantity")} {item.quantity}</p>
                       </div>
                       <p className="font-semibold text-[#D4AF37]" dir="ltr">
@@ -409,7 +409,7 @@ export default function Checkout() {
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <span className="text-[#94A3B8] line-clamp-1 flex-1 mr-2">
-                      {lang === "ar" && (item.product as any)?.nameAr ? item.product.nameAr : item.product?.name} x{item.quantity}
+                      {lang === "ar" && (item.product as any)?.nameAr ? item.product?.nameAr : item.product?.name} x{item.quantity}
                     </span>
                     <span className="text-slate-100 font-medium" dir="ltr">
                       {formatCurrency((Number(item.product?.salePrice || item.product?.price || 0) * item.quantity), lang)}

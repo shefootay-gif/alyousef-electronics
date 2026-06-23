@@ -18,12 +18,12 @@ async function exchangeAuthCode(
   const body = new URLSearchParams({
     grant_type: "authorization_code",
     code,
-    client_id: env.appId,
+    client_id: (env as any).appId,
     redirect_uri: redirectUri,
-    client_secret: env.appSecret,
+    client_secret: (env as any).appSecret,
   });
 
-  const resp = await fetch(`${env.kimiAuthUrl}/api/oauth/token`, {
+  const resp = await fetch(`${(env as any).kimiAuthUrl}/api/oauth/token`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: body.toString(),
@@ -38,7 +38,7 @@ async function exchangeAuthCode(
 }
 
 const jwks = jose.createRemoteJWKSet(
-  new URL(`${env.kimiAuthUrl}/api/.well-known/jwks.json`),
+  new URL(`${(env as any).kimiAuthUrl}/api/.well-known/jwks.json`),
 );
 
 async function verifyAccessToken(
@@ -110,7 +110,7 @@ export function createOAuthCallbackHandler() {
 
       const token = await signSessionToken({
         unionId: userId,
-        clientId: env.appId,
+        clientId: (env as any).appId,
       });
 
       const cookieOpts = getSessionCookieOptions(c.req.raw.headers);
