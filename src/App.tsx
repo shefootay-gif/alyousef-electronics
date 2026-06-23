@@ -1,31 +1,35 @@
 import { Routes, Route, useLocation } from "react-router";
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { CartProvider } from "./hooks/useCart";
 import TrackingPixels from "./components/TrackingPixels";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { AnimatePresence } from "framer-motion";
 
-const Home = lazy(() => import("./pages/Home"));
-const Shop = lazy(() => import("./pages/Shop"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
-const Cart = lazy(() => import("./pages/Cart"));
-const Checkout = lazy(() => import("./pages/Checkout"));
-const Orders = lazy(() => import("./pages/Orders"));
-const OrderDetail = lazy(() => import("./pages/OrderDetail"));
-const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
-const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
-const AdminOrders = lazy(() => import("./pages/admin/Orders"));
-const AdminProducts = lazy(() => import("./pages/admin/Products"));
-const AdminSettings = lazy(() => import("./pages/admin/Settings"));
-const AdminApps = lazy(() => import("./pages/admin/Apps"));
-const About = lazy(() => import("./pages/About"));
-const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const Terms = lazy(() => import("./pages/Terms"));
-const Contact = lazy(() => import("./pages/Contact"));
-const TrackOrder = lazy(() => import("./pages/TrackOrder"));
-const Login = lazy(() => import("./pages/Login"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+import Home from "./pages/Home";
+import Shop from "./pages/Shop";
+import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import Orders from "./pages/Orders";
+import OrderDetail from "./pages/OrderDetail";
+import AdminLayout from "./layouts/AdminLayout";
+import Dashboard from "./pages/admin/Dashboard";
+import AdminOrders from "./pages/admin/Orders";
+import AdminProducts from "./pages/admin/Products";
+import AdminSettings from "./pages/admin/Settings";
+import AdminApps from "./pages/admin/Apps";
+import AdminCoupons from "./pages/admin/Coupons";
+import AdminShipping from "./pages/admin/Shipping";
+import AdminCustomers from "./pages/admin/Customers";
+import AdminFinance from "./pages/admin/Finance";
+import About from "./pages/About";
+import ReturnPolicy from "./pages/ReturnPolicy";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Terms from "./pages/Terms";
+import Contact from "./pages/Contact";
+import TrackOrder from "./pages/TrackOrder";
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
 
 function LoadingFallback() {
   return (
@@ -62,6 +66,10 @@ function AnimatedRoutes() {
           <Route path="orders" element={<AdminOrders />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="apps" element={<AdminApps />} />
+          <Route path="coupons" element={<AdminCoupons />} />
+          <Route path="shipping" element={<AdminShipping />} />
+          <Route path="customers" element={<AdminCustomers />} />
+          <Route path="finance" element={<AdminFinance />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<NotFound />} />
