@@ -49,7 +49,7 @@ function parseAllowedOrigins(): string[] {
 export const env = {
   jwtSecret: resolveJwtSecret(),
   isProduction: process.env.NODE_ENV === "production",
-  databaseUrl: process.env.DATABASE_URL || "sqlite.db",
+  databaseUrl: optionalSecret("DATABASE_URL"),
   ownerUnionId: process.env.OWNER_UNION_ID ?? "",
   googleClientId: process.env.GOOGLE_CLIENT_ID ?? "",
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",

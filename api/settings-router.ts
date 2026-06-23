@@ -5,24 +5,60 @@ import { apiKeys, siteSettings } from "@db/schema";
 import { desc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import * as crypto from "node:crypto";
+import { defaultSiteSettings, mergeSiteSettings, pruneEmptyStrings, type SiteSettings } from "@contracts/site-settings";
+
+const emptyToUndefined = (value: unknown) => (typeof value === "string" && value.trim() === "" ? undefined : value);
+const optionalText = (schema: z.ZodString) => z.preprocess(emptyToUndefined, schema.optional());
 
 const ContactLinksSchema = z.object({
-  whatsapp: z.string().trim().regex(/^\+?[0-9]{8,15}$/).optional(),
-  website: z.string().trim().url().optional(),
-  snapchat: z.string().trim().max(80).regex(/^[a-zA-Z0-9_.-]+$/).optional(),
-  twitter: z.string().trim().max(80).regex(/^[a-zA-Z0-9_.-]+$/).optional(),
-  telegram: z.string().trim().max(80).regex(/^[a-zA-Z0-9_]+$/).optional(),
+  whatsapp: optionalText(z.string().trim().max(30)),
+  website: optionalText(z.string().trim().url()),
+  snapchat: optionalText(z.string().trim().max(200)),
+  twitter: optionalText(z.string().trim().max(200)),
+  telegram: optionalText(z.string().trim().max(200)),
 });
 
 const TrackingPixelsSchema = z.object({
-  facebookPixelId: z.string().trim().regex(/^[0-9]{5,30}$/).optional(),
-  tiktokPixelId: z.string().trim().regex(/^[a-zA-Z0-9]{8,64}$/).optional(),
-  snapchatPixelId: z.string().trim().regex(/^[a-zA-Z0-9_-]{8,64}$/).optional(),
-  googleAnalyticsId: z.string().trim().regex(/^(G-[A-Z0-9]+|UA-[0-9]+-[0-9]+)$/).optional(),
+  facebookPixelId: optionalText(z.string().trim().regex(/^[0-9]{5,30}$/)),
+  tiktokPixelId: optionalText(z.string().trim().regex(/^[a-zA-Z0-9]{8,64}$/)),
+  snapchatPixelId: optionalText(z.string().trim().regex(/^[a-zA-Z0-9_-]{8,64}$/)),
+  googleAnalyticsId: optionalText(z.string().trim().regex(/^(G-[A-Z0-9]+|UA-[0-9]+-[0-9]+)$/)),
+});
+
+const LocalizedTextSchema = z.object({
+  en: optionalText(z.string().trim().max(2000)),
+  ar: optionalText(z.string().trim().max(2000)),
+});
+
+const SiteContentSchema = z.object({
+  tagline: optionalText(z.string().trim().max(80)),
+  logoTagline: optionalText(z.string().trim().max(120)),
+  bannerText: LocalizedTextSchema.optional(),
+  heroEyebrow: LocalizedTextSchema.optional(),
+  heroTitle: LocalizedTextSchema.optional(),
+  heroDescription: LocalizedTextSchema.optional(),
+  heroImage: optionalText(z.string().trim().max(500000)),
+  offerTitle: LocalizedTextSchema.optional(),
+  offerCode: optionalText(z.string().trim().max(80)),
+  footerDescription: LocalizedTextSchema.optional(),
+  supportEmail: optionalText(z.string().trim().email()),
+  aboutTitle: LocalizedTextSchema.optional(),
+  aboutDescription: LocalizedTextSchema.optional(),
+  aboutImage: optionalText(z.string().trim().max(500000)),
+  services: z
+    .array(
+      z.object({
+        title: LocalizedTextSchema,
+        description: LocalizedTextSchema,
+      }),
+    )
+    .max(8)
+    .optional(),
 });
 
 const StoreSettingsSchema = z.object({
   siteName: z.string().trim().min(2).max(80).optional(),
+  logoUrl: optionalText(z.string().trim().max(500000)),
   primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
   secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
   accentColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
@@ -31,6 +67,7 @@ const StoreSettingsSchema = z.object({
   heroStyle: z.enum(["image", "minimal", "spotlight"]).optional(),
   contactLinks: ContactLinksSchema.optional(),
   trackingPixels: TrackingPixelsSchema.optional(),
+  content: SiteContentSchema.optional(),
 });
 
 function hashApiKey(key: string) {
@@ -49,25 +86,13 @@ export const settingsRouter = createRouter({
   get: publicQuery.query(async () => {
     const db = getDb();
     const settings = await db.select().from(siteSettings);
-    
-    // Transform into a simple key-value object
-    const result: Record<string, any> = {};
+
+    const result: Partial<SiteSettings> = {};
     for (const setting of settings) {
-      result[setting.key] = setting.value;
+      result[setting.key as keyof SiteSettings] = setting.value as never;
     }
-    
-    // Default values if not found
-    if (!result["siteName"]) result["siteName"] = "AL-YOUSEF Electronics";
-    if (!result["primaryColor"]) result["primaryColor"] = "#D4AF37";
-    if (!result["secondaryColor"]) result["secondaryColor"] = "#0F172A";
-    if (!result["accentColor"]) result["accentColor"] = "#0099CC";
-    if (!result["currency"]) result["currency"] = "EGP";
-    if (!result["themePreset"]) result["themePreset"] = "luxury";
-    if (!result["heroStyle"]) result["heroStyle"] = "image";
-    if (!result["contactLinks"]) result["contactLinks"] = {};
-    if (!result["trackingPixels"]) result["trackingPixels"] = {};
-    
-    return result;
+
+    return mergeSiteSettings(result);
   }),
 
   getContactLinks: publicQuery.query(async () => {
@@ -78,31 +103,30 @@ export const settingsRouter = createRouter({
       .where(eq(siteSettings.key, "contactLinks"))
       .limit(1);
 
-    return (rows[0]?.value ?? {}) as {
-      whatsapp?: string;
-      website?: string;
-      snapchat?: string;
-      twitter?: string;
-      telegram?: string;
-    };
+    return mergeSiteSettings({ contactLinks: (rows[0]?.value ?? {}) as SiteSettings["contactLinks"] }).contactLinks;
   }),
   
   update: adminQuery
     .input(StoreSettingsSchema)
     .mutation(async ({ input }) => {
       const db = getDb();
-      
-      for (const [key, value] of Object.entries(input)) {
+      const cleaned = pruneEmptyStrings(input);
+      const normalized = mergeSiteSettings(cleaned);
+      const allowedKeys = Object.keys(defaultSiteSettings) as (keyof SiteSettings)[];
+
+      for (const key of allowedKeys) {
+        const value = normalized[key];
         if (value === undefined) continue;
-        const existing = await db.select().from(siteSettings).where(eq(siteSettings.key, key)).limit(1);
-        if (existing.length > 0) {
-          await db.update(siteSettings).set({ value }).where(eq(siteSettings.key, key));
-        } else {
-          await db.insert(siteSettings).values({ key, value });
-        }
+        await db
+          .insert(siteSettings)
+          .values({ key, value })
+          .onConflictDoUpdate({
+            target: siteSettings.key,
+            set: { value },
+          });
       }
-      
-      return { success: true };
+
+      return { success: true, settings: normalized };
     }),
 
   listDropshippingIntegrations: adminQuery.query(async () => {

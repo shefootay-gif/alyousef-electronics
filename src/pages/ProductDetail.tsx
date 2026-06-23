@@ -4,6 +4,7 @@ import { trpc } from "@/providers/trpc";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useTheme } from "@/providers/ThemeProvider";
 import Layout from "@/components/Layout";
 import { formatCurrency } from "@/lib/utils";
 import {
@@ -25,6 +26,7 @@ export default function ProductDetail() {
   const { addToCart } = useCart();
   const { user } = useAuth();
   const { t, lang, isRTL } = useLanguage();
+  const { siteName } = useTheme();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<"description" | "specs" | "reviews">("description");
   const [liked, setLiked] = useState(false);
@@ -56,7 +58,7 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (product) {
-      const title = `${lang === "ar" && product.nameAr ? product.nameAr : product.name} | AL-YOUSEF Electronics`;
+      const title = `${lang === "ar" && product.nameAr ? product.nameAr : product.name} | ${siteName}`;
       document.title = title;
       
       let metaDesc = document.querySelector('meta[name="description"]');
@@ -78,7 +80,7 @@ export default function ProductDetail() {
         ogImage.setAttribute('content', product.image);
       }
     }
-  }, [product, lang]);
+  }, [product, lang, siteName]);
 
   const { data: relatedProducts } = trpc.product.list.useQuery(
     { categoryId: product?.categoryId, limit: 4, status: "active" },

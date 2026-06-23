@@ -1,8 +1,11 @@
 import { useLanguage } from "@/hooks/useLanguage";
+import { useTheme } from "@/providers/ThemeProvider";
+import { pickLocalized } from "@contracts/site-settings";
 import { ShieldCheck, Truck, Clock, RefreshCcw } from "lucide-react";
 
 export default function About() {
   const { lang, isRTL, t } = useLanguage();
+  const { content } = useTheme();
 
   return (
     <div className={`container mx-auto px-4 py-12 ${isRTL ? "text-right" : "text-left"}`}>
@@ -11,12 +14,10 @@ export default function About() {
         
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 mb-12">
           <h2 className="text-2xl font-semibold mb-4 text-slate-800">
-            {lang === "ar" ? "قصتنا" : "Our Story"}
+            {pickLocalized(content.aboutTitle, lang)}
           </h2>
           <p className="text-slate-600 leading-relaxed mb-6">
-            {lang === "ar" 
-              ? "تأسست شركة اليوسف للإلكترونيات برؤية واضحة: تقديم أفضل وأحدث التقنيات لعملائنا في مصر. منذ بدايتنا، التزمنا بتوفير منتجات أصلية 100% من أشهر العلامات التجارية العالمية، مع التركيز على تجربة تسوق استثنائية."
-              : "AL-YOUSEF Electronics was founded with a clear vision: to provide the best and latest technology to our customers in Egypt. Since our beginning, we have committed to offering 100% authentic products from the world's most famous brands, focusing on an exceptional shopping experience."}
+            {pickLocalized(content.aboutDescription, lang)}
           </p>
           <p className="text-slate-600 leading-relaxed">
             {lang === "ar"

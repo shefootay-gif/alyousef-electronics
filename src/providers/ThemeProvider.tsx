@@ -1,62 +1,33 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { trpc } from "./trpc";
+import { defaultSiteSettings, mergeSiteSettings, type SiteSettings } from "@contracts/site-settings";
 
-interface ThemeContextType {
-  siteName: string;
-  primaryColor: string;
-  secondaryColor: string;
-  accentColor: string;
-  currency: "EGP";
-  themePreset: "luxury" | "clean" | "contrast";
-  heroStyle: "image" | "minimal" | "spotlight";
+type ThemeContextType = SiteSettings & {
   isLoading: boolean;
-}
+};
 
 const ThemeContext = createContext<ThemeContextType>({
-  siteName: "AL-YOUSEF Electronics",
-  primaryColor: "#D4AF37",
-  secondaryColor: "#0F172A",
-  accentColor: "#0099CC",
-  currency: "EGP",
-  themePreset: "luxury",
-  heroStyle: "image",
+  ...defaultSiteSettings,
   isLoading: true,
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { data: settings, isLoading } = trpc.settings.get.useQuery();
-  const [theme, setTheme] = useState({
-    siteName: "AL-YOUSEF Electronics",
-    primaryColor: "#D4AF37",
-    secondaryColor: "#0F172A",
-    accentColor: "#0099CC",
-    currency: "EGP" as const,
-    themePreset: "luxury" as const,
-    heroStyle: "image" as const,
-  });
+  const [theme, setTheme] = useState<SiteSettings>(defaultSiteSettings);
 
   useEffect(() => {
     if (settings) {
-      setTheme({
-        siteName: settings.siteName || "AL-YOUSEF Electronics",
-        primaryColor: settings.primaryColor || "#D4AF37",
-        secondaryColor: settings.secondaryColor || "#0F172A",
-        accentColor: settings.accentColor || "#0099CC",
-        currency: "EGP",
-        themePreset: settings.themePreset || "luxury",
-        heroStyle: settings.heroStyle || "image",
-      });
+      const nextTheme = mergeSiteSettings(settings);
+      setTheme(nextTheme);
 
-      // Inject custom CSS variables to root
       const root = document.documentElement;
-      root.style.setProperty("--primary", settings.primaryColor || "#D4AF37");
-      root.style.setProperty("--secondary", settings.secondaryColor || "#0F172A");
-      root.style.setProperty("--accent", settings.accentColor || "#0099CC");
-      root.dataset.themePreset = settings.themePreset || "luxury";
-      root.dataset.heroStyle = settings.heroStyle || "image";
+      root.style.setProperty("--primary", nextTheme.primaryColor);
+      root.style.setProperty("--secondary", nextTheme.secondaryColor);
+      root.style.setProperty("--accent", nextTheme.accentColor);
+      root.dataset.themePreset = nextTheme.themePreset;
+      root.dataset.heroStyle = nextTheme.heroStyle;
       
-      // Update document title
-      document.title = settings.siteName || "AL-YOUSEF Electronics";
+      document.title = nextTheme.siteName;
     }
   }, [settings]);
 

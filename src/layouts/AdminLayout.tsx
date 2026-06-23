@@ -17,6 +17,7 @@ import {
   CreditCard
 } from "lucide-react";
 import { useTheme } from "@/providers/ThemeProvider";
+import BrandLogo from "@/components/BrandLogo";
 
 export default function AdminLayout() {
   const { t, isRTL } = useLanguage();
@@ -88,11 +89,7 @@ export default function AdminLayout() {
         <div className="h-full flex flex-col">
           <div className="flex items-center justify-between gap-3 p-6 border-b border-white/10 h-20">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center shadow-lg border border-[#D4AF37]/30 flex-shrink-0">
-                <span className="text-[#D4AF37] font-bold text-lg">
-                  {siteName.charAt(0)}
-                </span>
-              </div>
+              <BrandLogo variant="mark" />
               <div className={`flex flex-col ${!sidebarOpen ? 'lg:hidden' : ''}`}>
                 <span className="text-[#F8FAFC] font-bold tracking-wider truncate max-w-[140px]">{siteName}</span>
                 <span className="text-xs tracking-[0.2em] text-[#D4AF37]">ADMIN</span>
@@ -152,9 +149,7 @@ export default function AdminLayout() {
         {/* Mobile Header */}
         <header className="lg:hidden h-20 bg-[#0F172A] border-b border-white/10 flex items-center justify-between px-6 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center shadow-lg border border-[#D4AF37]/30">
-              <span className="text-[#D4AF37] font-bold text-lg">{siteName.charAt(0)}</span>
-            </div>
+            <BrandLogo variant="mark" />
             <span className="text-[#F8FAFC] font-bold tracking-wider">{siteName}</span>
           </div>
           <button 

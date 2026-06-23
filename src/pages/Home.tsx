@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useTheme } from "@/providers/ThemeProvider";
+import { pickLocalized } from "@contracts/site-settings";
 import FadeIn from "@/components/FadeIn";
 import Layout from "@/components/Layout";
 import ProductCard from "@/components/ProductCard";
@@ -32,6 +34,7 @@ const categoryIcons: Record<string, React.ReactNode> = {
 
 function HeroSection() {
   const { t, lang } = useLanguage();
+  const { content } = useTheme();
 
   const stats = lang === "ar"
     ? ["منتجات أصلية", "ضمان موثوق", "تجربة شراء فاخرة"]
@@ -98,25 +101,19 @@ function HeroSection() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#D4AF37] opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-[#D4AF37]"></span>
                 </span>
-                {t("premiumElectronics")}
+                {pickLocalized(content.heroEyebrow, lang) || t("premiumElectronics")}
               </p>
             </motion.div>
 
             <motion.div variants={textVariants}>
               <h1 className="text-5xl sm:text-7xl lg:text-[5rem] font-black text-white leading-[1.1] mb-8 tracking-tight">
-                {lang === "ar" ? (
-                  <>اكتشف <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F8D778] via-[#D4AF37] to-[#B8960F] drop-shadow-[0_0_30px_rgba(212,175,55,0.4)]">التكنولوجيا</span><br/>بمفهوم جديد</>
-                ) : (
-                  <>Experience <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F8D778] via-[#D4AF37] to-[#B8960F] drop-shadow-[0_0_30px_rgba(212,175,55,0.4)]">Technology</span><br/>Redefined</>
-                )}
+                {pickLocalized(content.heroTitle, lang)}
               </h1>
             </motion.div>
 
             <motion.div variants={textVariants}>
               <p className={`text-lg sm:text-xl text-[#94A3B8] mb-10 leading-relaxed max-w-xl ${lang === "ar" ? "mr-auto" : ""}`}>
-                {lang === "ar"
-                  ? "نقدم لك أحدث الأجهزة الذكية وملحقاتها في مكان واحد. تسوق الآن واستمتع بتجربة إلكترونية فاخرة لا مثيل لها."
-                  : t("heroDesc")}
+                {pickLocalized(content.heroDescription, lang) || t("heroDesc")}
               </p>
             </motion.div>
 
@@ -176,7 +173,7 @@ function HeroSection() {
                  <div className="w-10 h-1.5 rounded-full bg-[#111]" />
               </div>
               <div className="absolute inset-0 bg-gradient-to-br from-[#1E293B] to-[#020617]" />
-              <img src="https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=800&auto=format&fit=crop" className="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-overlay" alt="Screen" />
+              <img src={content.heroImage} className="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-overlay" alt="Screen" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent" />
               <div className="absolute bottom-10 inset-x-6">
                  <div className="h-20 w-20 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 shadow-lg mb-4">
@@ -327,6 +324,7 @@ function FeaturedProductsSection() {
 
 function SpecialOfferSection() {
   const { t, lang, isRTL } = useLanguage();
+  const { content } = useTheme();
   const [timeLeft, setTimeLeft] = useState({ days: 2, hours: 14, minutes: 35, seconds: 42 });
 
   useEffect(() => {
@@ -382,10 +380,10 @@ function SpecialOfferSection() {
                 {t("limitedTimeOffer")}
               </div>
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
-                {t("offerTitle")}
+                {pickLocalized(content.offerTitle, lang) || t("offerTitle")}
               </h2>
               <div className="inline-block px-6 py-3 rounded-2xl bg-[#0F172A] border border-white/10 text-[#C0C0C0] font-mono text-xl shadow-inner mb-8">
-                {lang === "ar" ? "الكود:" : "Code:"} <span className="text-[#D4AF37] font-bold tracking-wider ml-2">GAMING15</span>
+                {lang === "ar" ? "الكود:" : "Code:"} <span className="text-[#D4AF37] font-bold tracking-wider ml-2">{content.offerCode}</span>
               </div>
             </motion.div>
 
@@ -428,13 +426,19 @@ function SpecialOfferSection() {
 }
 
 function FeaturesBar() {
-  const { t } = useLanguage();
-  const features = [
-    { icon: <Truck className="w-7 h-7" />, title: t("freeDelivery"), desc: t("freeDeliveryDesc") },
-    { icon: <Shield className="w-7 h-7" />, title: t("securePayment"), desc: t("securePaymentDesc") },
-    { icon: <HeadphonesIcon className="w-7 h-7" />, title: t("support"), desc: t("supportDesc") },
-    { icon: <RefreshCw className="w-7 h-7" />, title: t("easyReturns"), desc: t("easyReturnsDesc") },
+  const { t, lang } = useLanguage();
+  const { content } = useTheme();
+  const icons = [
+    <Truck className="w-7 h-7" />,
+    <Shield className="w-7 h-7" />,
+    <HeadphonesIcon className="w-7 h-7" />,
+    <RefreshCw className="w-7 h-7" />,
   ];
+  const features = content.services.map((service, index) => ({
+    icon: icons[index] || <Shield className="w-7 h-7" />,
+    title: pickLocalized(service.title, lang) || t("support"),
+    desc: pickLocalized(service.description, lang) || t("supportDesc"),
+  }));
 
   return (
     <section className="py-12 bg-[#020617] border-y border-white/5">
@@ -461,6 +465,7 @@ function FeaturesBar() {
 
 function AboutUsSection() {
   const { lang, isRTL } = useLanguage();
+  const { content } = useTheme();
   
   return (
     <section className="py-24 bg-[#020617] text-white relative overflow-hidden">
@@ -479,18 +484,12 @@ function AboutUsSection() {
               {lang === "ar" ? "قصتنا" : "Our Story"}
             </div>
             <h2 className="text-4xl sm:text-5xl font-black mb-6 leading-tight">
-              {lang === "ar" ? (
-                <>رؤية نحو <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778]">المستقبل</span></>
-              ) : (
-                <>Vision for the <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778]">Future</span></>
-              )}
+              {pickLocalized(content.aboutTitle, lang)}
             </h2>
             <div className={`w-24 h-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] mb-8 rounded-full ${isRTL ? "ml-auto" : "mr-auto"}`} />
             
             <p className="text-[#94A3B8] text-lg sm:text-xl leading-relaxed mb-6 font-medium">
-              {lang === "ar" 
-                ? "تأسست شركة اليوسف للإلكترونيات برؤية واضحة: تقديم أفضل وأحدث التقنيات لعملائنا في مصر. نحن نفخر بكوننا الوجهة الموثوقة لكل ما يخص الأجهزة الذكية والحواسيب."
-                : "AL-YOUSEF Electronics was founded with a clear vision: to provide the best and latest technology to our customers in Egypt. We pride ourselves on being the trusted destination for smart devices."}
+              {pickLocalized(content.aboutDescription, lang)}
             </p>
             <p className="text-[#94A3B8] text-lg sm:text-xl leading-relaxed">
               {lang === "ar"
@@ -509,7 +508,7 @@ function AboutUsSection() {
             <div className="absolute inset-0 bg-gradient-to-tr from-[#D4AF37]/30 to-transparent rounded-[3rem] blur-2xl transform rotate-6" />
             <div className="relative aspect-[4/3] rounded-[3rem] overflow-hidden border-[6px] border-[#0F172A] shadow-2xl bg-[#0F172A]">
               <img 
-                src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop" 
+                src={content.aboutImage} 
                 alt="AL-YOUSEF Electronics Vision" 
                 loading="lazy"
                 className="w-full h-full object-cover mix-blend-luminosity opacity-80 hover:mix-blend-normal hover:opacity-100 transition-all duration-700 hover:scale-105"

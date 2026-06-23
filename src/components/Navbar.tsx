@@ -4,7 +4,7 @@ import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { trpc } from "@/providers/trpc";
-import { useTheme } from "@/providers/ThemeProvider";
+import BrandLogo from "@/components/BrandLogo";
 import {
   ShoppingCart,
   Search,
@@ -37,7 +37,6 @@ export default function Navbar() {
   const { itemCount, setIsOpen } = useCart();
   const { user, logout } = useAuth();
   const { t, lang, setLang, isRTL } = useLanguage();
-  const { siteName } = useTheme();
   const location = useLocation();
 
   const { data: categories } = trpc.category.list.useQuery();
@@ -69,13 +68,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform border border-[#D4AF37]/30">
-              <span className="text-[#D4AF37] font-bold text-xl">{siteName.charAt(0)}</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-black tracking-tight text-white leading-none">{siteName}</span>
-              <span className="text-[10px] font-bold text-[#D4AF37] tracking-widest uppercase mt-0.5">Store</span>
-            </div>
+            <BrandLogo className="transition-transform group-hover:scale-[1.02]" />
           </Link>
 
           {/* Desktop Nav */}

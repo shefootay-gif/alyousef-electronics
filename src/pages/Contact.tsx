@@ -2,12 +2,14 @@ import { useState } from "react";
 import Layout from "@/components/Layout";
 import { useLanguage } from "@/hooks/useLanguage";
 import { trpc } from "@/providers/trpc";
+import { useTheme } from "@/providers/ThemeProvider";
 import { MapPin, Phone, Mail, Send } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Contact() {
   const { lang } = useLanguage();
-  const { data: contactLinks } = (trpc.settings as any).getContactLinks.useQuery();
+  const { content } = useTheme();
+  const { data: contactLinks } = trpc.settings.getContactLinks.useQuery();
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [loading, setLoading] = useState(false);
 
@@ -70,7 +72,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-[#171717] mb-1">{lang === "ar" ? "البريد الإلكتروني" : "Email"}</h4>
-                  <p className="text-[#64748B]">support@alyousef.com</p>
+                  <p className="text-[#64748B]">{content.supportEmail}</p>
                 </div>
               </div>
             </div>
