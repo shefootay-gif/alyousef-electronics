@@ -20,7 +20,7 @@ import { useTheme } from "@/providers/ThemeProvider";
 import BrandLogo from "@/components/BrandLogo";
 
 export default function AdminLayout() {
-  const { t, isRTL } = useLanguage();
+  const { t, lang, isRTL } = useLanguage();
   const { user, isLoading, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -62,16 +62,16 @@ export default function AdminLayout() {
     { id: "/admin", label: t("dashboard"), icon: LayoutDashboard },
     { id: "/admin/products", label: t("products"), icon: Package },
     { id: "/admin/orders", label: t("orders"), icon: ShoppingBag },
-    { id: "/admin/customers", label: "Customers", icon: Users },
-    { id: "/admin/coupons", label: "Coupons", icon: Tags },
-    { id: "/admin/shipping", label: "Shipping", icon: Truck },
-    { id: "/admin/finance", label: "Finance", icon: CreditCard },
-    { id: "/admin/apps", label: "Apps & Integrations", icon: LinkIcon },
+    { id: "/admin/customers", label: lang === "ar" ? "العملاء" : "Customers", icon: Users },
+    { id: "/admin/coupons", label: lang === "ar" ? "الكوبونات" : "Coupons", icon: Tags },
+    { id: "/admin/shipping", label: lang === "ar" ? "الشحن" : "Shipping", icon: Truck },
+    { id: "/admin/finance", label: lang === "ar" ? "المدفوعات" : "Finance", icon: CreditCard },
+    { id: "/admin/apps", label: lang === "ar" ? "التطبيقات والتكاملات" : "Apps & Integrations", icon: LinkIcon },
     { id: "/admin/settings", label: t("settings"), icon: Settings },
   ];
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9] flex relative">
+    <div className="min-h-screen bg-[#F1F5F9] flex relative" dir={isRTL ? "rtl" : "ltr"}>
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div 
@@ -92,7 +92,7 @@ export default function AdminLayout() {
               <BrandLogo variant="mark" />
               <div className={`flex flex-col ${!sidebarOpen ? 'lg:hidden' : ''}`}>
                 <span className="text-[#F8FAFC] font-bold tracking-wider truncate max-w-[140px]">{siteName}</span>
-                <span className="text-xs tracking-[0.2em] text-[#D4AF37]">ADMIN</span>
+                <span className="text-xs tracking-[0.2em] text-[#D4AF37]">{lang === "ar" ? "الإدارة" : "ADMIN"}</span>
               </div>
             </div>
             <button 

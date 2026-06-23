@@ -16,13 +16,14 @@ const orderStatusColors: Record<string, string> = {
 
 export default function OrdersManagement() {
   const { t, lang, isRTL } = useLanguage();
+  const label = (en: string, ar: string) => (lang === "ar" ? ar : en);
   const { data: ordersData } = trpc.order.list.useQuery({ page: 1, limit: 50 });
   const utils = trpc.useUtils();
 
   const updateStatus = trpc.order.updateStatus.useMutation({
     onSuccess: () => {
       utils.order.list.invalidate();
-      toast.success("Order status updated");
+      toast.success(label("Order status updated", "تم تحديث حالة الطلب"));
     },
   });
 
@@ -49,7 +50,7 @@ export default function OrdersManagement() {
                       <>
                         {order.shippingAddress.firstName || order.shippingAddress.fullName} {order.shippingAddress.lastName || ''}
                       </>
-                    ) : 'Guest'}
+                    ) : label("Guest", "ضيف")}
                   </div>
                   {typeof order.shippingAddress === 'object' && order.shippingAddress !== null && (
                     <div className="text-xs text-[#94A3B8] mt-1 space-y-0.5">

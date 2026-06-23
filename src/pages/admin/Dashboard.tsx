@@ -20,6 +20,7 @@ const orderStatusColors: Record<string, string> = {
 
 export default function DashboardOverview() {
   const { t, lang, isRTL } = useLanguage();
+  const label = (en: string, ar: string) => (lang === "ar" ? ar : en);
   const [period, setPeriod] = useState<"7d" | "30d" | "90d">("30d");
   const { data: dashboard } = trpc.analytics.dashboard.useQuery({ period });
   const { data: revenueData } = trpc.analytics.revenue.useQuery({ period });
@@ -71,7 +72,7 @@ export default function DashboardOverview() {
                   : "text-[#94A3B8] hover:text-slate-100 hover:bg-white/5"
               }`}
             >
-              {p === "7d" ? "7 Days" : p === "30d" ? "30 Days" : "90 Days"}
+              {p === "7d" ? label("7 Days", "7 أيام") : p === "30d" ? label("30 Days", "30 يوم") : label("90 Days", "90 يوم")}
             </button>
           ))}
         </div>
@@ -102,22 +103,24 @@ export default function DashboardOverview() {
         <motion.div variants={itemVariants} className="lg:col-span-2 bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg p-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h3 className="text-lg font-bold text-slate-100">Store health / صحة المتجر</h3>
-              <p className="text-sm text-[#94A3B8] mt-1">مؤشرات تشغيل سريعة مثل Shopify Home.</p>
+              <h3 className="text-lg font-bold text-slate-100">{label("Store health", "صحة المتجر")}</h3>
+              <p className="text-sm text-[#94A3B8] mt-1">
+                {label("Quick operating indicators for your store.", "مؤشرات تشغيل سريعة للمتجر.")}
+              </p>
             </div>
             <Sparkles className="w-6 h-6 text-[#D4AF37]" />
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <div className="rounded-xl bg-black/25 border border-white/10 p-4">
-              <p className="text-xs text-[#94A3B8]">Low stock</p>
+              <p className="text-xs text-[#94A3B8]">{label("Low stock", "مخزون منخفض")}</p>
               <p className="mt-2 text-2xl font-black text-white">{dashboard?.lowStockProducts?.length || 0}</p>
             </div>
             <div className="rounded-xl bg-black/25 border border-white/10 p-4">
-              <p className="text-xs text-[#94A3B8]">Active catalog</p>
+              <p className="text-xs text-[#94A3B8]">{label("Active catalog", "الكتالوج النشط")}</p>
               <p className="mt-2 text-2xl font-black text-white">{dashboard?.activeProducts || 0}</p>
             </div>
             <div className="rounded-xl bg-black/25 border border-white/10 p-4">
-              <p className="text-xs text-[#94A3B8]">Orders period</p>
+              <p className="text-xs text-[#94A3B8]">{label("Orders period", "طلبات الفترة")}</p>
               <p className="mt-2 text-2xl font-black text-white">{dashboard?.totalOrders || 0}</p>
             </div>
           </div>
@@ -125,7 +128,7 @@ export default function DashboardOverview() {
             <div className="mt-5 rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-4">
               <div className="mb-3 flex items-center gap-2 text-yellow-300">
                 <AlertTriangle className="w-4 h-4" />
-                <span className="text-sm font-bold">منتجات تحتاج إعادة تخزين</span>
+                <span className="text-sm font-bold">{label("Products need restocking", "منتجات تحتاج إعادة تخزين")}</span>
               </div>
               <div className="grid gap-2 sm:grid-cols-2">
                 {dashboard?.lowStockProducts?.slice(0, 4).map((product: any) => (
@@ -140,12 +143,12 @@ export default function DashboardOverview() {
         </motion.div>
 
         <motion.div variants={itemVariants} className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg p-6">
-          <h3 className="text-lg font-bold text-slate-100">Quick actions</h3>
+          <h3 className="text-lg font-bold text-slate-100">{label("Quick actions", "إجراءات سريعة")}</h3>
           <div className="mt-5 space-y-3">
             {[
-              { to: "/admin/products", label: "Add or edit products", icon: Package },
-              { to: "/admin/apps", label: "Connect dropshipping", icon: Sparkles },
-              { to: "/admin/settings", label: "Customize theme", icon: Settings },
+              { to: "/admin/products", label: label("Add or edit products", "إضافة أو تعديل المنتجات"), icon: Package },
+              { to: "/admin/apps", label: label("Connect dropshipping", "ربط الدروبشيبينج"), icon: Sparkles },
+              { to: "/admin/settings", label: label("Customize theme", "تخصيص الهوية"), icon: Settings },
             ].map((action) => {
               const Icon = action.icon;
               return (
@@ -183,7 +186,7 @@ export default function DashboardOverview() {
               <YAxis stroke="#94A3B8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => formatCurrency(val, lang)} />
               <Tooltip
                 contentStyle={{ borderRadius: "12px", border: "1px solid #E2E8F0", boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1)" }}
-                formatter={(value: number) => [formatCurrency(value, lang), "Revenue"]}
+                formatter={(value: number) => [formatCurrency(value, lang), label("Revenue", "الإيرادات")]}
               />
               <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
             </AreaChart>
@@ -223,14 +226,14 @@ export default function DashboardOverview() {
 
         {/* Top Selling Products */}
         <motion.div variants={itemVariants} className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg p-6 border border-white/10/50">
-          <h3 className="text-lg font-bold text-slate-100 mb-4">Top Selling Products / الأكثر مبيعاً</h3>
+          <h3 className="text-lg font-bold text-slate-100 mb-4">{label("Top Selling Products", "المنتجات الأكثر مبيعًا")}</h3>
           <div className="overflow-x-auto">
             <table className={`w-full text-sm ${isRTL ? "text-right" : "text-left"}`}>
               <thead>
                 <tr className="border-b border-white/10">
-                  <th className="py-3 px-4 font-semibold text-slate-100">Product</th>
-                  <th className="py-3 px-4 font-semibold text-slate-100">Sold</th>
-                  <th className="py-3 px-4 font-semibold text-slate-100">Revenue</th>
+                  <th className="py-3 px-4 font-semibold text-slate-100">{label("Product", "المنتج")}</th>
+                  <th className="py-3 px-4 font-semibold text-slate-100">{label("Sold", "المباع")}</th>
+                  <th className="py-3 px-4 font-semibold text-slate-100">{label("Revenue", "الإيرادات")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E2E8F0]">

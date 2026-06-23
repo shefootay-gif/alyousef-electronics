@@ -14,6 +14,7 @@ const statusColors: Record<string, string> = {
 
 export default function ProductsManagement() {
   const { t, lang, isRTL } = useLanguage();
+  const label = (en: string, ar: string) => (lang === "ar" ? ar : en);
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
@@ -31,17 +32,17 @@ export default function ProductsManagement() {
   const deleteMutation = trpc.product.delete.useMutation({
     onSuccess: () => {
       utils.product.list.invalidate();
-      toast.success("Product deleted");
+      toast.success(label("Product deleted", "تم حذف المنتج"));
     },
     onError: (err) => {
-      toast.error(err.message || "Failed to delete product");
+      toast.error(err.message || label("Failed to delete product", "تعذر حذف المنتج"));
     }
   });
 
   const toggleStatusMutation = trpc.product.toggleStatus.useMutation({
     onSuccess: () => {
       utils.product.list.invalidate();
-      toast.success("Status updated");
+      toast.success(label("Status updated", "تم تحديث الحالة"));
     },
   });
 
@@ -58,10 +59,10 @@ export default function ProductsManagement() {
       utils.product.list.invalidate();
       setShowForm(false);
       setFormData({ name: "", nameAr: "", slug: "", description: "", descriptionAr: "", shortDescription: "", categoryId: categories?.[0]?.id || 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false, upsellProductId: null, crossSellIds: [] });
-      toast.success("Product created");
+      toast.success(label("Product created", "تم إنشاء المنتج"));
     },
     onError: (err) => {
-      toast.error(err.message || "Failed to create product");
+      toast.error(err.message || label("Failed to create product", "تعذر إنشاء المنتج"));
     }
   });
 
@@ -70,10 +71,10 @@ export default function ProductsManagement() {
       utils.product.list.invalidate();
       setShowForm(false);
       setEditingProduct(null);
-      toast.success("Product updated");
+      toast.success(label("Product updated", "تم تحديث المنتج"));
     },
     onError: (err) => {
-      toast.error(err.message || "Failed to update product");
+      toast.error(err.message || label("Failed to update product", "تعذر تحديث المنتج"));
     }
   });
 
@@ -214,13 +215,13 @@ export default function ProductsManagement() {
               <textarea value={formData.descriptionAr} onChange={(e) => setFormData({ ...formData, descriptionAr: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37] resize-none" rows={3} dir="rtl" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-100 mb-1">Upsell product / منتج الترقية</label>
+              <label className="block text-sm font-medium text-slate-100 mb-1">{label("Upsell product", "منتج الترقية")}</label>
               <select
                 value={formData.upsellProductId ?? ""}
                 onChange={(e) => setFormData({ ...formData, upsellProductId: e.target.value ? Number(e.target.value) : null })}
                 className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]"
               >
-                <option value="">No upsell</option>
+                <option value="">{label("No upsell", "بدون منتج ترقية")}</option>
                 {productOptions.map((product: any) => (
                   <option key={product.id} value={product.id}>
                     {product.name}
@@ -229,10 +230,12 @@ export default function ProductsManagement() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-100 mb-1">Cross-sell products / منتجات مكملة</label>
+              <label className="block text-sm font-medium text-slate-100 mb-1">{label("Cross-sell products", "منتجات مكملة")}</label>
               <div className="max-h-36 overflow-y-auto rounded-lg border border-white/10 bg-black/20 p-3 space-y-2">
                 {productOptions.length === 0 && (
-                  <p className="text-xs text-[#94A3B8]">Add more products to enable cross-selling.</p>
+                  <p className="text-xs text-[#94A3B8]">
+                    {label("Add more products to enable cross-selling.", "أضف منتجات أخرى لتفعيل المنتجات المكملة.")}
+                  </p>
                 )}
                 {productOptions.map((product: any) => (
                   <label key={product.id} className="flex items-center gap-2 text-sm text-slate-200">
@@ -312,7 +315,7 @@ export default function ProductsManagement() {
                       <button onClick={() => startEdit(product)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#F1F5F9] text-[#94A3B8] hover:text-[#D4AF37] transition-colors">
                         <Pencil className="w-4 h-4" />
                       </button>
-                      <button onClick={() => { if (confirm("Delete this product?")) deleteMutation.mutate({ id: product.id }); }} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-50 text-[#94A3B8] hover:text-red-500 transition-colors">
+                      <button onClick={() => { if (confirm(label("Delete this product?", "هل تريد حذف هذا المنتج؟"))) deleteMutation.mutate({ id: product.id }); }} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-50 text-[#94A3B8] hover:text-red-500 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                       <button onClick={() => toggleStatusMutation.mutate({ id: product.id, status: product.status === "active" ? "inactive" : "active" })} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#F1F5F9] text-[#94A3B8] hover:text-[#C0C0C0] transition-colors">

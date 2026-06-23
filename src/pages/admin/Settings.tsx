@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { trpc } from "@/providers/trpc";
 import { useTheme } from "@/providers/ThemeProvider";
+import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "sonner";
 import { defaultSiteSettings, mergeSiteSettings, type SiteSettings } from "@contracts/site-settings";
 import { Globe2, Image, Palette, Save, Share2, Store, Type, Wand2 } from "lucide-react";
@@ -40,6 +41,80 @@ const trackingLabels: Record<keyof SiteSettings["trackingPixels"], string> = {
   tiktokPixelId: "TikTok Pixel ID",
   snapchatPixelId: "Snapchat Pixel ID",
   googleAnalyticsId: "Google Analytics ID",
+};
+
+const ar = {
+  settingsSaved: "تم حفظ الإعدادات بنجاح",
+  settingsError: "تعذر حفظ الإعدادات",
+  chooseImage: "اختر ملف صورة",
+  loading: "جاري تحميل الإعدادات...",
+  eyebrow: "إعدادات المتجر",
+  title: "إدارة محتوى الموقع",
+  description: "تحكم في الهوية، اللوجو، روابط التواصل، الألوان، البانرات، النصوص الثابتة، الخدمات، الفوتر، وأكواد التتبع.",
+  saving: "جاري الحفظ...",
+  save: "حفظ التغييرات",
+  brandIdentity: "هوية المتجر",
+  siteName: "اسم الموقع",
+  logoSmallTagline: "وصف اللوجو المختصر",
+  logoFooterTagline: "وصف اللوجو في الفوتر",
+  currency: "العملة",
+  egyptianPound: "الجنيه المصري EGP",
+  logoUrl: "رابط اللوجو أو صورة محفوظة",
+  uploadLogo: "رفع اللوجو",
+  preview: "معاينة مباشرة",
+  logoPreview: "معاينة اللوجو",
+  buyButton: "زر الشراء",
+  colors: "ألوان الهوية والثيم",
+  primaryColor: "اللون الأساسي",
+  secondaryColor: "لون الخلفية",
+  accentColor: "اللون المساعد",
+  themePreset: "قالب الثيم",
+  images: "الصور والبنرات",
+  heroStyle: "شكل الهيرو",
+  fullImage: "صورة كاملة",
+  spotlight: "إضاءة منتج",
+  minimal: "بسيط",
+  heroImageUrl: "رابط صورة الهيرو",
+  uploadHero: "رفع صورة الهيرو",
+  aboutImageUrl: "رابط صورة من نحن",
+  uploadAbout: "رفع صورة من نحن",
+  staticText: "النصوص الثابتة",
+  english: "إنجليزي",
+  arabic: "عربي",
+  offerCode: "كود العرض",
+  supportEmail: "بريد الدعم",
+  contact: "روابط التواصل والسوشيال",
+  services: "شريط الخدمات",
+  tracking: "أكواد التتبع والتسويق",
+  service: "خدمة",
+  serviceTitle: "العنوان",
+  serviceDescription: "الوصف",
+};
+
+const localizedFieldLabels: Record<LocalizedKey, { en: string; ar: string }> = {
+  bannerText: { en: "Top banner text", ar: "نص البانر العلوي" },
+  heroEyebrow: { en: "Hero eyebrow", ar: "النص الصغير في الهيرو" },
+  heroTitle: { en: "Hero title", ar: "عنوان الهيرو" },
+  heroDescription: { en: "Hero description", ar: "وصف الهيرو" },
+  offerTitle: { en: "Offer title", ar: "عنوان العرض" },
+  footerDescription: { en: "Footer description", ar: "وصف الفوتر" },
+  aboutTitle: { en: "About title", ar: "عنوان من نحن" },
+  aboutDescription: { en: "About description", ar: "وصف من نحن" },
+};
+
+const contactLabelsAr: Record<keyof SiteSettings["contactLinks"], string> = {
+  whatsapp: "رقم واتساب",
+  website: "رابط الموقع",
+  snapchat: "رابط أو اسم سناب شات",
+  twitter: "رابط أو اسم X / تويتر",
+  telegram: "رابط أو اسم تيليجرام",
+};
+
+const trackingLabelsAr: Record<keyof SiteSettings["trackingPixels"], string> = {
+  facebookPixelId: "معرف Facebook Pixel",
+  tiktokPixelId: "معرف TikTok Pixel",
+  snapchatPixelId: "معرف Snapchat Pixel",
+  googleAnalyticsId: "معرف Google Analytics",
 };
 
 function TextInput({
@@ -91,10 +166,13 @@ function TextArea({
 }
 
 export default function Settings() {
+  const { lang } = useLanguage();
   const { data: settings, isLoading } = trpc.settings.get.useQuery();
   const utils = trpc.useUtils();
   const liveTheme = useTheme();
   const [form, setForm] = useState<SiteSettings>(defaultSiteSettings);
+  const isArabic = lang === "ar";
+  const label = (en: string, arabic: string) => (isArabic ? arabic : en);
 
   useEffect(() => {
     if (settings) {
@@ -106,9 +184,9 @@ export default function Settings() {
     onSuccess: async () => {
       await utils.settings.get.invalidate();
       await utils.settings.getContactLinks.invalidate();
-      toast.success("Settings saved successfully");
+      toast.success(label("Settings saved successfully", ar.settingsSaved));
     },
-    onError: (error) => toast.error(error.message || "Could not save settings"),
+    onError: (error) => toast.error(error.message || label("Could not save settings", ar.settingsError)),
   });
 
   const save = () => updateSettings.mutate(form);
@@ -133,7 +211,7 @@ export default function Settings() {
   const setImageFromFile = (file: File | undefined, key: "logoUrl" | "heroImage" | "aboutImage") => {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      toast.error("Please choose an image file");
+      toast.error(label("Please choose an image file", ar.chooseImage));
       return;
     }
 
@@ -152,7 +230,7 @@ export default function Settings() {
   if (isLoading) {
     return (
       <div className="rounded-2xl border border-white/10 bg-[#0F172A]/80 p-6 text-slate-100">
-        Loading settings...
+        {label("Loading settings...", ar.loading)}
       </div>
     );
   }
@@ -161,10 +239,10 @@ export default function Settings() {
     <div className="space-y-6 text-slate-100">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#D4AF37]">Store settings</p>
-          <h1 className="mt-2 text-3xl font-black">Control site content</h1>
+          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#D4AF37]">{label("Store settings", ar.eyebrow)}</p>
+          <h1 className="mt-2 text-3xl font-black">{label("Control site content", ar.title)}</h1>
           <p className="mt-2 text-sm text-slate-400">
-            Manage branding, logo, contact links, colors, banners, static copy, services, footer, and tracking codes.
+            {label("Manage branding, logo, contact links, colors, banners, static copy, services, footer, and tracking codes.", ar.description)}
           </p>
         </div>
         <button
@@ -173,7 +251,7 @@ export default function Settings() {
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-3 font-bold text-black transition hover:bg-[#F8D778] disabled:opacity-60"
         >
           <Save className="h-4 w-4" />
-          {updateSettings.isPending ? "Saving..." : "Save changes"}
+          {updateSettings.isPending ? label("Saving...", ar.saving) : label("Save changes", ar.save)}
         </button>
       </div>
 
@@ -181,49 +259,49 @@ export default function Settings() {
         <section className="rounded-2xl border border-white/10 bg-[#0F172A]/80 p-6">
           <div className="mb-6 flex items-center gap-3">
             <Store className="h-5 w-5 text-[#D4AF37]" />
-            <h2 className="text-xl font-bold">Brand identity</h2>
+            <h2 className="text-xl font-bold">{label("Brand identity", ar.brandIdentity)}</h2>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <TextInput
-              label="Site name"
+              label={label("Site name", ar.siteName)}
               value={form.siteName}
               onChange={(siteName) => setForm({ ...form, siteName })}
               placeholder="AL-YOUSEF Electronics"
             />
             <TextInput
-              label="Logo small tagline"
+              label={label("Logo small tagline", ar.logoSmallTagline)}
               value={form.content.tagline}
               onChange={(value) => updateContent("tagline", value)}
               placeholder="Store"
             />
             <TextInput
-              label="Logo footer tagline"
+              label={label("Logo footer tagline", ar.logoFooterTagline)}
               value={form.content.logoTagline}
               onChange={(value) => updateContent("logoTagline", value)}
               placeholder="PREMIUM TECH STORE"
             />
             <label className="space-y-2">
-              <span className="text-sm font-semibold text-slate-300">Currency</span>
+              <span className="text-sm font-semibold text-slate-300">{label("Currency", ar.currency)}</span>
               <select
                 value={form.currency}
                 onChange={() => setForm({ ...form, currency: "EGP" })}
                 className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 outline-none transition focus:border-[#D4AF37]"
               >
-                <option value="EGP">Egyptian pound EGP</option>
+                <option value="EGP">{label("Egyptian pound EGP", ar.egyptianPound)}</option>
               </select>
             </label>
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-[1fr_220px]">
             <TextInput
-              label="Logo URL or data image"
+              label={label("Logo URL or data image", ar.logoUrl)}
               value={form.logoUrl}
               onChange={(logoUrl) => setForm({ ...form, logoUrl })}
               placeholder="/logo.png or https://..."
             />
             <label className="space-y-2">
-              <span className="text-sm font-semibold text-slate-300">Upload logo</span>
+              <span className="text-sm font-semibold text-slate-300">{label("Upload logo", ar.uploadLogo)}</span>
               <input
                 type="file"
                 accept="image/*"
@@ -237,7 +315,7 @@ export default function Settings() {
         <section className="rounded-2xl border border-white/10 bg-[#0F172A]/80 p-6">
           <div className="mb-6 flex items-center gap-3">
             <Wand2 className="h-5 w-5 text-[#D4AF37]" />
-            <h2 className="text-xl font-bold">Live preview</h2>
+            <h2 className="text-xl font-bold">{label("Live preview", ar.preview)}</h2>
           </div>
           <div
             className="rounded-2xl border p-6"
@@ -250,12 +328,12 @@ export default function Settings() {
               <BrandLogo />
             </div>
             {form.logoUrl && (
-              <img src={form.logoUrl} alt="Logo preview" className="mb-6 h-24 max-w-full rounded-xl object-contain" />
+              <img src={form.logoUrl} alt={label("Logo preview", ar.logoPreview)} className="mb-6 h-24 max-w-full rounded-xl object-contain" />
             )}
             <p className="font-black">{form.siteName || liveTheme.siteName}</p>
             <p className="mt-1 text-xs text-slate-300">{form.content.tagline}</p>
             <button className="mt-5 rounded-xl px-4 py-2 text-sm font-bold text-black" style={{ backgroundColor: form.primaryColor }}>
-              Buy button
+              {label("Buy button", ar.buyButton)}
             </button>
           </div>
         </section>
@@ -264,14 +342,14 @@ export default function Settings() {
       <section className="rounded-2xl border border-white/10 bg-[#0F172A]/80 p-6">
         <div className="mb-6 flex items-center gap-3">
           <Palette className="h-5 w-5 text-[#D4AF37]" />
-          <h2 className="text-xl font-bold">Brand colors and theme</h2>
+          <h2 className="text-xl font-bold">{label("Brand colors and theme", ar.colors)}</h2>
         </div>
 
         <div className="grid gap-4 md:grid-cols-4">
           {[
-            ["primaryColor", "Primary color"],
-            ["secondaryColor", "Background color"],
-            ["accentColor", "Accent color"],
+            ["primaryColor", label("Primary color", ar.primaryColor)],
+            ["secondaryColor", label("Background color", ar.secondaryColor)],
+            ["accentColor", label("Accent color", ar.accentColor)],
           ].map(([key, label]) => (
             <label key={key} className="space-y-2">
               <span className="text-sm font-semibold text-slate-300">{label}</span>
@@ -292,7 +370,7 @@ export default function Settings() {
           ))}
 
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-300">Theme preset</span>
+            <span className="text-sm font-semibold text-slate-300">{label("Theme preset", ar.themePreset)}</span>
             <select
               value={form.themePreset}
               onChange={(e) => setForm({ ...form, themePreset: e.target.value as SiteSettings["themePreset"] })}
@@ -309,24 +387,24 @@ export default function Settings() {
       <section className="rounded-2xl border border-white/10 bg-[#0F172A]/80 p-6">
         <div className="mb-6 flex items-center gap-3">
           <Image className="h-5 w-5 text-[#D4AF37]" />
-          <h2 className="text-xl font-bold">Images and banners</h2>
+          <h2 className="text-xl font-bold">{label("Images and banners", ar.images)}</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-300">Hero style</span>
+            <span className="text-sm font-semibold text-slate-300">{label("Hero style", ar.heroStyle)}</span>
             <select
               value={form.heroStyle}
               onChange={(e) => setForm({ ...form, heroStyle: e.target.value as SiteSettings["heroStyle"] })}
               className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 outline-none transition focus:border-[#D4AF37]"
             >
-              <option value="image">Full image</option>
-              <option value="spotlight">Product spotlight</option>
-              <option value="minimal">Minimal</option>
+              <option value="image">{label("Full image", ar.fullImage)}</option>
+              <option value="spotlight">{label("Product spotlight", ar.spotlight)}</option>
+              <option value="minimal">{label("Minimal", ar.minimal)}</option>
             </select>
           </label>
-          <TextInput label="Hero image URL" value={form.content.heroImage} onChange={(value) => updateContent("heroImage", value)} />
+          <TextInput label={label("Hero image URL", ar.heroImageUrl)} value={form.content.heroImage} onChange={(value) => updateContent("heroImage", value)} />
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-300">Upload hero image</span>
+            <span className="text-sm font-semibold text-slate-300">{label("Upload hero image", ar.uploadHero)}</span>
             <input
               type="file"
               accept="image/*"
@@ -334,9 +412,9 @@ export default function Settings() {
               className="block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-[#D4AF37] file:px-3 file:py-2 file:font-bold file:text-black"
             />
           </label>
-          <TextInput label="About image URL" value={form.content.aboutImage} onChange={(value) => updateContent("aboutImage", value)} />
+          <TextInput label={label("About image URL", ar.aboutImageUrl)} value={form.content.aboutImage} onChange={(value) => updateContent("aboutImage", value)} />
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-slate-300">Upload about image</span>
+            <span className="text-sm font-semibold text-slate-300">{label("Upload about image", ar.uploadAbout)}</span>
             <input
               type="file"
               accept="image/*"
@@ -350,40 +428,40 @@ export default function Settings() {
       <section className="rounded-2xl border border-white/10 bg-[#0F172A]/80 p-6">
         <div className="mb-6 flex items-center gap-3">
           <Type className="h-5 w-5 text-[#D4AF37]" />
-          <h2 className="text-xl font-bold">Static text content</h2>
+          <h2 className="text-xl font-bold">{label("Static text content", ar.staticText)}</h2>
         </div>
         <div className="space-y-5">
           {localizedContentFields.map((field) => (
             <div key={field.key} className="grid gap-4 md:grid-cols-2">
               <TextArea
-                label={`${field.label} - English`}
+                label={`${isArabic ? localizedFieldLabels[field.key].ar : field.label} - ${label("English", ar.english)}`}
                 value={form.content[field.key].en}
                 rows={field.rows}
                 onChange={(value) => updateLocalizedContent(field.key, "en", value)}
               />
               <TextArea
-                label={`${field.label} - Arabic`}
+                label={`${isArabic ? localizedFieldLabels[field.key].ar : field.label} - ${label("Arabic", ar.arabic)}`}
                 value={form.content[field.key].ar}
                 rows={field.rows}
                 onChange={(value) => updateLocalizedContent(field.key, "ar", value)}
               />
             </div>
           ))}
-          <TextInput label="Offer code" value={form.content.offerCode} onChange={(value) => updateContent("offerCode", value)} />
-          <TextInput label="Support email" value={form.content.supportEmail} onChange={(value) => updateContent("supportEmail", value)} />
+          <TextInput label={label("Offer code", ar.offerCode)} value={form.content.offerCode} onChange={(value) => updateContent("offerCode", value)} />
+          <TextInput label={label("Support email", ar.supportEmail)} value={form.content.supportEmail} onChange={(value) => updateContent("supportEmail", value)} />
         </div>
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-[#0F172A]/80 p-6">
         <div className="mb-6 flex items-center gap-3">
           <Share2 className="h-5 w-5 text-[#D4AF37]" />
-          <h2 className="text-xl font-bold">Contact and social links</h2>
+          <h2 className="text-xl font-bold">{label("Contact and social links", ar.contact)}</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {(Object.keys(defaultSiteSettings.contactLinks) as (keyof SiteSettings["contactLinks"])[]).map((key) => (
             <TextInput
               key={key}
-              label={contactLabels[key]}
+              label={isArabic ? contactLabelsAr[key] : contactLabels[key]}
               value={form.contactLinks[key] ?? ""}
               onChange={(value) =>
                 setForm({
@@ -399,13 +477,13 @@ export default function Settings() {
       <section className="rounded-2xl border border-white/10 bg-[#0F172A]/80 p-6">
         <div className="mb-6 flex items-center gap-3">
           <Wand2 className="h-5 w-5 text-[#D4AF37]" />
-          <h2 className="text-xl font-bold">Services strip</h2>
+          <h2 className="text-xl font-bold">{label("Services strip", ar.services)}</h2>
         </div>
         <div className="space-y-4">
           {form.content.services.map((service, index) => (
             <div key={index} className="grid gap-4 rounded-xl border border-white/10 bg-black/20 p-4 md:grid-cols-2">
               <TextInput
-                label={`Service ${index + 1} title - English`}
+                label={`${label("Service", ar.service)} ${index + 1} - ${label("title", ar.serviceTitle)} - ${label("English", ar.english)}`}
                 value={service.title.en}
                 onChange={(value) => {
                   const services = [...form.content.services];
@@ -414,7 +492,7 @@ export default function Settings() {
                 }}
               />
               <TextInput
-                label={`Service ${index + 1} title - Arabic`}
+                label={`${label("Service", ar.service)} ${index + 1} - ${label("title", ar.serviceTitle)} - ${label("Arabic", ar.arabic)}`}
                 value={service.title.ar}
                 onChange={(value) => {
                   const services = [...form.content.services];
@@ -423,7 +501,7 @@ export default function Settings() {
                 }}
               />
               <TextInput
-                label={`Service ${index + 1} description - English`}
+                label={`${label("Service", ar.service)} ${index + 1} - ${label("description", ar.serviceDescription)} - ${label("English", ar.english)}`}
                 value={service.description.en}
                 onChange={(value) => {
                   const services = [...form.content.services];
@@ -432,7 +510,7 @@ export default function Settings() {
                 }}
               />
               <TextInput
-                label={`Service ${index + 1} description - Arabic`}
+                label={`${label("Service", ar.service)} ${index + 1} - ${label("description", ar.serviceDescription)} - ${label("Arabic", ar.arabic)}`}
                 value={service.description.ar}
                 onChange={(value) => {
                   const services = [...form.content.services];
@@ -448,13 +526,13 @@ export default function Settings() {
       <section className="rounded-2xl border border-white/10 bg-[#0F172A]/80 p-6">
         <div className="mb-6 flex items-center gap-3">
           <Globe2 className="h-5 w-5 text-[#D4AF37]" />
-          <h2 className="text-xl font-bold">Tracking and marketing pixels</h2>
+          <h2 className="text-xl font-bold">{label("Tracking and marketing pixels", ar.tracking)}</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           {(Object.keys(defaultSiteSettings.trackingPixels) as (keyof SiteSettings["trackingPixels"])[]).map((key) => (
             <TextInput
               key={key}
-              label={trackingLabels[key]}
+              label={isArabic ? trackingLabelsAr[key] : trackingLabels[key]}
               value={form.trackingPixels[key] ?? ""}
               onChange={(value) =>
                 setForm({
