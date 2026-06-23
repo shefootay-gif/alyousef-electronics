@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { trpc } from "@/providers/trpc";
 import { formatCurrency } from "@/lib/utils";
 import { useLanguage } from "@/hooks/useLanguage";
+import { egyptGovernorates, getGovernorateLabel } from "@contracts/egypt-locations";
 
 export default function ShippingManagement() {
   const { lang } = useLanguage();
@@ -36,7 +37,18 @@ export default function ShippingManagement() {
       <section className="rounded-2xl border border-white/10 bg-[#0F172A]/80 p-6">
         <div className="grid gap-4 md:grid-cols-6">
           <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-xl border border-white/10 bg-black/30 px-4 py-3 outline-none focus:border-[#D4AF37]" />
-          <input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder={label("City or empty for default", "المدينة أو اتركها فارغة كافتراضي")} className="rounded-xl border border-white/10 bg-black/30 px-4 py-3 outline-none focus:border-[#D4AF37]" />
+          <select
+            value={form.city}
+            onChange={(e) => setForm({ ...form, city: e.target.value })}
+            className="rounded-xl border border-white/10 bg-black/30 px-4 py-3 outline-none focus:border-[#D4AF37]"
+          >
+            <option value="">{label("Default all governorates", "افتراضي لكل المحافظات")}</option>
+            {egyptGovernorates.map((governorate) => (
+              <option key={governorate.value} value={governorate.value}>
+                {lang === "ar" ? governorate.ar : governorate.en}
+              </option>
+            ))}
+          </select>
           <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder={label("Price", "السعر")} className="rounded-xl border border-white/10 bg-black/30 px-4 py-3 outline-none focus:border-[#D4AF37]" />
           <input value={form.freeShippingThreshold} onChange={(e) => setForm({ ...form, freeShippingThreshold: e.target.value })} placeholder={label("Free threshold", "حد الشحن المجاني")} className="rounded-xl border border-white/10 bg-black/30 px-4 py-3 outline-none focus:border-[#D4AF37]" />
           <input type="number" value={form.estimatedDaysMax} onChange={(e) => setForm({ ...form, estimatedDaysMax: Number(e.target.value) })} className="rounded-xl border border-white/10 bg-black/30 px-4 py-3 outline-none focus:border-[#D4AF37]" />
@@ -53,7 +65,9 @@ export default function ShippingManagement() {
               <div>
                 <Truck className="mb-3 h-6 w-6 text-[#D4AF37]" />
                 <h3 className="font-bold">{rate.name}</h3>
-                <p className="text-sm text-slate-400">{rate.city || label("Default all cities", "افتراضي لكل المدن")}</p>
+                <p className="text-sm text-slate-400">
+                  {rate.city ? getGovernorateLabel(rate.city, lang) : label("Default all governorates", "افتراضي لكل المحافظات")}
+                </p>
               </div>
               <button onClick={() => deleteRate.mutate({ id: rate.id })} className="rounded-lg border border-red-500/20 p-2 text-red-300">
                 <Trash2 className="h-4 w-4" />

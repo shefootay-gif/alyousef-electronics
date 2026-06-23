@@ -9,6 +9,7 @@ import { useCart } from "@/hooks/useCart";
 import { useLanguage } from "@/hooks/useLanguage";
 import { formatCurrency } from "@/lib/utils";
 import { trpc } from "@/providers/trpc";
+import { egyptGovernorates, getGovernorateCenters } from "@contracts/egypt-locations";
 
 type PaymentMethod = "cod" | "paymob" | "fawry";
 
@@ -34,6 +35,7 @@ export default function Checkout() {
     city: "",
     postalCode: "",
   });
+  const governorateCenters = getGovernorateCenters(shippingData.city);
 
   const { data: shippingOptions } = trpc.shipping.options.useQuery(
     { city: shippingData.city, subtotal: total },
@@ -196,7 +198,6 @@ export default function Checkout() {
                     ["lastName", t("lastName")],
                     ["email", t("emailAddress")],
                     ["phone", t("phone")],
-                    ["district", t("district")],
                     ["streetAddress", t("streetAddress")],
                   ].map(([key, label]) => (
                     <label key={key} className={key === "streetAddress" ? "sm:col-span-2" : ""}>
@@ -211,19 +212,50 @@ export default function Checkout() {
                   ))}
 
                   <label>
-                    <span className="block text-sm font-medium text-slate-300 mb-1">{t("city")} *</span>
+                    <span className="block text-sm font-medium text-slate-300 mb-1">
+                      {lang === "ar" ? "المحافظة" : "Governorate"} *
+                    </span>
                     <select
                       value={shippingData.city}
                       onChange={(e) => {
-                        setShippingData({ ...shippingData, city: e.target.value });
+                        setShippingData({ ...shippingData, city: e.target.value, district: "" });
                         setSelectedShippingRateId(null);
                       }}
                       className="w-full px-4 py-3 rounded-xl bg-[#0F172A] border border-white/10 text-white focus:border-[#D4AF37] focus:outline-none"
                     >
-                      <option value="">{t("selectCity")}</option>
-                      <option value="Cairo">Cairo</option>
-                      <option value="Giza">Giza</option>
-                      <option value="Alexandria">Alexandria</option>
+                      <option value="">{lang === "ar" ? "اختر المحافظة" : "Select governorate"}</option>
+                      {egyptGovernorates.map((governorate) => (
+                        <option key={governorate.value} value={governorate.value}>
+                          {lang === "ar" ? governorate.ar : governorate.en}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label>
+                    <span className="block text-sm font-medium text-slate-300 mb-1">
+                      {lang === "ar" ? "المركز / المدينة" : "Center / City"} *
+                    </span>
+                    <select
+                      value={shippingData.district}
+                      onChange={(e) => setShippingData({ ...shippingData, district: e.target.value })}
+                      disabled={!shippingData.city}
+                      className="w-full px-4 py-3 rounded-xl bg-[#0F172A] border border-white/10 text-white focus:border-[#D4AF37] focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <option value="">
+                        {shippingData.city
+                          ? lang === "ar"
+                            ? "اختر المركز أو المدينة"
+                            : "Select center or city"
+                          : lang === "ar"
+                            ? "اختر المحافظة أولًا"
+                            : "Select governorate first"}
+                      </option>
+                      {governorateCenters.map((center) => (
+                        <option key={center.value} value={center.value}>
+                          {lang === "ar" ? center.ar : center.en}
+                        </option>
+                      ))}
                     </select>
                   </label>
 
