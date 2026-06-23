@@ -84,6 +84,11 @@ export default function ProductDetail() {
     { enabled: !!product?.categoryId }
   );
 
+  const { data: crossSells } = trpc.product.getByIds.useQuery(
+    { ids: product?.crossSellIds || [] },
+    { enabled: !!product?.crossSellIds && product.crossSellIds.length > 0 }
+  );
+
   const handleAddToCart = () => {
     if (!product) return;
     addToCart(product.id, quantity);
@@ -109,13 +114,13 @@ export default function ProductDetail() {
       <Layout>
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-28">
           <div className="animate-pulse grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div className="aspect-square bg-[#E2E8F0] rounded-2xl" />
+            <div className="aspect-square bg-white/5 rounded-2xl" />
             <div className="space-y-4">
-              <div className="h-8 bg-[#E2E8F0] rounded w-3/4" />
-              <div className="h-6 bg-[#E2E8F0] rounded w-1/2" />
-              <div className="h-4 bg-[#E2E8F0] rounded w-full" />
-              <div className="h-4 bg-[#E2E8F0] rounded w-5/6" />
-              <div className="h-12 bg-[#E2E8F0] rounded w-1/3 mt-6" />
+              <div className="h-8 bg-slate-800 rounded w-3/4" />
+              <div className="h-6 bg-slate-800 rounded w-1/2" />
+              <div className="h-4 bg-slate-800 rounded w-full" />
+              <div className="h-4 bg-slate-800 rounded w-5/6" />
+              <div className="h-12 bg-slate-800 rounded w-1/3 mt-6" />
             </div>
           </div>
         </div>
@@ -127,7 +132,7 @@ export default function ProductDetail() {
     return (
       <Layout>
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-28 text-center">
-          <h1 className="text-2xl font-bold text-[#171717] mb-4">{t("productNotFound")}</h1>
+          <h1 className="text-2xl font-bold text-slate-100 mb-4">{t("productNotFound")}</h1>
           <Link to="/shop" className="text-[#D4AF37] hover:underline">
             {t("backToShop")}
           </Link>
@@ -399,6 +404,53 @@ export default function ProductDetail() {
             )}
           </div>
         </div>
+
+        {/* Frequently Bought Together (Cross-Sells) */}
+        {crossSells && crossSells.length > 0 && (
+          <div className="mt-16 bg-[#0F172A]/50 border border-white/10 rounded-3xl p-8 lg:p-12">
+            <h2 className="text-2xl sm:text-3xl font-black text-white mb-8 text-center">
+              {lang === "ar" ? (<>تشترى <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778]">معاً</span> عادة</>) : (<>Frequently Bought <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F8D778]">Together</span></>)}
+            </h2>
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-6">
+              {/* Current Product */}
+              <div className="flex flex-col items-center max-w-[200px]">
+                <div className="w-32 h-32 bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-[#D4AF37]/30 mb-4">
+                  <img src={product?.image || "/placeholder.png"} alt={product?.name} className="w-full h-full object-contain" />
+                </div>
+                <span className="text-sm text-center text-slate-300 font-medium line-clamp-2">{lang === 'ar' && product?.nameAr ? product.nameAr : product?.name}</span>
+              </div>
+              
+              {/* Plus Symbols & Cross Sells */}
+              {crossSells.map((cs) => (
+                <div key={cs.id} className="flex flex-col lg:flex-row items-center gap-6">
+                  <Plus className="text-[#D4AF37] w-8 h-8" />
+                  <Link to={`/product/${cs.slug}`} className="flex flex-col items-center max-w-[200px] group hover:scale-105 transition-transform">
+                    <div className="w-32 h-32 bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 group-hover:border-[#D4AF37]/50 mb-4">
+                      <img src={cs.image || "/placeholder.png"} alt={cs.name} className="w-full h-full object-contain" />
+                    </div>
+                    <span className="text-sm text-center text-slate-300 font-medium line-clamp-2 group-hover:text-[#D4AF37]">{lang === 'ar' && cs.nameAr ? cs.nameAr : cs.name}</span>
+                    <span className="text-[#D4AF37] font-bold mt-1">EGP {cs.salePrice || cs.price}</span>
+                  </Link>
+                </div>
+              ))}
+            </div>
+            
+            {/* Add Bundle Button */}
+            <div className="mt-10 text-center">
+              <button 
+                onClick={() => {
+                  handleAddToCart();
+                  crossSells.forEach(cs => addToCart(cs.id, 1));
+                  toast.success(lang === "ar" ? "تم إضافة المجموعة للسلة!" : "Bundle added to cart!");
+                }}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-black font-black text-lg rounded-xl shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:shadow-[0_0_30px_rgba(212,175,55,0.5)] transition-all"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {lang === "ar" ? "إضافة الكل للسلة" : "Add All To Cart"}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Related Products */}
         {relatedProducts?.items && relatedProducts.items.length > 0 && (

@@ -7,63 +7,36 @@ import { eq } from "drizzle-orm";
 export const settingsRouter = createRouter({
   get: publicQuery.query(async () => {
     const db = getDb();
-    const allSettings = await db.select().from(siteSettings);
+    const settings = await db.select().from(siteSettings);
+    
+    // Transform into a simple key-value object
     const result: Record<string, any> = {};
-    for (const setting of allSettings) {
+    for (const setting of settings) {
       result[setting.key] = setting.value;
     }
+    
+    // Default values if not found
+    if (!result["siteName"]) result["siteName"] = "AL-YOUSEF Electronics";
+    if (!result["primaryColor"]) result["primaryColor"] = "#D4AF37";
+    if (!result["secondaryColor"]) result["secondaryColor"] = "#0F172A";
+    
     return result;
   }),
-
-  getContactLinks: publicQuery.query(async () => {
-    const db = getDb();
-    const [setting] = await db
-      .select()
-      .from(siteSettings)
-      .where(eq(siteSettings.key, "contactLinks"))
-      .limit(1);
-    return (setting?.value as any) || { whatsapp: "", website: "", snapchat: "", twitter: "", telegram: "" };
-  }),
-
+  
   update: adminQuery
-    .input(z.object({ key: z.string(), value: z.any() }))
-    .mutation(async ({ input }) => {
-      const db = getDb();
-      const [existing] = await db
-        .select()
-        .from(siteSettings)
-        .where(eq(siteSettings.key, input.key))
-        .limit(1);
-
-      if (existing) {
-        await db
-          .update(siteSettings)
-          .set({ value: input.value })
-          .where(eq(siteSettings.key, input.key));
-      } else {
-        await db.insert(siteSettings).values({ key: input.key, value: input.value });
-      }
-
-      return { success: true };
-    }),
-
-  bulkUpdate: adminQuery
     .input(z.record(z.string(), z.any()))
     .mutation(async ({ input }) => {
       const db = getDb();
+      
       for (const [key, value] of Object.entries(input)) {
-        const [existing] = await db
-          .select()
-          .from(siteSettings)
-          .where(eq(siteSettings.key, key))
-          .limit(1);
-
-        if (existing) {
+        const existing = await db.select().from(siteSettings).where(eq(siteSettings.key, key)).limit(1);
+        if (existing.length > 0) {
           await db.update(siteSettings).set({ value }).where(eq(siteSettings.key, key));
         } else {
           await db.insert(siteSettings).values({ key, value });
         }
       }
+      
       return { success: true };
-    }),
+    })
 });

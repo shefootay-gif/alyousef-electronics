@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
+import { formatCurrency } from "@/lib/utils";
 import {
   LayoutDashboard,
   Package,
@@ -25,11 +26,11 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 const statusColors: Record<string, string> = {
   active: "bg-green-100 text-green-700",
-  inactive: "bg-gray-100 text-gray-700",
+  inactive: "bg-white/10 text-gray-700",
   draft: "bg-yellow-100 text-yellow-700",
   out_of_stock: "bg-red-100 text-red-700",
 };
@@ -41,8 +42,8 @@ const orderStatusColors: Record<string, string> = {
   delivered: "bg-green-100 text-green-700",
   cancelled: "bg-red-100 text-red-700",
   return_requested: "bg-orange-100 text-orange-700",
-  returned: "bg-gray-100 text-gray-700",
-  refunded: "bg-gray-100 text-gray-700",
+  returned: "bg-white/10 text-gray-700",
+  refunded: "bg-white/10 text-gray-700",
 };
 
 function DashboardOverview() {
@@ -68,7 +69,7 @@ function DashboardOverview() {
     }
   };
 
-  const itemVariants: any = {
+  const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
@@ -86,8 +87,8 @@ function DashboardOverview() {
     >
       {/* Header and Period Filter */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-2xl font-bold text-[#171717]">{t("dashboard")}</h2>
-        <div className="flex bg-white rounded-lg shadow-sm border border-[#E2E8F0] p-1">
+        <h2 className="text-2xl font-bold text-slate-100">{t("dashboard")}</h2>
+        <div className="flex bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-lg shadow-sm border border-white/10 p-1">
           {(["7d", "30d", "90d"] as const).map((p) => (
             <button
               key={p}
@@ -95,7 +96,7 @@ function DashboardOverview() {
               className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
                 period === p 
                   ? "bg-[#D4AF37] text-white" 
-                  : "text-[#64748B] hover:text-[#171717] hover:bg-[#F8FAFC]"
+                  : "text-[#94A3B8] hover:text-slate-100 hover:bg-white/5"
               }`}
             >
               {p === "7d" ? "7 Days" : p === "30d" ? "30 Days" : "90 Days"}
@@ -107,27 +108,27 @@ function DashboardOverview() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: t("revenue30d"), value: `EGP ${(dashboard?.revenue || 0).toFixed(0)}`, icon: <DollarSign className="w-6 h-6" />, color: "from-[#D4AF37] to-[#B8960F]" },
+          { label: t("revenue30d"), value: formatCurrency(dashboard?.revenue || 0, lang), icon: <DollarSign className="w-6 h-6" />, color: "from-[#D4AF37] to-[#B8960F]" },
           { label: t("totalOrders"), value: dashboard?.totalOrders || 0, icon: <ShoppingBag className="w-6 h-6" />, color: "from-[#C0C0C0] to-[#0099CC]" },
           { label: t("activeProducts"), value: dashboard?.activeProducts || 0, icon: <Package className="w-6 h-6" />, color: "from-emerald-500 to-emerald-600" },
           { label: t("newCustomers"), value: dashboard?.newCustomers || 0, icon: <Users className="w-6 h-6" />, color: "from-purple-500 to-purple-600" },
         ].map((card, i) => (
-          <motion.div key={i} variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow border border-[#E2E8F0]/50">
+          <motion.div key={i} variants={itemVariants} className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow border border-white/10/50">
             <div className="flex items-center justify-between mb-4">
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center text-white shadow-md`}>
                 {card.icon}
               </div>
               <TrendingUp className="w-5 h-5 text-green-500" />
             </div>
-            <p className="text-2xl font-bold text-[#171717]">{card.value}</p>
+            <p className="text-2xl font-bold text-slate-100">{card.value}</p>
             <p className="text-sm text-[#94A3B8] mt-1">{card.label}</p>
           </motion.div>
         ))}
       </div>
 
       {/* Revenue Chart */}
-      <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-6 border border-[#E2E8F0]/50">
-        <h3 className="text-lg font-bold text-[#171717] mb-4">{t("revenueOverview")}</h3>
+      <motion.div variants={itemVariants} className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg p-6 border border-white/10/50">
+        <h3 className="text-lg font-bold text-slate-100 mb-4">{t("revenueOverview")}</h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData}>
@@ -139,10 +140,10 @@ function DashboardOverview() {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
               <XAxis dataKey="date" stroke="#94A3B8" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94A3B8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `EGP ${val}`} />
+              <YAxis stroke="#94A3B8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => formatCurrency(val, lang)} />
               <Tooltip
                 contentStyle={{ borderRadius: "12px", border: "1px solid #E2E8F0", boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1)" }}
-                formatter={(value: number) => [`EGP ${value.toFixed(2)}`, "Revenue"]}
+                formatter={(value: number) => [formatCurrency(value, lang), "Revenue"]}
               />
               <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
             </AreaChart>
@@ -152,27 +153,27 @@ function DashboardOverview() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Orders */}
-        <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-6 border border-[#E2E8F0]/50">
-          <h3 className="text-lg font-bold text-[#171717] mb-4">{t("recentOrders")}</h3>
+        <motion.div variants={itemVariants} className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg p-6 border border-white/10/50">
+          <h3 className="text-lg font-bold text-slate-100 mb-4">{t("recentOrders")}</h3>
           <div className="overflow-x-auto">
             <table className={`w-full text-sm ${isRTL ? "text-right" : "text-left"}`}>
               <thead>
-                <tr className="border-b border-[#E2E8F0]">
-                  <th className="py-3 px-4 font-semibold text-[#171717]">{t("orderNumber")}</th>
-                  <th className="py-3 px-4 font-semibold text-[#171717]">{t("status")}</th>
-                  <th className="py-3 px-4 font-semibold text-[#171717]">{t("total")}</th>
+                <tr className="border-b border-white/10">
+                  <th className="py-3 px-4 font-semibold text-slate-100">{t("orderNumber")}</th>
+                  <th className="py-3 px-4 font-semibold text-slate-100">{t("status")}</th>
+                  <th className="py-3 px-4 font-semibold text-slate-100">{t("total")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E2E8F0]">
                 {recentOrders?.slice(0, 5).map((order: any) => (
-                  <tr key={order.id} className="hover:bg-[#F8FAFC] transition-colors">
+                  <tr key={order.id} className="hover:bg-white/5 transition-colors">
                     <td className="py-3 px-4 font-medium">{order.orderNumber}</td>
                     <td className="py-3 px-4">
                       <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${orderStatusColors[order.status] || ""}`}>
                         {t(order.status)}
                       </span>
                     </td>
-                    <td className="py-3 px-4 font-semibold text-[#D4AF37]">EGP {Number(order.total).toFixed(2)}</td>
+                    <td className="py-3 px-4 font-semibold text-[#D4AF37]">{formatCurrency(Number(order.total), lang)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -181,23 +182,23 @@ function DashboardOverview() {
         </motion.div>
 
         {/* Top Selling Products */}
-        <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-6 border border-[#E2E8F0]/50">
-          <h3 className="text-lg font-bold text-[#171717] mb-4">Top Selling Products / الأكثر مبيعاً</h3>
+        <motion.div variants={itemVariants} className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg p-6 border border-white/10/50">
+          <h3 className="text-lg font-bold text-slate-100 mb-4">Top Selling Products / الأكثر مبيعاً</h3>
           <div className="overflow-x-auto">
             <table className={`w-full text-sm ${isRTL ? "text-right" : "text-left"}`}>
               <thead>
-                <tr className="border-b border-[#E2E8F0]">
-                  <th className="py-3 px-4 font-semibold text-[#171717]">Product</th>
-                  <th className="py-3 px-4 font-semibold text-[#171717]">Sold</th>
-                  <th className="py-3 px-4 font-semibold text-[#171717]">Revenue</th>
+                <tr className="border-b border-white/10">
+                  <th className="py-3 px-4 font-semibold text-slate-100">Product</th>
+                  <th className="py-3 px-4 font-semibold text-slate-100">Sold</th>
+                  <th className="py-3 px-4 font-semibold text-slate-100">Revenue</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E2E8F0]">
                 {productPerformance?.topSelling?.slice(0, 5).map((item: any) => (
-                  <tr key={item.productId} className="hover:bg-[#F8FAFC] transition-colors">
+                  <tr key={item.productId} className="hover:bg-white/5 transition-colors">
                     <td className="py-3 px-4 font-medium line-clamp-1 max-w-[150px]" title={item.productName}>{item.productName}</td>
                     <td className="py-3 px-4 text-[#0099CC] font-bold">{item.totalSold}</td>
-                    <td className="py-3 px-4 font-semibold text-[#D4AF37]">EGP {Number(item.revenue || 0).toFixed(2)}</td>
+                    <td className="py-3 px-4 font-semibold text-[#D4AF37]">{formatCurrency(Number(item.revenue || 0), lang)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -243,7 +244,7 @@ function ProductsManagement() {
   });
 
   const [formData, setFormData] = useState({
-    name: "", slug: "", description: "", shortDescription: "",
+    name: "", nameAr: "", slug: "", description: "", descriptionAr: "", shortDescription: "",
     categoryId: 1, brand: "", sku: "", price: "", salePrice: "",
     image: "", stockQuantity: 0, status: "draft" as const, isFeatured: false,
   });
@@ -252,7 +253,7 @@ function ProductsManagement() {
     onSuccess: () => {
       utils.product.list.invalidate();
       setShowForm(false);
-      setFormData({ name: "", slug: "", description: "", shortDescription: "", categoryId: categories?.[0]?.id || 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false });
+      setFormData({ name: "", nameAr: "", slug: "", description: "", descriptionAr: "", shortDescription: "", categoryId: categories?.[0]?.id || 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false });
       toast.success("Product created");
     },
     onError: (err) => {
@@ -275,9 +276,9 @@ function ProductsManagement() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingProduct) {
-      updateMutation.mutate({ id: editingProduct.id, ...formData, salePrice: formData.salePrice || undefined });
+      updateMutation.mutate({ id: editingProduct.id, ...formData, salePrice: formData.salePrice || null });
     } else {
-      createMutation.mutate({ ...formData, salePrice: formData.salePrice || undefined });
+      createMutation.mutate({ ...formData, salePrice: formData.salePrice || null });
     }
   };
 
@@ -285,8 +286,10 @@ function ProductsManagement() {
     setEditingProduct(product);
     setFormData({
       name: product.name || "",
+      nameAr: product.nameAr || "",
       slug: product.slug || "",
       description: product.description || "",
+      descriptionAr: product.descriptionAr || "",
       shortDescription: product.shortDescription || "",
       categoryId: product.categoryId || 1,
       brand: product.brand || "",
@@ -311,16 +314,16 @@ function ProductsManagement() {
             placeholder={t("searchProducts")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className={`w-full ${isRTL ? "pr-10 pl-4" : "pl-10 pr-4"} py-2.5 rounded-xl border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#D4AF37]`}
+            className={`w-full ${isRTL ? "pr-10 pl-4" : "pl-10 pr-4"} py-2.5 rounded-xl border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]`}
           />
         </div>
         <button
           onClick={() => {
             setEditingProduct(null);
-            setFormData({ name: "", slug: "", description: "", shortDescription: "", categoryId: categories?.[0]?.id || 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false });
+            setFormData({ name: "", nameAr: "", slug: "", description: "", descriptionAr: "", shortDescription: "", categoryId: categories?.[0]?.id || 1, brand: "", sku: "", price: "", salePrice: "", image: "", stockQuantity: 0, status: "draft", isFeatured: false });
             setShowForm(true);
           }}
-          className={`${isRTL ? "mr-4" : "ml-4"} px-4 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl hover:shadow-lg transition-all flex items-center gap-2 text-sm`}
+          className={`${isRTL ? "mr-4" : "ml-4"} px-4 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-slate-100 font-bold rounded-xl hover:shadow-lg transition-all flex items-center gap-2 text-sm`}
         >
           <Plus className="w-4 h-4" />
           {t("addProduct")}
@@ -328,70 +331,78 @@ function ProductsManagement() {
       </div>
 
       {showForm && (
-        <div className="bg-white rounded-2xl shadow-lg p-6">
+        <div className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-[#171717]">
+            <h3 className="text-lg font-bold text-slate-100">
               {editingProduct ? t("editProduct") : t("addNewProduct")}
             </h3>
             <button onClick={() => { setShowForm(false); setEditingProduct(null); }}>
-              <X className="w-5 h-5 text-[#64748B]" />
+              <X className="w-5 h-5 text-[#94A3B8]" />
             </button>
           </div>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[#171717] mb-1">{t("nameTitle")}</label>
-              <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" required />
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("nameTitle")}</label>
+              <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#171717] mb-1">{t("slugTitle")}</label>
-              <input type="text" value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" required />
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("nameArTitle")}</label>
+              <input type="text" value={formData.nameAr} onChange={(e) => setFormData({ ...formData, nameAr: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" dir="rtl" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#171717] mb-1">{t("categoryTitle")}</label>
-              <select value={formData.categoryId} onChange={(e) => setFormData({ ...formData, categoryId: Number(e.target.value) })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]">
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("slugTitle")}</label>
+              <input type="text" value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("categoryTitle")}</label>
+              <select value={formData.categoryId} onChange={(e) => setFormData({ ...formData, categoryId: Number(e.target.value) })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]">
                 {categories?.map((cat) => <option key={cat.id} value={cat.id}>{lang === "ar" && cat.nameAr ? cat.nameAr : cat.name}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#171717] mb-1">{t("brand")}</label>
-              <input type="text" value={formData.brand} onChange={(e) => setFormData({ ...formData, brand: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" />
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("brand")}</label>
+              <input type="text" value={formData.brand} onChange={(e) => setFormData({ ...formData, brand: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#171717] mb-1">{t("priceTitle")}</label>
-              <input type="text" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" required placeholder="4599.00" />
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("priceTitle")}</label>
+              <input type="text" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" required placeholder="4599.00" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#171717] mb-1">{t("salePriceTitle")}</label>
-              <input type="text" value={formData.salePrice} onChange={(e) => setFormData({ ...formData, salePrice: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" placeholder="4299.00" />
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("salePriceTitle")}</label>
+              <input type="text" value={formData.salePrice} onChange={(e) => setFormData({ ...formData, salePrice: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" placeholder="4299.00" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#171717] mb-1">{t("sku")}</label>
-              <input type="text" value={formData.sku} onChange={(e) => setFormData({ ...formData, sku: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" />
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("sku")}</label>
+              <input type="text" value={formData.sku} onChange={(e) => setFormData({ ...formData, sku: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#171717] mb-1">{t("stockQuantity")}</label>
-              <input type="number" value={formData.stockQuantity} onChange={(e) => setFormData({ ...formData, stockQuantity: Number(e.target.value) })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" />
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("stockQuantity")}</label>
+              <input type="number" value={formData.stockQuantity} onChange={(e) => setFormData({ ...formData, stockQuantity: Number(e.target.value) })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-[#171717] mb-1">{t("imageUrl")}</label>
-              <input type="text" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" placeholder="/products/image.png" />
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("imageUrl")}</label>
+              <input type="text" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" placeholder="/products/image.png" />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-[#171717] mb-1">{t("shortDesc")}</label>
-              <input type="text" value={formData.shortDescription} onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" />
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("shortDesc")}</label>
+              <input type="text" value={formData.shortDescription} onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-[#171717] mb-1">{t("fullDesc")}</label>
-              <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0] resize-none" rows={3} />
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("fullDesc")}</label>
+              <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37] resize-none" rows={3} />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-slate-100 mb-1">{t("descArTitle")}</label>
+              <textarea value={formData.descriptionAr} onChange={(e) => setFormData({ ...formData, descriptionAr: e.target.value })} className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37] resize-none" rows={3} dir="rtl" />
             </div>
             <div className="sm:col-span-2 flex items-center gap-4">
               <label className="flex items-center gap-2">
-                <input type="checkbox" checked={formData.isFeatured} onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })} className="rounded border-[#E2E8F0] text-[#D4AF37]" />
-                <span className="text-sm text-[#171717]">{t("featured")}</span>
+                <input type="checkbox" checked={formData.isFeatured} onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })} className="rounded border-white/10 text-[#D4AF37]" />
+                <span className="text-sm text-slate-100">{t("featured")}</span>
               </label>
             </div>
             <div className="sm:col-span-2">
-              <button type="submit" className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl hover:shadow-lg transition-all">
+              <button type="submit" className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-slate-100 font-bold rounded-xl hover:shadow-lg transition-all">
                 {editingProduct ? t("updateProduct") : t("createProduct")}
               </button>
             </div>
@@ -400,43 +411,43 @@ function ProductsManagement() {
       )}
 
       {/* Products Table */}
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className={`w-full text-sm ${isRTL ? "text-right" : "text-left"}`}>
             <thead>
-              <tr className="border-b border-[#E2E8F0] bg-[#F8FAFC]">
-                <th className="py-3 px-4 font-semibold text-[#171717]">{t("product")}</th>
-                <th className="py-3 px-4 font-semibold text-[#171717]">{t("priceCol")}</th>
-                <th className="py-3 px-4 font-semibold text-[#171717]">{t("stock")}</th>
-                <th className="py-3 px-4 font-semibold text-[#171717]">{t("status")}</th>
-                <th className="py-3 px-4 font-semibold text-[#171717]">{t("actions")}</th>
+              <tr className="border-b border-white/10 bg-white/5">
+                <th className="py-3 px-4 font-semibold text-slate-100">{t("product")}</th>
+                <th className="py-3 px-4 font-semibold text-slate-100">{t("priceCol")}</th>
+                <th className="py-3 px-4 font-semibold text-slate-100">{t("stock")}</th>
+                <th className="py-3 px-4 font-semibold text-slate-100">{t("status")}</th>
+                <th className="py-3 px-4 font-semibold text-slate-100">{t("actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E2E8F0]">
               {isLoading ? (
                 [...Array(5)].map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    <td className="py-3 px-4"><div className="h-4 bg-[#E2E8F0] rounded w-3/4" /></td>
-                    <td className="py-3 px-4"><div className="h-4 bg-[#E2E8F0] rounded w-1/2" /></td>
-                    <td className="py-3 px-4"><div className="h-4 bg-[#E2E8F0] rounded w-1/3" /></td>
-                    <td className="py-3 px-4"><div className="h-4 bg-[#E2E8F0] rounded w-1/2" /></td>
-                    <td className="py-3 px-4"><div className="h-4 bg-[#E2E8F0] rounded w-1/3" /></td>
+                    <td className="py-3 px-4"><div className="h-4 bg-white/10 rounded w-3/4" /></td>
+                    <td className="py-3 px-4"><div className="h-4 bg-white/10 rounded w-1/2" /></td>
+                    <td className="py-3 px-4"><div className="h-4 bg-white/10 rounded w-1/3" /></td>
+                    <td className="py-3 px-4"><div className="h-4 bg-white/10 rounded w-1/2" /></td>
+                    <td className="py-3 px-4"><div className="h-4 bg-white/10 rounded w-1/3" /></td>
                   </tr>
                 ))
               ) : productsData?.items?.map((product: any) => (
-                <tr key={product.id} className="hover:bg-[#F8FAFC] transition-colors">
+                <tr key={product.id} className="hover:bg-white/5 transition-colors">
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-3">
-                      <img src={product.image || "/placeholder.png"} alt={product.name} className="w-10 h-10 object-contain rounded-lg bg-[#F8FAFC]" />
+                      <img src={product.image || "/placeholder.png"} alt={product.name} className="w-10 h-10 object-contain rounded-lg bg-white/5" />
                       <div>
-                        <p className="font-medium text-[#171717] line-clamp-1">{product.name}</p>
+                        <p className="font-medium text-slate-100 line-clamp-1">{product.name}</p>
                         <p className="text-xs text-[#94A3B8]">{product.brand}</p>
                       </div>
                     </div>
                   </td>
                   <td className="py-3 px-4">
-                    <span className="font-semibold text-[#D4AF37]">EGP {product.salePrice || product.price}</span>
-                    {product.salePrice && <span className="text-xs text-[#94A3B8] line-through ml-1">EGP {product.price}</span>}
+                    <span className="font-semibold text-[#D4AF37]">{formatCurrency(product.salePrice || product.price, lang)}</span>
+                    {product.salePrice && <span className="text-xs text-[#94A3B8] line-through ml-1">{formatCurrency(product.price, lang)}</span>}
                   </td>
                   <td className="py-3 px-4">{product.stockQuantity}</td>
                   <td className="py-3 px-4">
@@ -446,13 +457,13 @@ function ProductsManagement() {
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-1">
-                      <button onClick={() => startEdit(product)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#F1F5F9] text-[#64748B] hover:text-[#D4AF37] transition-colors">
+                      <button onClick={() => startEdit(product)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#F1F5F9] text-[#94A3B8] hover:text-[#D4AF37] transition-colors">
                         <Pencil className="w-4 h-4" />
                       </button>
-                      <button onClick={() => { if (confirm("Delete this product?")) deleteMutation.mutate({ id: product.id }); }} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-50 text-[#64748B] hover:text-red-500 transition-colors">
+                      <button onClick={() => { if (confirm("Delete this product?")) deleteMutation.mutate({ id: product.id }); }} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-50 text-[#94A3B8] hover:text-red-500 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
-                      <button onClick={() => toggleStatusMutation.mutate({ id: product.id, status: product.status === "active" ? "inactive" : "active" })} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#F1F5F9] text-[#64748B] hover:text-[#C0C0C0] transition-colors">
+                      <button onClick={() => toggleStatusMutation.mutate({ id: product.id, status: product.status === "active" ? "inactive" : "active" })} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#F1F5F9] text-[#94A3B8] hover:text-[#C0C0C0] transition-colors">
                         {product.status === "active" ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
@@ -480,24 +491,24 @@ function OrdersManagement() {
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+    <div className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className={`w-full text-sm ${isRTL ? "text-right" : "text-left"}`}>
           <thead>
-            <tr className="border-b border-[#E2E8F0] bg-[#F8FAFC]">
-              <th className="py-3 px-4 font-semibold text-[#171717]">{t("orderNumber")}</th>
-              <th className="py-3 px-4 font-semibold text-[#171717]">{t("customer")}</th>
-              <th className="py-3 px-4 font-semibold text-[#171717]">{t("total")}</th>
-              <th className="py-3 px-4 font-semibold text-[#171717]">{t("status")}</th>
-              <th className="py-3 px-4 font-semibold text-[#171717]">{t("actions")}</th>
+            <tr className="border-b border-white/10 bg-white/5">
+              <th className="py-3 px-4 font-semibold text-slate-100">{t("orderNumber")}</th>
+              <th className="py-3 px-4 font-semibold text-slate-100">{t("customer")}</th>
+              <th className="py-3 px-4 font-semibold text-slate-100">{t("total")}</th>
+              <th className="py-3 px-4 font-semibold text-slate-100">{t("status")}</th>
+              <th className="py-3 px-4 font-semibold text-slate-100">{t("actions")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#E2E8F0]">
             {ordersData?.items?.map((order: any) => (
-              <tr key={order.id} className="hover:bg-[#F8FAFC]">
+              <tr key={order.id} className="hover:bg-white/5">
                 <td className="py-3 px-4 font-medium">{order.orderNumber}</td>
                 <td className="py-3 px-4">
-                  <div className="font-medium text-[#171717]">
+                  <div className="font-medium text-slate-100">
                     {typeof order.shippingAddress === 'object' && order.shippingAddress !== null ? (
                       <>
                         {order.shippingAddress.firstName || order.shippingAddress.fullName} {order.shippingAddress.lastName || ''}
@@ -505,14 +516,14 @@ function OrdersManagement() {
                     ) : 'Guest'}
                   </div>
                   {typeof order.shippingAddress === 'object' && order.shippingAddress !== null && (
-                    <div className="text-xs text-[#64748B] mt-1 space-y-0.5">
+                    <div className="text-xs text-[#94A3B8] mt-1 space-y-0.5">
                       <p>{order.shippingAddress.phone}</p>
                       <p>{order.shippingAddress.district || ''}{order.shippingAddress.city ? `, ${order.shippingAddress.city}` : ''}</p>
                       <p>{order.shippingAddress.streetAddress || order.shippingAddress.address || ''} {order.shippingAddress.buildingNumber ? `- ${order.shippingAddress.buildingNumber}` : ''}</p>
                     </div>
                   )}
                 </td>
-                <td className="py-3 px-4 font-semibold text-[#D4AF37]">EGP {Number(order.total).toFixed(2)}</td>
+                <td className="py-3 px-4 font-semibold text-[#D4AF37]">{formatCurrency(Number(order.total), lang)}</td>
                 <td className="py-3 px-4">
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${orderStatusColors[order.status] || ""}`}>
                     {t(order.status)}
@@ -522,7 +533,7 @@ function OrdersManagement() {
                   <select
                     value={order.status}
                     onChange={(e) => updateStatus.mutate({ id: order.id, status: e.target.value as any })}
-                    className="text-xs rounded-lg border border-[#E2E8F0] px-2 py-1 focus:outline-none focus:border-[#D4AF37]"
+                    className="text-xs rounded-lg border border-white/10 px-2 py-1 focus:outline-none focus:border-[#D4AF37]"
                   >
                     <option value="pending">{t("pending")}</option>
                     <option value="processing">{t("processing")}</option>
@@ -572,46 +583,46 @@ function SettingsPage() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 max-w-2xl">
-      <h3 className="text-lg font-bold text-[#171717] mb-6">{t("contactLinks")}</h3>
+    <div className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-lg p-6 max-w-2xl">
+      <h3 className="text-lg font-bold text-slate-100 mb-6">{t("contactLinks")}</h3>
       <div className="space-y-4">
         {["whatsapp", "website", "snapchat", "twitter", "telegram"].map((key) => (
           <div key={key}>
-            <label className="block text-sm font-medium text-[#171717] mb-1 capitalize">{key}</label>
+            <label className="block text-sm font-medium text-slate-100 mb-1 capitalize">{key}</label>
             <input
               type="text"
               value={links[key] || ""}
               onChange={(e) => setLinks({ ...links, [key]: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]"
+              className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]"
               placeholder={`Enter ${key} link`}
             />
           </div>
         ))}
-        <button onClick={handleSave} className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl hover:shadow-lg transition-all">
+        <button onClick={handleSave} className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-slate-100 font-bold rounded-xl hover:shadow-lg transition-all">
           {t("saveSettings")}
         </button>
       </div>
 
-      <div className="mt-10 border-t border-[#E2E8F0] pt-8">
-        <h3 className="text-lg font-bold text-[#171717] mb-6">أدوات التتبع (Pixels)</h3>
+      <div className="mt-10 border-t border-white/10 pt-8">
+        <h3 className="text-lg font-bold text-slate-100 mb-6">أدوات التتبع (Pixels)</h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#171717] mb-1">Facebook Pixel ID</label>
-            <input type="text" value={pixels.facebookPixelId || ""} onChange={(e) => setPixels({ ...pixels, facebookPixelId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" placeholder="مثال: 123456789012345" />
+            <label className="block text-sm font-medium text-slate-100 mb-1">Facebook Pixel ID</label>
+            <input type="text" value={pixels.facebookPixelId || ""} onChange={(e) => setPixels({ ...pixels, facebookPixelId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" placeholder="مثال: 123456789012345" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#171717] mb-1">TikTok Pixel ID</label>
-            <input type="text" value={pixels.tiktokPixelId || ""} onChange={(e) => setPixels({ ...pixels, tiktokPixelId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" placeholder="مثال: C1234567890" />
+            <label className="block text-sm font-medium text-slate-100 mb-1">TikTok Pixel ID</label>
+            <input type="text" value={pixels.tiktokPixelId || ""} onChange={(e) => setPixels({ ...pixels, tiktokPixelId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" placeholder="مثال: C1234567890" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#171717] mb-1">Snapchat Pixel ID</label>
-            <input type="text" value={pixels.snapchatPixelId || ""} onChange={(e) => setPixels({ ...pixels, snapchatPixelId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" placeholder="مثال: 12345678-1234-1234-1234-123456789012" />
+            <label className="block text-sm font-medium text-slate-100 mb-1">Snapchat Pixel ID</label>
+            <input type="text" value={pixels.snapchatPixelId || ""} onChange={(e) => setPixels({ ...pixels, snapchatPixelId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" placeholder="مثال: 12345678-1234-1234-1234-123456789012" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#171717] mb-1">Google Analytics ID (G-XXXX)</label>
-            <input type="text" value={pixels.googleAnalyticsId || ""} onChange={(e) => setPixels({ ...pixels, googleAnalyticsId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm focus:outline-none focus:border-[#C0C0C0]" placeholder="مثال: G-ABC123XYZ" />
+            <label className="block text-sm font-medium text-slate-100 mb-1">Google Analytics ID (G-XXXX)</label>
+            <input type="text" value={pixels.googleAnalyticsId || ""} onChange={(e) => setPixels({ ...pixels, googleAnalyticsId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-white/10 text-sm focus:outline-none focus:border-[#D4AF37]" placeholder="مثال: G-ABC123XYZ" />
           </div>
-          <button onClick={handleSave} className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl hover:shadow-lg transition-all">
+          <button onClick={handleSave} className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-slate-100 font-bold rounded-xl hover:shadow-lg transition-all">
             حفظ إعدادات التتبع
           </button>
         </div>
@@ -650,7 +661,7 @@ export default function Admin() {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-[#F8FAFC] mb-4">{t("accessDenied")}</h1>
           <p className="text-[#94A3B8] mb-6">{t("needAdmin")}</p>
-          <button onClick={() => navigate("/")} className="px-6 py-3 bg-[#D4AF37] text-[#171717] font-bold rounded-xl">
+          <button onClick={() => navigate("/")} className="px-6 py-3 bg-[#D4AF37] text-slate-100 font-bold rounded-xl">
             {t("goHome")}
           </button>
         </div>
@@ -703,8 +714,8 @@ export default function Admin() {
                   }}
                   className={`w-full flex items-center gap-3 px-6 py-3 transition-all ${
                     activeTab === tab.id
-                      ? `bg-white/10 text-[#D4AF37] ${isRTL ? "border-r-2" : "border-l-2"} border-[#D4AF37]`
-                      : "text-[#94A3B8] hover:bg-white/5 hover:text-[#F8FAFC]"
+                      ? `bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl/10 text-[#D4AF37] ${isRTL ? "border-r-2" : "border-l-2"} border-[#D4AF37]`
+                      : "text-[#94A3B8] hover:bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl/5 hover:text-[#F8FAFC]"
                   }`}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" />
@@ -725,8 +736,8 @@ export default function Admin() {
       {/* Main Content */}
       <div className="flex-1 min-w-0">
         {/* Top Bar */}
-        <header className="bg-white shadow-sm px-6 py-4 flex items-center justify-between sticky top-0 z-30">
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden text-[#64748B]">
+        <header className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl shadow-sm px-6 py-4 flex items-center justify-between sticky top-0 z-30">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="lg:hidden text-[#94A3B8]">
             {sidebarOpen ? <X className="w-5 h-5" /> : <BarChart3 className="w-5 h-5" />}
           </button>
           <div className={`flex items-center gap-4 ${isRTL ? "mr-auto" : "ml-auto"}`}>
@@ -738,17 +749,17 @@ export default function Admin() {
                 }}
                 className="relative w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#F1F5F9] transition-colors"
               >
-                <Bell className="w-5 h-5 text-[#64748B]" />
+                <Bell className="w-5 h-5 text-[#94A3B8]" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
               </button>
               
               {/* Notifications Dropdown */}
-              <div id="notifications-dropdown" className="hidden absolute top-12 right-0 w-80 bg-white rounded-2xl shadow-xl border border-[#E2E8F0] overflow-hidden z-50">
-                <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC]">
-                  <h3 className="font-bold text-[#171717]">{lang === "ar" ? "الإشعارات" : "Notifications"}</h3>
+              <div id="notifications-dropdown" className="hidden absolute top-12 right-0 w-80 bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-2xl shadow-xl border border-white/10 overflow-hidden z-50">
+                <div className="p-4 border-b border-white/10 bg-white/5">
+                  <h3 className="font-bold text-slate-100">{lang === "ar" ? "الإشعارات" : "Notifications"}</h3>
                 </div>
                 <div className="max-h-80 overflow-y-auto">
-                  <div className="p-4 text-center text-[#64748B] text-sm">
+                  <div className="p-4 text-center text-[#94A3B8] text-sm">
                     {lang === "ar" ? "لا توجد إشعارات جديدة حالياً" : "No new notifications"}
                   </div>
                 </div>
@@ -759,9 +770,9 @@ export default function Admin() {
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#171717] to-[#C0C0C0] flex items-center justify-center text-white font-bold text-sm cursor-pointer hover:shadow-lg transition-shadow">
                 {(user.name || "A")[0]}
               </div>
-              <div className={`absolute ${isRTL ? "left-0" : "right-0"} top-full mt-2 w-48 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden z-50`}>
-                <div className="px-4 py-3 border-b border-[#E2E8F0]">
-                  <p className="text-sm font-semibold text-[#171717]">{user.name}</p>
+              <div className={`absolute ${isRTL ? "left-0" : "right-0"} top-full mt-2 w-48 bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden z-50`}>
+                <div className="px-4 py-3 border-b border-white/10">
+                  <p className="text-sm font-semibold text-slate-100">{user.name}</p>
                 </div>
                 <button
                   onClick={logout}

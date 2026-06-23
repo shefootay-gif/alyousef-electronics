@@ -20,7 +20,7 @@ import {
   ArrowRight,
   Star,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 const categoryIcons: Record<string, React.ReactNode> = {
   Smartphone: <Smartphone className="w-7 h-7" />,
@@ -38,12 +38,12 @@ function HeroSection() {
     ? ["منتجات أصلية", "ضمان موثوق", "تجربة شراء فاخرة"]
     : ["Authentic Tech", "Trusted Warranty", "Premium Checkout"];
 
-  const textVariants: any = {
+  const textVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
   };
 
-  const containerVariants: any = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -293,10 +293,10 @@ function FeaturedProductsSection() {
   const { t, lang } = useLanguage();
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-[#050505] relative border-y border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#171717] mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-100 mb-4">
             {lang === "ar" ? (
               <><span className="text-[#D4AF37]">منتجات</span> مميزة</>
             ) : (
@@ -315,7 +315,7 @@ function FeaturedProductsSection() {
         <div className="text-center mt-10">
           <Link
             to="/shop"
-            className="inline-flex items-center gap-2 px-8 py-3 border-2 border-[#171717] text-[#171717] font-semibold rounded-xl hover:bg-[#171717] hover:text-white transition-all"
+            className="inline-flex items-center gap-2 px-8 py-3 border border-white/20 text-slate-200 font-semibold rounded-xl hover:bg-white/10 transition-all"
           >
             {t("viewAllProducts")}
             <ArrowRight className={`w-4 h-4 ${lang === "ar" ? "rotate-180" : ""}`} />
@@ -438,7 +438,7 @@ function FeaturesBar() {
   ];
 
   return (
-    <section className="py-12 bg-white">
+    <section className="py-12 bg-[#020617] border-y border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((f, i) => (
@@ -448,7 +448,7 @@ function FeaturesBar() {
                 {f.icon}
               </div>
               <div>
-                <h3 className="text-base font-semibold text-[#171717]">{f.title}</h3>
+                <h3 className="text-base font-semibold text-slate-200">{f.title}</h3>
                 <p className="text-sm text-[#94A3B8]">{f.desc}</p>
               </div>
             </div>

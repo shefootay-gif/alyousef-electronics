@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router";
 import { useCart } from "@/hooks/useCart";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -6,7 +6,7 @@ import { Star, Heart, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
-export default function ProductCard({ product }: { product: any }) {
+const ProductCard = React.memo(function ProductCard({ product }: { product: any }) {
   const { addToCart } = useCart();
   const { t, lang } = useLanguage();
   const [liked, setLiked] = useState(false);
@@ -146,4 +146,6 @@ export default function ProductCard({ product }: { product: any }) {
       </div>
     </motion.div>
   );
-}
+});
+
+export default ProductCard;

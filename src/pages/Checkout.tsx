@@ -15,12 +15,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
 import { useLanguage } from "@/hooks/useLanguage";
-
-const steps = [
-  { id: "shipping", label: "Shipping", icon: Truck },
-  { id: "payment", label: "Payment", icon: CreditCard },
-  { id: "review", label: "Review", icon: Receipt },
-];
+import { formatCurrency } from "@/lib/utils";
 
 export default function Checkout() {
   const { items, total, clearCart } = useCart();
@@ -29,6 +24,12 @@ export default function Checkout() {
   const { t, lang } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const steps = [
+    { id: "shipping", label: t("shippingInfo"), icon: Truck },
+    { id: "payment", label: t("paymentMethod"), icon: CreditCard },
+    { id: "review", label: t("reviewOrder"), icon: Receipt },
+  ];
 
   const [shippingData, setShippingData] = useState({
     firstName: user?.name ? user.name.split(" ")[0] : "",
@@ -47,7 +48,7 @@ export default function Checkout() {
   const createOrder = trpc.order.create.useMutation({
     onSuccess: () => {
       clearCart();
-      toast.success("Order placed successfully!");
+      toast.success(lang === "ar" ? "تم تأكيد الطلب بنجاح!" : "Order placed successfully!");
       navigate("/orders");
     },
     onError: (err) => {
@@ -56,9 +57,9 @@ export default function Checkout() {
     },
   });
 
-  const shipping = total >= 5000 ? 0 : 350;
-  const tax = total * 0.15;
-  const grandTotal = total + shipping + tax;
+  const shipping = total >= 5000 ? 0 : 35;
+  const tax = Math.round(total * 15) / 100;
+  const grandTotal = Math.round((total + shipping + tax) * 100) / 100;
 
   const handlePlaceOrder = () => {
     const shippingSchema = z.object({
@@ -73,7 +74,7 @@ export default function Checkout() {
 
     const result = shippingSchema.safeParse(shippingData);
     if (!result.success) {
-      toast.error(result.error.errors[0].message);
+      toast.error(result.error.issues[0].message);
       return;
     }
 
@@ -108,9 +109,9 @@ export default function Checkout() {
     return (
       <Layout>
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-28 text-center">
-          <h2 className="text-2xl font-bold text-[#171717] mb-4">Your cart is empty</h2>
+          <h2 className="text-2xl font-bold text-slate-100 mb-4">{t("emptyCart")}</h2>
           <Link to="/shop" className="text-[#D4AF37] hover:underline">
-            Continue Shopping
+            {t("continueShopping")}
           </Link>
         </div>
       </Layout>
@@ -121,10 +122,10 @@ export default function Checkout() {
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-28 pb-16">
         <div className="flex items-center gap-4 mb-8">
-          <Link to="/cart" className="text-[#64748B] hover:text-[#171717] transition-colors">
-            <ArrowLeft className="w-5 h-5" />
+          <Link to="/cart" className="text-[#94A3B8] hover:text-white transition-colors">
+            <ArrowLeft className={`w-5 h-5 ${lang === "ar" ? "rotate-180" : ""}`} />
           </Link>
-          <h1 className="text-3xl font-bold text-[#171717]">Checkout</h1>
+          <h1 className="text-3xl font-bold text-slate-100">{t("proceedToCheckout")}</h1>
         </div>
 
         {/* Progress Steps */}
@@ -142,20 +143,20 @@ export default function Checkout() {
                       ? "bg-green-500 text-white"
                       : isActive
                       ? "bg-[#D4AF37] text-[#171717]"
-                      : "bg-[#E2E8F0] text-[#94A3B8]"
+                      : "bg-[#0F172A] border border-white/10 text-[#94A3B8]"
                   }`}
                 >
                   {isCompleted ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
                 </div>
                 <span
                   className={`text-sm font-medium hidden sm:block ${
-                    isActive ? "text-[#171717]" : isCompleted ? "text-green-600" : "text-[#94A3B8]"
+                    isActive ? "text-slate-100" : isCompleted ? "text-green-500" : "text-[#94A3B8]"
                   }`}
                 >
                   {step.label}
                 </span>
                 {i < steps.length - 1 && (
-                  <div className={`flex-1 h-0.5 mx-2 ${isCompleted ? "bg-green-500" : "bg-[#E2E8F0]"}`} />
+                  <div className={`flex-1 h-0.5 mx-2 ${isCompleted ? "bg-green-500" : "bg-white/10"}`} />
                 )}
               </div>
             );
@@ -167,152 +168,144 @@ export default function Checkout() {
           <div className="flex-1">
             {/* Shipping Step */}
             {currentStep === 0 && (
-              <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
-                <h2 className="text-xl font-bold text-[#171717] mb-6">Shipping Information</h2>
+              <div className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8">
+                <h2 className="text-xl font-bold text-slate-100 mb-6">{t("shippingInfo")}</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="sm:col-span-1">
-                    <label className="block text-sm font-medium text-[#171717] mb-1">First Name *</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">{t("firstName")} *</label>
                     <input
                       type="text"
                       value={shippingData.firstName}
                       onChange={(e) => setShippingData({ ...shippingData, firstName: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#C0C0C0] focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#D4AF37] focus:outline-none transition-colors"
                       placeholder="e.g. Ahmed"
                     />
                   </div>
                   <div className="sm:col-span-1">
                     <div>
-                      <label className="block text-sm font-medium text-[#0F172A] mb-2">{t("lastName")} *</label>
+                      <label className="block text-sm font-medium text-slate-300 mb-1">{t("lastName")} *</label>
                       <input
                         type="text"
                         value={shippingData.lastName}
                         onChange={(e) => setShippingData({ ...shippingData, lastName: e.target.value })}
-                        className="w-full h-12 px-4 rounded-xl border border-[#E2E8F0] focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] bg-[#F8FAFC] focus:bg-white transition-all text-left"
+                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#D4AF37] focus:outline-none transition-colors"
                         dir="auto"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#0F172A] mb-2">{lang === "ar" ? "البريد الإلكتروني" : "Email Address"} *</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">{t("emailAddress")} *</label>
                     <input
                       type="email"
                       value={shippingData.email}
                       onChange={(e) => setShippingData({ ...shippingData, email: e.target.value })}
-                      className="w-full h-12 px-4 rounded-xl border border-[#E2E8F0] focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] bg-[#F8FAFC] focus:bg-white transition-all text-left"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#D4AF37] focus:outline-none transition-colors"
                       dir="ltr"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#0F172A] mb-2">{t("phone")} *</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">{t("phone")} *</label>
                     <input
                       type="tel"
                       value={shippingData.phone}
                       onChange={(e) => setShippingData({ ...shippingData, phone: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#C0C0C0] focus:outline-none transition-colors"
-                      placeholder="05XXXXXXXX"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#D4AF37] focus:outline-none transition-colors"
+                      placeholder="01XXXXXXXXX"
+                      dir="ltr"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#171717] mb-1">City *</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">{t("city")} *</label>
                     <select
                       value={shippingData.city}
                       onChange={(e) => setShippingData({ ...shippingData, city: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#C0C0C0] focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-[#0F172A] border border-white/10 text-white focus:border-[#D4AF37] focus:outline-none transition-colors"
                     >
-                      <option value="">Select City</option>
+                      <option value="">{t("selectCity")}</option>
                       <option value="Cairo">Cairo</option>
                       <option value="Alexandria">Alexandria</option>
-                      <option value="Mecca">Mecca</option>
-                      <option value="Medina">Medina</option>
                       <option value="Giza">Giza</option>
-                      <option value="Khobar">Khobar</option>
-                      <option value="Tabuk">Tabuk</option>
-                      <option value="Abha">Abha</option>
-                      <option value="Taif">Taif</option>
-                      <option value="Buraidah">Buraidah</option>
                     </select>
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-[#171717] mb-1">District *</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">{t("district")} *</label>
                     <input
                       type="text"
                       value={shippingData.district}
                       onChange={(e) => setShippingData({ ...shippingData, district: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#C0C0C0] focus:outline-none transition-colors"
-                      placeholder="e.g. Al-Olaya District"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#D4AF37] focus:outline-none transition-colors"
+                      placeholder="e.g. Nasr City"
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-[#171717] mb-1">Street Address *</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">{t("streetAddress")} *</label>
                     <textarea
                       value={shippingData.streetAddress}
                       onChange={(e) => setShippingData({ ...shippingData, streetAddress: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#C0C0C0] focus:outline-none transition-colors resize-none"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#D4AF37] focus:outline-none transition-colors resize-none"
                       rows={2}
-                      placeholder="Street name"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#171717] mb-1">Building / Apartment</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">{t("building")}</label>
                     <input
                       type="text"
                       value={shippingData.buildingNumber}
                       onChange={(e) => setShippingData({ ...shippingData, buildingNumber: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#C0C0C0] focus:outline-none transition-colors"
-                      placeholder="e.g. Building 12, Apt 4"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#D4AF37] focus:outline-none transition-colors"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#171717] mb-1">Postal Code</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">{t("postalCode")}</label>
                     <input
                       type="text"
                       value={shippingData.postalCode}
                       onChange={(e) => setShippingData({ ...shippingData, postalCode: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#E2E8F0] focus:border-[#C0C0C0] focus:outline-none transition-colors"
-                      placeholder="XXXXX"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-[#D4AF37] focus:outline-none transition-colors"
+                      dir="ltr"
                     />
                   </div>
                 </div>
                 <button
                   onClick={() => {
                     if (!shippingData.firstName || !shippingData.lastName || !shippingData.phone || !shippingData.streetAddress || !shippingData.district || !shippingData.city) {
-                      toast.error("Please fill in all required fields");
+                      toast.error(t("fillRequired"));
                       return;
                     }
                     setCurrentStep(1);
                   }}
                   className="mt-6 w-full py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl hover:shadow-lg transition-all"
                 >
-                  Continue to Payment
+                  {t("continueToPayment")}
                 </button>
               </div>
             )}
 
             {/* Payment Step */}
             {currentStep === 1 && (
-              <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
-                <h2 className="text-xl font-bold text-[#171717] mb-6">Payment Method</h2>
+              <div className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8">
+                <h2 className="text-xl font-bold text-slate-100 mb-6">{t("paymentMethod")}</h2>
                 <div className="space-y-3">
                   {[
-                    { id: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order" },
-                    { id: "credit_card", label: "Credit / Debit Card", desc: "Visa, Mastercard, Mada" },
-                    { id: "stc_pay", label: "STC Pay", desc: "Pay with STC Pay wallet" },
+                    { id: "cod", label: lang === "ar" ? "الدفع عند الاستلام" : "Cash on Delivery", desc: lang === "ar" ? "الدفع نقداً عند استلام الطلب" : "Pay when you receive your order" },
+                    { id: "credit_card", label: lang === "ar" ? "بطاقة ائتمانية / مدى" : "Credit / Debit Card", desc: "Visa, Mastercard, Mada" },
+                    { id: "stc_pay", label: "STC Pay / Apple Pay", desc: lang === "ar" ? "الدفع عبر المحافظ الإلكترونية" : "Pay with Digital Wallets" },
                   ].map((method) => (
                     <button
                       key={method.id}
                       onClick={() => setPaymentMethod(method.id as any)}
-                      className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
+                      className={`w-full p-4 rounded-xl border border-white/10 text-left transition-all ${
                         paymentMethod === method.id
-                          ? "border-[#D4AF37] bg-[#FEF9E7]"
-                          : "border-[#E2E8F0] hover:border-[#94A3B8]"
+                          ? "border-[#D4AF37] bg-[#D4AF37]/10"
+                          : "bg-white/5 hover:border-white/30"
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <div
                           className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                            paymentMethod === method.id ? "border-[#D4AF37]" : "border-[#E2E8F0]"
+                            paymentMethod === method.id ? "border-[#D4AF37]" : "border-white/20"
                           }`}
                         >
                           {paymentMethod === method.id && (
@@ -320,7 +313,7 @@ export default function Checkout() {
                           )}
                         </div>
                         <div>
-                          <p className="font-semibold text-[#171717]">{method.label}</p>
+                          <p className="font-semibold text-slate-100">{method.label}</p>
                           <p className="text-sm text-[#94A3B8]">{method.desc}</p>
                         </div>
                       </div>
@@ -330,15 +323,15 @@ export default function Checkout() {
                 <div className="flex gap-3 mt-6">
                   <button
                     onClick={() => setCurrentStep(0)}
-                    className="px-6 py-4 border-2 border-[#E2E8F0] text-[#64748B] font-semibold rounded-xl hover:bg-[#F8FAFC] transition-all"
+                    className="px-6 py-4 border border-white/10 text-[#94A3B8] font-semibold rounded-xl hover:bg-white/5 transition-all"
                   >
-                    Back
+                    {t("previous")}
                   </button>
                   <button
                     onClick={() => setCurrentStep(2)}
                     className="flex-1 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl hover:shadow-lg transition-all"
                   >
-                    Review Order
+                    {t("reviewOrder")}
                   </button>
                 </div>
               </div>
@@ -346,43 +339,43 @@ export default function Checkout() {
 
             {/* Review Step */}
             {currentStep === 2 && (
-              <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
-                <h2 className="text-xl font-bold text-[#171717] mb-6">Review Your Order</h2>
+              <div className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8">
+                <h2 className="text-xl font-bold text-slate-100 mb-6">{t("reviewOrder")}</h2>
 
                 {/* Shipping Summary */}
-                <div className="mb-6 p-4 bg-[#F8FAFC] rounded-xl">
-                  <h3 className="font-semibold text-[#171717] mb-2">Shipping To</h3>
-                  <p className="text-sm text-[#64748B]">{shippingData.firstName} {shippingData.lastName}</p>
-                  <p className="text-sm text-[#64748B]">{shippingData.phone}</p>
-                  <p className="text-sm text-[#64748B]">{shippingData.streetAddress}</p>
-                  <p className="text-sm text-[#64748B]">{shippingData.district}, {shippingData.city}, Egypt</p>
+                <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl">
+                  <h3 className="font-semibold text-slate-200 mb-2">{t("shippingTo")}</h3>
+                  <p className="text-sm text-[#94A3B8]">{shippingData.firstName} {shippingData.lastName}</p>
+                  <p className="text-sm text-[#94A3B8]">{shippingData.phone}</p>
+                  <p className="text-sm text-[#94A3B8]">{shippingData.streetAddress}</p>
+                  <p className="text-sm text-[#94A3B8]">{shippingData.district}, {shippingData.city}, Egypt</p>
                 </div>
 
                 {/* Payment Summary */}
-                <div className="mb-6 p-4 bg-[#F8FAFC] rounded-xl">
-                  <h3 className="font-semibold text-[#171717] mb-2">Payment Method</h3>
-                  <p className="text-sm text-[#64748B]">
-                    {paymentMethod === "cod" && "Cash on Delivery"}
-                    {paymentMethod === "credit_card" && "Credit / Debit Card"}
-                    {paymentMethod === "stc_pay" && "STC Pay"}
+                <div className="mb-6 p-4 bg-white/5 border border-white/10 rounded-xl">
+                  <h3 className="font-semibold text-slate-200 mb-2">{t("paymentMethod")}</h3>
+                  <p className="text-sm text-[#94A3B8]">
+                    {paymentMethod === "cod" && (lang === "ar" ? "الدفع عند الاستلام" : "Cash on Delivery")}
+                    {paymentMethod === "credit_card" && (lang === "ar" ? "بطاقة ائتمانية / مدى" : "Credit / Debit Card")}
+                    {paymentMethod === "stc_pay" && "STC Pay / Apple Pay"}
                   </p>
                 </div>
 
                 {/* Items */}
                 <div className="space-y-3 mb-6">
                   {items.map((item) => (
-                    <div key={item.id} className="flex items-center gap-4 p-3 bg-[#F8FAFC] rounded-xl">
+                    <div key={item.id} className="flex items-center gap-4 p-3 bg-white/5 border border-white/10 rounded-xl">
                       <img
                         src={item.product?.image || "/placeholder.png"}
                         alt={item.product?.name || ""}
-                        className="w-16 h-16 object-contain rounded-lg bg-white"
+                        className="w-16 h-16 object-cover rounded-lg bg-white/5"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-[#171717] text-sm">{item.product?.name}</p>
-                        <p className="text-xs text-[#94A3B8]">Qty: {item.quantity}</p>
+                        <p className="font-medium text-slate-100 text-sm">{lang === "ar" && (item.product as any)?.nameAr ? item.product.nameAr : item.product?.name}</p>
+                        <p className="text-xs text-[#94A3B8]">{t("quantity")} {item.quantity}</p>
                       </div>
-                      <p className="font-semibold text-[#D4AF37]">
-                        EGP {(Number(item.product?.salePrice || item.product?.price || 0) * item.quantity).toFixed(2)}
+                      <p className="font-semibold text-[#D4AF37]" dir="ltr">
+                        {formatCurrency((Number(item.product?.salePrice || item.product?.price || 0) * item.quantity), lang)}
                       </p>
                     </div>
                   ))}
@@ -391,9 +384,9 @@ export default function Checkout() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setCurrentStep(1)}
-                    className="px-6 py-4 border-2 border-[#E2E8F0] text-[#64748B] font-semibold rounded-xl hover:bg-[#F8FAFC] transition-all"
+                    className="px-6 py-4 border border-white/10 text-[#94A3B8] font-semibold rounded-xl hover:bg-white/5 transition-all"
                   >
-                    Back
+                    {t("previous")}
                   </button>
                   <button
                     onClick={handlePlaceOrder}
@@ -401,7 +394,7 @@ export default function Checkout() {
                     className="flex-1 py-4 bg-gradient-to-r from-[#D4AF37] to-[#B8960F] text-[#171717] font-bold rounded-xl hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {isSubmitting && <Loader2 className="w-5 h-5 animate-spin" />}
-                    Place Order - EGP {grandTotal.toFixed(2)}
+                    {t("placeOrder")} - {formatCurrency(grandTotal, lang)}
                   </button>
                 </div>
               </div>
@@ -410,39 +403,39 @@ export default function Checkout() {
 
           {/* Order Summary Sidebar */}
           <div className="lg:w-80 flex-shrink-0">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
-              <h3 className="font-bold text-[#171717] mb-4">Order Summary</h3>
+            <div className="bg-[#0F172A]/80 border border-white/10 backdrop-blur-xl rounded-[2rem] p-6 sticky top-24">
+              <h3 className="font-bold text-slate-100 mb-4">{t("orderSummary")}</h3>
               <div className="space-y-2 mb-4">
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
-                    <span className="text-[#64748B] line-clamp-1 flex-1 mr-2">
-                      {item.product?.name} x{item.quantity}
+                    <span className="text-[#94A3B8] line-clamp-1 flex-1 mr-2">
+                      {lang === "ar" && (item.product as any)?.nameAr ? item.product.nameAr : item.product?.name} x{item.quantity}
                     </span>
-                    <span className="text-[#171717] font-medium">
-                      EGP {(Number(item.product?.salePrice || item.product?.price || 0) * item.quantity).toFixed(2)}
+                    <span className="text-slate-100 font-medium" dir="ltr">
+                      {formatCurrency((Number(item.product?.salePrice || item.product?.price || 0) * item.quantity), lang)}
                     </span>
                   </div>
                 ))}
               </div>
-              <div className="border-t border-[#E2E8F0] pt-4 space-y-2">
+              <div className="border-t border-white/10 pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#64748B]">Subtotal</span>
-                  <span className="font-semibold text-[#171717]">EGP {total.toFixed(2)}</span>
+                  <span className="text-[#94A3B8]">{t("subtotal")}</span>
+                  <span className="font-semibold text-slate-100" dir="ltr">{formatCurrency(total, lang)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#64748B]">Shipping</span>
-                  <span className={`font-semibold ${shipping === 0 ? "text-green-600" : "text-[#171717]"}`}>
-                    {shipping === 0 ? "FREE" : `EGP ${shipping.toFixed(2)}`}
+                  <span className="text-[#94A3B8]">{t("shipping")}</span>
+                  <span className={`font-semibold ${shipping === 0 ? "text-green-500" : "text-slate-100"}`} dir="ltr">
+                    {shipping === 0 ? t("free") : formatCurrency(shipping, lang)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#64748B]">Tax</span>
-                  <span className="font-semibold text-[#171717]">EGP {tax.toFixed(2)}</span>
+                  <span className="text-[#94A3B8]">Tax (15%)</span>
+                  <span className="font-semibold text-slate-100" dir="ltr">{formatCurrency(tax, lang)}</span>
                 </div>
-                <div className="border-t border-[#E2E8F0] pt-2">
+                <div className="border-t border-white/10 pt-4 mt-2">
                   <div className="flex justify-between">
-                    <span className="font-bold text-[#171717]">Total</span>
-                    <span className="text-xl font-bold text-[#D4AF37]">EGP {grandTotal.toFixed(2)}</span>
+                    <span className="font-bold text-slate-100">{t("total")}</span>
+                    <span className="text-xl font-bold text-[#D4AF37]" dir="ltr">{formatCurrency(grandTotal, lang)}</span>
                   </div>
                 </div>
               </div>

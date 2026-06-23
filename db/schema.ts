@@ -82,6 +82,8 @@ export const products = pgTable("products", {
   reviewCount: integer("reviewCount").default(0),
   weight: text("weight"),
   dimensions: jsonb("dimensions").$type<{ length: number; width: number; height: number }>(),
+  crossSellIds: jsonb("crossSellIds").$type<number[]>(),
+  upsellProductId: integer("upsellProductId"),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow().$onUpdate(() => new Date()),
 }, (table) => ({
@@ -204,3 +206,16 @@ export const activityLog = pgTable("activityLog", {
 });
 
 export type ActivityLog = typeof activityLog.$inferSelect;
+
+// API Keys table for integrations (Dropshipping, etc.)
+export const apiKeys = pgTable("apiKeys", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  key: text("key").notNull().unique(),
+  provider: text("provider").default("custom"),
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
+  lastUsedAt: timestamp("lastUsedAt", { mode: "date" }),
+});
+
+export type ApiKey = typeof apiKeys.$inferSelect;

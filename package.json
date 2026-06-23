@@ -14,7 +14,8 @@
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "export:template": "node scripts/export-template.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.965.0",
@@ -88,11 +89,14 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@hono/vite-dev-server": "^0.19.0",
+    "@types/adm-zip": "^0.5.8",
     "@types/node": "^24.10.1",
     "@types/pg": "^8.20.0",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "adm-zip": "^0.5.17",
+    "archiver": "^8.0.0",
     "autoprefixer": "^10.4.23",
     "esbuild": "^0.27.2",
     "eslint": "^9.39.1",

@@ -173,6 +173,26 @@ const translations: Record<string, Record<Lang, string>> = {
   dashboard: { en: "Dashboard", ar: "اللوحة الرئيسية" },
   orders: { en: "Orders", ar: "الطلبات" },
   settings: { en: "Settings", ar: "الإعدادات" },
+  // Checkout & Cart
+  shippingInfo: { en: "Shipping Information", ar: "معلومات الشحن" },
+  firstName: { en: "First Name", ar: "الاسم الأول" },
+  lastName: { en: "Last Name", ar: "اسم العائلة" },
+  emailAddress: { en: "Email Address", ar: "البريد الإلكتروني" },
+  phone: { en: "Phone", ar: "رقم الجوال" },
+  city: { en: "City", ar: "المدينة" },
+  selectCity: { en: "Select City", ar: "اختر المدينة" },
+  district: { en: "District", ar: "الحي" },
+  streetAddress: { en: "Street Address", ar: "اسم الشارع" },
+  building: { en: "Building / Apartment", ar: "المبنى / الشقة" },
+  postalCode: { en: "Postal Code", ar: "الرمز البريدي" },
+  continueToPayment: { en: "Continue to Payment", ar: "متابعة للدفع" },
+  paymentMethod: { en: "Payment Method", ar: "طريقة الدفع" },
+  reviewOrder: { en: "Review Order", ar: "مراجعة الطلب" },
+  shippingTo: { en: "Shipping To", ar: "الشحن إلى" },
+  placeOrder: { en: "Place Order", ar: "تأكيد الطلب" },
+  fillRequired: { en: "Please fill in all required fields", ar: "الرجاء تعبئة جميع الحقول المطلوبة" },
+  nameArTitle: { en: "Name (Arabic)", ar: "الاسم (عربي)" },
+  descArTitle: { en: "Description (Arabic)", ar: "الوصف (عربي)" },
 };
 
 const LanguageContext = createContext<LanguageContextType | null>(null);
@@ -194,12 +214,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       // Load Arabic font
       const link = document.createElement("link");
       link.rel = "stylesheet";
-      link.href = "https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap";
+      link.href = "https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap";
       link.id = "arabic-font";
       if (!document.getElementById("arabic-font")) {
         document.head.appendChild(link);
       }
-      document.body.style.fontFamily = "'Tajawal', sans-serif";
+      document.body.style.fontFamily = "'Cairo', sans-serif";
     } else {
       document.body.style.fontFamily = "";
     }

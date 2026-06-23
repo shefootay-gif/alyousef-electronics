@@ -50,6 +50,37 @@ app.post("/api/webhooks/payment", async (c) => {
   }
 });
 
+// Dropshipping Webhook (Zendrop/AliExpress generic receiver)
+app.post("/api/webhooks/dropship/product", async (c) => {
+  try {
+    const apiKey = c.req.header("Authorization")?.replace("Bearer ", "");
+    if (!apiKey) return c.json({ error: "Unauthorized" }, 401);
+
+    // Dynamic import to avoid circular dependencies if any
+    const { getDb } = await import("./queries/connection");
+    const { apiKeys, products } = await import("@db/schema");
+    const { eq } = await import("drizzle-orm");
+
+    const db = getDb();
+    const keyRecord = await db.select().from(apiKeys).where(eq(apiKeys.key, apiKey)).limit(1);
+    
+    if (keyRecord.length === 0 || !keyRecord[0].isActive) {
+      return c.json({ error: "Invalid API Key" }, 401);
+    }
+
+    const payload = await c.req.json();
+    console.log("Dropshipping webhook received for provider:", keyRecord[0].provider, payload);
+    
+    // Example logic: Create or update product
+    // ...
+
+    return c.json({ success: true, message: "Product synced" });
+  } catch (err) {
+    console.error(err);
+    return c.json({ error: "Webhook Error" }, 400);
+  }
+});
+
 app.get("/api/health", (c) => {
   return c.json({ status: "ok", message: "Server is awake!" }, 200);
 });

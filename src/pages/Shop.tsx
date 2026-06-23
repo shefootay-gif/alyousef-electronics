@@ -206,12 +206,12 @@ export default function Shop() {
             {isLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="rounded-2xl bg-white shadow-lg overflow-hidden animate-pulse">
-                    <div className="aspect-square bg-[#E2E8F0]" />
+                  <div key={i} className="rounded-2xl bg-[#0F172A]/80 border border-white/10 shadow-lg overflow-hidden animate-pulse">
+                    <div className="aspect-square bg-white/5" />
                     <div className="p-5 space-y-3">
-                      <div className="h-4 bg-[#E2E8F0] rounded w-3/4" />
-                      <div className="h-4 bg-[#E2E8F0] rounded w-1/2" />
-                      <div className="h-6 bg-[#E2E8F0] rounded w-1/3" />
+                      <div className="h-4 bg-slate-800 rounded w-3/4" />
+                      <div className="h-4 bg-slate-800 rounded w-1/2" />
+                      <div className="h-6 bg-slate-800 rounded w-1/3" />
                     </div>
                   </div>
                 ))}

@@ -159,6 +159,18 @@ export const productRouter = createRouter({
       return { ...product, category, reviews: productReviews };
     }),
 
+  getByIds: publicQuery
+    .input(z.object({ ids: z.array(z.number()) }))
+    .query(async ({ input }) => {
+      if (!input.ids || input.ids.length === 0) return [];
+      const db = getDb();
+      const items = await db
+        .select()
+        .from(products)
+        .where(inArray(products.id, input.ids));
+      return items;
+    }),
+
   getFeatured: publicQuery
     .input(z.object({ limit: z.number().default(8) }).optional())
     .query(async ({ input }) => {
@@ -282,15 +294,17 @@ export const productRouter = createRouter({
     .input(
       z.object({
         name: z.string().min(1),
+        nameAr: z.string().optional().nullable(),
         slug: z.string().min(1),
         description: z.string().optional(),
+        descriptionAr: z.string().optional().nullable(),
         shortDescription: z.string().optional(),
         categoryId: z.number(),
         brand: z.string().optional(),
         sku: z.string().optional(),
         price: z.string(),
-        salePrice: z.string().optional(),
-        image: z.string().optional(),
+        salePrice: z.string().optional().nullable(),
+        image: z.string().url("Must be a valid URL").or(z.literal("")).optional(),
         stockQuantity: z.number().default(0),
         status: z.enum(["active", "inactive", "draft", "out_of_stock"]).default("draft"),
         isFeatured: z.boolean().default(false),
@@ -307,14 +321,16 @@ export const productRouter = createRouter({
       z.object({
         id: z.number(),
         name: z.string().optional(),
+        nameAr: z.string().optional().nullable(),
         slug: z.string().optional(),
         description: z.string().optional(),
+        descriptionAr: z.string().optional().nullable(),
         shortDescription: z.string().optional(),
         categoryId: z.number().optional(),
         brand: z.string().optional(),
         price: z.string().optional(),
-        salePrice: z.string().optional(),
-        image: z.string().optional(),
+        salePrice: z.string().optional().nullable(),
+        image: z.string().url("Must be a valid URL").or(z.literal("")).optional(),
         stockQuantity: z.number().optional(),
         status: z.enum(["active", "inactive", "draft", "out_of_stock"]).optional(),
         isFeatured: z.boolean().optional(),

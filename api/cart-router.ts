@@ -35,10 +35,11 @@ export const cartRouter = createRouter({
       product: allProducts.find(p => p.id === item.productId) || null,
     }));
 
-    const total = itemsWithProduct.reduce((sum, item) => {
+    const totalCents = itemsWithProduct.reduce((sum, item) => {
       const price = item.product?.salePrice || item.product?.price || "0";
-      return sum + Number(price) * item.quantity;
+      return sum + Math.round(Number(price) * 100) * item.quantity;
     }, 0);
+    const total = totalCents / 100;
 
     return {
       items: itemsWithProduct,

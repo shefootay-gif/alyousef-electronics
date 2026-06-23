@@ -63,7 +63,7 @@ export default function OrderDetail() {
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold text-[#F8FAFC] mb-2">Order #{order.orderNumber}</h1>
               <p className="text-[#94A3B8]">
-                {new Date(order.createdAt).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US", {
+                {new Date(order.createdAt || Date.now()).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",

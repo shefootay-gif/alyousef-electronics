@@ -8,6 +8,7 @@ interface CartItem {
   product: {
     id: number;
     name: string;
+    nameAr?: string | null;
     slug: string;
     price: string;
     salePrice: string | null;

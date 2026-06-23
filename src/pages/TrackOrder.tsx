@@ -130,7 +130,7 @@ export default function TrackOrder() {
                     {lang === "ar" ? "تاريخ الطلب" : "Order Date"}
                   </p>
                   <p className="font-semibold text-[#171717]">
-                    {new Date(order.createdAt).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US", {
+                    {new Date(order.createdAt || Date.now()).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US", {
                       year: "numeric", month: "long", day: "numeric"
                     })}
                   </p>
@@ -184,11 +184,11 @@ export default function TrackOrder() {
                   </h3>
                   <div className="bg-[#F8FAFC] p-4 rounded-xl space-y-1">
                     <p className="font-semibold text-[#171717]">
-                      {order.shippingAddress?.firstName} {order.shippingAddress?.lastName}
+                      {(order.shippingAddress as any)?.firstName} {(order.shippingAddress as any)?.lastName}
                     </p>
-                    <p className="text-sm text-[#64748B]">{order.shippingAddress?.phone}</p>
-                    <p className="text-sm text-[#64748B] mt-2">{order.shippingAddress?.streetAddress}</p>
-                    <p className="text-sm text-[#64748B]">{order.shippingAddress?.district}, {order.shippingAddress?.city}</p>
+                    <p className="text-sm text-[#64748B]">{(order.shippingAddress as any)?.phone}</p>
+                    <p className="text-sm text-[#64748B] mt-2">{(order.shippingAddress as any)?.streetAddress}</p>
+                    <p className="text-sm text-[#64748B]">{(order.shippingAddress as any)?.district}, {(order.shippingAddress as any)?.city}</p>
                   </div>
                 </div>
                 <div>

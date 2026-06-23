@@ -12,7 +12,12 @@ const Cart = lazy(() => import("./pages/Cart"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const Orders = lazy(() => import("./pages/Orders"));
 const OrderDetail = lazy(() => import("./pages/OrderDetail"));
-const Admin = lazy(() => import("./pages/Admin"));
+const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
+const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
+const AdminOrders = lazy(() => import("./pages/admin/Orders"));
+const AdminProducts = lazy(() => import("./pages/admin/Products"));
+const AdminSettings = lazy(() => import("./pages/admin/Settings"));
+const AdminApps = lazy(() => import("./pages/admin/Apps"));
 const About = lazy(() => import("./pages/About"));
 const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -51,7 +56,13 @@ function AnimatedRoutes() {
         <Route path="/track-order" element={<TrackOrder />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/order/:id" element={<OrderDetail />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="settings" element={<AdminSettings />} />
+          <Route path="apps" element={<AdminApps />} />
+        </Route>
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -59,15 +70,19 @@ function AnimatedRoutes() {
   );
 }
 
+import { ThemeProvider } from "./providers/ThemeProvider";
+
 export default function App() {
   return (
-    <CartProvider>
+    <ThemeProvider>
+      <CartProvider>
       <TrackingPixels />
       <ErrorBoundary>
         <Suspense fallback={<LoadingFallback />}>
           <AnimatedRoutes />
         </Suspense>
       </ErrorBoundary>
-    </CartProvider>
+      </CartProvider>
+    </ThemeProvider>
   );
 }
