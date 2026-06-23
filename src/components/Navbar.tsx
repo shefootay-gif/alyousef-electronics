@@ -67,8 +67,8 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <BrandLogo className="transition-transform group-hover:scale-[1.02]" />
+          <Link to="/" className="min-w-0 flex items-center gap-3 group">
+            <BrandLogo className="max-w-[150px] overflow-hidden transition-transform group-hover:scale-[1.02] sm:max-w-none" />
           </Link>
 
           {/* Desktop Nav */}
@@ -125,11 +125,11 @@ export default function Navbar() {
           </div>
 
           {/* Right Icons */}
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-3">
             {/* Language Toggle */}
             <button
               onClick={() => setLang(lang === "en" ? "ar" : "en")}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 text-[#F8FAFC] hover:text-[#D4AF37] hover:border-[#D4AF37] transition-all text-sm font-semibold"
+              className="flex h-10 items-center gap-1.5 rounded-full border border-white/20 px-2 text-xs font-semibold text-[#F8FAFC] transition-all hover:border-[#D4AF37] hover:text-[#D4AF37] sm:px-3 sm:text-sm"
               title="Toggle Language"
             >
               <Languages className="w-4 h-4" />
@@ -240,7 +240,8 @@ export default function Navbar() {
               <Link
                 to="/login"
                 aria-label="Login"
-                className="w-10 h-10 rounded-full flex items-center justify-center text-[#F8FAFC] hover:text-[#D4AF37] hover:bg-white/10 transition-all"
+                title={t("signIn")}
+                className="hidden h-10 w-10 items-center justify-center rounded-full text-[#F8FAFC] transition-all hover:bg-white/10 hover:text-[#D4AF37] min-[380px]:flex"
               >
                 <User className="w-5 h-5" />
               </Link>
@@ -288,6 +289,28 @@ export default function Navbar() {
             <Link to="/shop?featured=true" className="block text-[#F8FAFC] hover:text-[#D4AF37] py-2 text-lg font-medium">
               {t("deals")}
             </Link>
+            {user ? (
+              <>
+                {user.role === "admin" && (
+                  <Link to="/admin" className="block text-[#F8FAFC] hover:text-[#D4AF37] py-2 text-lg font-medium">
+                    {t("adminDashboard")}
+                  </Link>
+                )}
+                <Link to="/orders" className="block text-[#F8FAFC] hover:text-[#D4AF37] py-2 text-lg font-medium">
+                  {t("myOrders")}
+                </Link>
+                <button
+                  onClick={logout}
+                  className="block w-full py-2 text-start text-lg font-medium text-red-300 hover:text-red-200"
+                >
+                  {t("logout")}
+                </button>
+              </>
+            ) : (
+              <Link to="/login" className="block rounded-xl bg-[#D4AF37] px-4 py-3 text-center text-lg font-bold text-[#171717]">
+                {t("signIn")}
+              </Link>
+            )}
             <button
               onClick={() => setLang(lang === "en" ? "ar" : "en")}
               className="flex items-center gap-2 text-[#D4AF37] py-2 text-lg font-medium"
